@@ -3,6 +3,38 @@
   text-align: left;
 }
 
+.landing-main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero--landing {
+  flex: 1;
+  padding: clamp(72px, 10vw, 120px) 0 clamp(56px, 8vw, 96px);
+}
+
+.hero--landing .container {
+  max-width: 1480px;
+}
+
+.hero--landing .hero__title {
+  font-size: clamp(72px, 16vw, 176px);
+  margin-bottom: 36px;
+}
+
+.hero--landing .hero__subtitle {
+  max-width: 1460px;
+  font-size: clamp(28px, 4.3vw, 64px);
+  line-height: 1.28;
+  letter-spacing: -0.035em;
+  margin-bottom: 64px;
+}
+
+.hero--landing .button-row {
+  gap: 16px;
+}
+
 .hero__eyebrow {
   font-size: 14px;
   font-weight: 500;
@@ -71,6 +103,13 @@
   background: var(--color-bg-soft);
   color: var(--color-fg);
   border-color: var(--color-fg);
+}
+
+@media (max-width: 720px) {
+  .hero--landing .hero__subtitle {
+    line-height: 1.22;
+    margin-bottom: 40px;
+  }
 }
 
 .card {

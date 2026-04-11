@@ -79,10 +79,8 @@
   <link rel="stylesheet" href="assets/css/components.css" />
 </head>
 <body data-page="home">
-  <div data-include="header"></div>
-
-  <main>
-    <section class="hero">
+  <main class="landing-main">
+    <section class="hero hero--landing">
       <div class="container">
         <div class="hero__eyebrow">Data Scientist · Munich</div>
         <h1 class="hero__title">Emrecan Ulu.</h1>
@@ -93,28 +91,11 @@
         <div class="button-row">
           <a class="button button--primary" href="projects.html">View projects</a>
           <a class="button button--ghost" href="about.html">About me</a>
+          <a class="button button--ghost" href="research.html">Research</a>
         </div>
       </div>
     </section>
-
     <hr class="divider" />
-
-    <section class="section--tight">
-      <div class="container">
-        <div class="section__eyebrow">Selected work</div>
-        <h2 class="section__title">A few things I&rsquo;ve built.</h2>
-        <p class="section__lead">Research pipelines, retrieval systems, and applied ML — focused on what actually ships.</p>
-        <div class="grid grid--3" data-list="projects" style="margin-top: 48px;"></div>
-      </div>
-    </section>
   </main>
-
-  <div data-include="footer"></div>
-
-  <script src="assets/js/site.js"></script>
-  <script src="assets/js/list.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => loadList("projects", "[data-list='projects']"));
-  </script>
 </body>
 </html>
