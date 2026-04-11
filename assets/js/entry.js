@@ -27,7 +27,7 @@ async function loadEntry() {
 
   if (backLink) {
     backLink.href = `${type}.html`;
-    backLink.textContent = `\u2190 Back to ${type}`;
+    backLink.textContent = `Back to ${type}`;
   }
   if (metaEl) metaEl.textContent = type;
   if (repoLink) repoLink.hidden = true;
