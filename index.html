@@ -33,6 +33,20 @@
     gtag('config', 'G-LYY1V218NW');
   </script>
 
+  <script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -79,8 +93,10 @@
   <link rel="stylesheet" href="assets/css/components.css" />
 </head>
 <body data-page="home">
-  <main class="landing-main">
-    <section class="hero hero--landing">
+  <div data-include="header"></div>
+
+  <main>
+    <section class="hero">
       <div class="container">
         <div class="hero__eyebrow">Data Scientist · Munich</div>
         <h1 class="hero__title">Emrecan Ulu.</h1>
@@ -89,13 +105,16 @@
           Currently a Data Scientist at Siemens, studying Social and Economic Data Science at the University of Konstanz.
         </p>
         <div class="button-row">
-          <a class="button button--primary" href="projects.html">View projects</a>
-          <a class="button button--ghost" href="about.html">About me</a>
+          <a class="button button--primary" href="about.html">About me</a>
+          <a class="button button--ghost" href="projects.html">View projects</a>
           <a class="button button--ghost" href="research.html">Research</a>
         </div>
       </div>
     </section>
-    <hr class="divider" />
   </main>
+
+  <div data-include="footer"></div>
+
+  <script src="assets/js/site.js"></script>
 </body>
 </html>

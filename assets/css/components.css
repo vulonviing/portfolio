@@ -3,38 +3,6 @@
   text-align: left;
 }
 
-.landing-main {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.hero--landing {
-  flex: 1;
-  padding: clamp(72px, 10vw, 120px) 0 clamp(56px, 8vw, 96px);
-}
-
-.hero--landing .container {
-  max-width: 1480px;
-}
-
-.hero--landing .hero__title {
-  font-size: clamp(72px, 16vw, 176px);
-  margin-bottom: 36px;
-}
-
-.hero--landing .hero__subtitle {
-  max-width: 1460px;
-  font-size: clamp(28px, 4.3vw, 64px);
-  line-height: 1.28;
-  letter-spacing: -0.035em;
-  margin-bottom: 64px;
-}
-
-.hero--landing .button-row {
-  gap: 16px;
-}
-
 .hero__eyebrow {
   font-size: 14px;
   font-weight: 500;
@@ -49,7 +17,7 @@
   letter-spacing: -0.04em;
   line-height: 1.02;
   margin: 0 0 24px;
-  background: linear-gradient(180deg, #1d1d1f 0%, #515154 100%);
+  background: linear-gradient(180deg, var(--color-hero-start) 0%, var(--color-hero-end) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -58,7 +26,7 @@
 .hero__subtitle {
   font-size: clamp(20px, 2.4vw, 28px);
   color: var(--color-fg-soft);
-  font-weight: 300;
+  font-weight: 400;
   max-width: 720px;
   margin: 0 0 40px;
 }
@@ -89,7 +57,7 @@
   color: var(--color-bg);
 }
 .button--primary:hover {
-  background: #000;
+  background: var(--color-button-primary-hover);
   color: var(--color-bg);
   transform: translateY(-1px);
 }
@@ -103,13 +71,6 @@
   background: var(--color-bg-soft);
   color: var(--color-fg);
   border-color: var(--color-fg);
-}
-
-@media (max-width: 720px) {
-  .hero--landing .hero__subtitle {
-    line-height: 1.22;
-    margin-bottom: 40px;
-  }
 }
 
 .card {
@@ -154,6 +115,7 @@
   margin: 0 0 24px;
   line-height: 1.5;
   flex-grow: 1;
+  font-weight: 400;
 }
 
 .card__cta {
@@ -227,6 +189,7 @@
   font-size: 15px;
   color: var(--color-fg-soft);
   margin: 0 0 12px;
+  font-weight: 400;
 }
 .timeline__org span { color: var(--color-fg); font-weight: 500; }
 .timeline__desc {
@@ -234,6 +197,7 @@
   color: var(--color-fg-soft);
   margin: 0;
   line-height: 1.55;
+  font-weight: 400;
 }
 
 .entry {
@@ -261,8 +225,8 @@
   margin: 0 auto;
   font-size: 18px;
   line-height: 1.65;
-  color: #2c2c2e;
-  font-weight: 300;
+  color: var(--color-prose);
+  font-weight: 400;
 }
 .prose h1 { font-size: clamp(36px, 5vw, 56px); margin: 48px 0 24px; }
 .prose h2 { font-size: clamp(26px, 3vw, 36px); margin: 56px 0 20px; font-weight: 600; }
