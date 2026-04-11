@@ -17,6 +17,7 @@ async function loadEntry() {
   const backLink = document.querySelector("[data-back]");
   const metaEl = document.querySelector("[data-meta]");
   const repoLink = document.querySelector("[data-repo]");
+  const typeLabel = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
 
   if (!mount) return;
 
@@ -27,9 +28,9 @@ async function loadEntry() {
 
   if (backLink) {
     backLink.href = `${type}.html`;
-    backLink.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+    backLink.textContent = typeLabel;
   }
-  if (metaEl) metaEl.textContent = type;
+  if (metaEl) metaEl.textContent = typeLabel;
   if (repoLink) repoLink.hidden = true;
 
   try {
@@ -61,7 +62,7 @@ async function loadEntry() {
         const canonical = document.querySelector('link[rel="canonical"]');
         if (canonical) canonical.setAttribute("href", window.location.href);
 
-        if (metaEl && item.date) metaEl.textContent = `${type} · ${item.date}`;
+        if (metaEl && item.date) metaEl.textContent = `${typeLabel} · ${item.date}`;
         if (repoLink && item.repo) {
           repoLink.href = item.repo;
           repoLink.hidden = false;

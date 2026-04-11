@@ -1,6 +1,11 @@
 .hero {
-  padding: clamp(88px, 14vw, 160px) 0 clamp(72px, 12vw, 140px);
+  padding: clamp(56px, 9vw, 104px) 0 clamp(48px, 8vw, 88px);
   text-align: left;
+}
+
+.home-page .hero {
+  width: 100%;
+  padding: clamp(24px, 5vw, 40px) 0;
 }
 
 .hero__eyebrow {
@@ -8,7 +13,7 @@
   font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--color-accent);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .hero__title {
@@ -16,7 +21,7 @@
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1.02;
-  margin: 0 0 24px;
+  margin: 0 0 20px;
   background: linear-gradient(180deg, var(--color-hero-start) 0%, var(--color-hero-end) 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -28,7 +33,7 @@
   color: var(--color-fg-soft);
   font-weight: 400;
   max-width: 720px;
-  margin: 0 0 40px;
+  margin: 0 0 32px;
 }
 
 .button-row {
@@ -110,8 +115,7 @@
 .card__meta {
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   color: var(--color-fg-soft);
   margin-bottom: 12px;
 }
@@ -176,7 +180,7 @@
 
 .about-grid {
   display: grid;
-  gap: clamp(48px, 8vw, 96px);
+  gap: clamp(32px, 6vw, 64px);
   grid-template-columns: 1fr;
 }
 @media (min-width: 820px) {
@@ -184,12 +188,11 @@
 }
 
 .about-grid__sidebar h3 {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   color: var(--color-fg-soft);
-  margin: 32px 0 12px;
+  margin: 28px 0 10px;
 }
 .about-grid__sidebar h3:first-child { margin-top: 0; }
 
@@ -234,7 +237,7 @@
 }
 
 .entry {
-  padding: clamp(72px, 10vw, 120px) 0 0;
+  padding: clamp(44px, 7vw, 76px) 0 0;
 }
 
 .entry__actions {
@@ -267,12 +270,11 @@
 }
 
 .entry__meta {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
   color: var(--color-accent);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .prose {
@@ -336,8 +338,12 @@
 .prose img { border-radius: var(--radius-md); margin: 1.6em 0; }
 .prose hr { border: none; border-top: 1px solid var(--color-line-soft); margin: 3em 0; }
 
-.list-page__header { padding: clamp(88px, 14vw, 160px) 0 clamp(40px, 7vw, 64px); }
-.list-page__header .section__title { margin-bottom: 0; }
+.list-page__header { padding: clamp(52px, 8vw, 92px) 0 clamp(24px, 4vw, 40px); }
+.list-page__header .section__title {
+  margin-bottom: 0;
+  font-size: clamp(40px, 6.4vw, 80px);
+  line-height: 1.02;
+}
 
 .empty-state {
   padding: 64px 0;
