@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "community-notes-x-rescue",
+    "title": "Community Notes X Rescue",
+    "date": "March 2026",
+    "excerpt": "A Python research pipeline analyzing X Community Notes — clustering raters and rescuing notes stuck in 'Needs More Ratings'.",
+    "tags": ["Python", "BERTopic", "UMAP", "LLM"]
+  },
+  {
+    "slug": "buildrag",
+    "title": "BuildRAG",
+    "date": "January 2026",
+    "excerpt": "A fully local RAG chatbot built with Streamlit, LangChain, Chroma, and Ollama. Document-based Q&A, completely private.",
+    "tags": ["RAG", "LangChain", "Streamlit", "Ollama"]
+  }
+]

@@ -1,0 +1,14 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+node_modules/
+
+# Personal files / source material — kept locally, never published
+Emrecan CV*.pdf
+*.pdf
+README.md
+README 2.md
+README 3.md

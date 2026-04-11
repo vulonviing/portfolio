@@ -1,0 +1,23 @@
+[
+  {
+    "slug": "babe-baseline",
+    "title": "BABE Baseline — RoBERTa Fine-tune Reproduction",
+    "date": "2025",
+    "excerpt": "Reproducing sentence-level media bias classification on BABE. A clean RoBERTa-base fine-tune that beats published baselines at 0.857 macro-F1.",
+    "tags": ["RoBERTa", "NLP", "Reproduction"]
+  },
+  {
+    "slug": "mbib-quality-observatory",
+    "title": "MBIB Quality Observatory",
+    "date": "2025",
+    "excerpt": "An audit of the Media Bias Identification Benchmark — label noise probes, near-duplicate detection, and LLM review across 8 tasks.",
+    "tags": ["Benchmarking", "Cleanlab", "LLM Review"]
+  },
+  {
+    "slug": "rec-dating",
+    "title": "Rec-Dating: Role-Based Bipartite Network",
+    "date": "2024",
+    "excerpt": "Studying the rec-dating dataset as a role-based bipartite network — popularity, prestige, and feature alignment with HITS.",
+    "tags": ["Networks", "HITS", "Bipartite"]
+  }
+]
