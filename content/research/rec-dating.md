@@ -1,43 +1,133 @@
-# Rec-Dating: Role-Based Bipartite Network
+# Rec-Dating Project
 
-A study of the `rec-dating` dataset as a **role-based bipartite network**, separating outgoing rating activity from received attention.
+This project studies the `rec-dating` dataset as a role-based bipartite network.
 
-## Core idea
+The notebooks are arranged in four steps and can be run in order from data preparation to the final figures.
+
+## Core Idea
 
 - `rater` nodes send ratings
 - `profile` nodes receive ratings
-- Edge weight is the observed score from `1` to `10`
+- edge weight is the observed score from `1` to `10`
 
-This framing lets us separate **outgoing activity** from **received attention** and apply network measures such as HITS in a role-consistent way.
+This framing lets us separate outgoing activity from received attention and apply network measures such as HITS in a role-consistent way.
 
-## Main questions
+## Main Questions
 
 1. How strongly do popularity and prestige align on the profile side?
 2. How concentrated is received attention?
-3. Do the profiles dominating overall interaction also dominate the high-rating buckets?
+3. Do the profiles dominating overall interaction also dominate high-rating buckets?
 4. Which profile-side features are most aligned with elite interaction and elite high-rating status?
 
-## Pipeline
+## Project Structure
 
-A four-step notebook workflow that builds from the raw dataset to the final paper figures:
+- `data/`: raw dataset
+- `src/rec_dating_project/`: reusable project code
+- `scripts/`: analysis scripts used by the notebooks
+- `notebooks/`: the ordered notebook workflow
+- `paper/`: LaTeX paper draft and bibliography
+- `outputs/data/`: generated tables reused across notebooks
+- `outputs/figures/`: generated figures reused in notebooks and paper
 
-1. **`01_data_preparation`** — inspects the raw file, explains the role-based modeling choice, builds a cached dataset summary
-2. **`02_rec_dating_exploration`** — popularity, prestige, inequality, and descriptive plots
-3. **`03_applications`** — applies the framework to bucket concentration and feature alignment
-4. **`04_final_plots_for_paper`** — gathers the final figures and reference values
+## Environment Setup
 
-Each notebook is a thin orchestrator that calls reusable code from `src/rec_dating_project/` and analysis scripts under `scripts/`.
+The project was last checked with `Python 3.11.9`.
 
-## Outputs
+From the project root:
 
-- Generated tables in `outputs/data/`
-- Generated figures in `outputs/figures/`
-- A LaTeX paper draft under `paper/` that consumes those figures directly
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
 
-## Reproducibility
+The raw dataset is expected at:
 
-Notebooks reuse cached artifacts when they exist, and rebuild missing ones automatically. A `FORCE_REBUILD = True` flag in the setup cell triggers a full refresh when needed.
+```text
+data/rec-dating/rec-dating.edges
+```
 
-## Stack
+Download it manually from the Network Repository page and place it at the path above:
 
-`Python 3.11` · `pandas` · `networkx` · `matplotlib` · `LaTeX`
+```text
+https://networkrepository.com/rec-dating.php
+```
+
+## Recommended Notebook Workflow
+
+Run the notebooks in this order:
+
+1. `notebooks/01_data_preparation.ipynb`
+2. `notebooks/02_rec_dating_exploration.ipynb`
+3. `notebooks/03_applications.ipynb`
+4. `notebooks/04_final_plots_for_paper.ipynb`
+
+What each notebook does:
+
+- `01`: inspects the raw file, explains the role-based modeling choice, and builds the cached dataset summary
+- `02`: explores popularity, prestige, inequality, and descriptive plots
+- `03`: applies the framework to bucket concentration and feature alignment
+- `04`: gathers the final figures and reference values used to check the project outputs
+
+## How To Run The Notebooks
+
+### Option A: Interactive
+
+Launch JupyterLab from the project root:
+
+```bash
+jupyter lab
+```
+
+Then open the notebooks and run them in the numbered order above.
+
+### Option B: Fully Reproducible Terminal Execution
+
+If you want to execute everything from the terminal:
+
+```bash
+MPLCONFIGDIR=/tmp/matplotlib-codex python3 -m nbconvert --to notebook --execute notebooks/01_data_preparation.ipynb --inplace --ExecutePreprocessor.timeout=1200
+MPLCONFIGDIR=/tmp/matplotlib-codex python3 -m nbconvert --to notebook --execute notebooks/02_rec_dating_exploration.ipynb --inplace --ExecutePreprocessor.timeout=1200
+MPLCONFIGDIR=/tmp/matplotlib-codex python3 -m nbconvert --to notebook --execute notebooks/03_applications.ipynb --inplace --ExecutePreprocessor.timeout=1200
+MPLCONFIGDIR=/tmp/matplotlib-codex python3 -m nbconvert --to notebook --execute notebooks/04_final_plots_for_paper.ipynb --inplace --ExecutePreprocessor.timeout=1200
+```
+
+The `MPLCONFIGDIR` prefix helps on headless or restricted environments where Matplotlib cannot write to its default cache directory.
+
+## Generated Outputs And Rebuild Behavior
+
+- The notebooks reuse cached files in `outputs/data/` and `outputs/figures/` when they already exist.
+- Missing artifacts are rebuilt automatically by the relevant scripts.
+- If you want a full refresh, set `FORCE_REBUILD = True` in the setup cell of the notebook you are running.
+
+## Scripts Used By The Notebooks
+
+The notebooks rely on these scripts:
+
+- `scripts/01_dataset_overview.py`
+- `scripts/02_full_project_analysis.py`
+- `scripts/03_profile_rating_extremes.py`
+- `scripts/04_profile_feature_alignment.py`
+- `scripts/05_degree_distribution_fit.py`
+
+If the notebook templates ever need to be regenerated, run:
+
+```bash
+python3 scripts/06_rebuild_notebooks.py
+```
+
+## Paper Reproduction
+
+After `04_final_plots_for_paper.ipynb` has been executed, the paper figures should be available under `outputs/figures/`.
+
+To compile the paper from the project root:
+
+```bash
+latexmk -pdf -cd paper/main.tex
+```
+
+## Notes
+
+- The dataset is large, so cached artifacts are used intentionally to keep the notebook workflow responsive.
+- The last notebook is a final check that the generated figures and summary values still line up with the rest of the project.

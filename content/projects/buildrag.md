@@ -1,29 +1,41 @@
 # BuildRAG
 
-A fully local Retrieval-Augmented Generation chatbot for document-based Q&A. No cloud, no API keys, no data leaving the machine.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2c66433e-beb5-43aa-ab26-11dbbc77dd68" width="1200">
+</p>
 
-## What it does
+**BuildRAG** is a local, production-ready **Retrieval-Augmented Generation (RAG)** workspace built with **Streamlit**, **Ollama**, and **Chroma**.
 
-- Ingests documents, chunks them, and indexes them in a local **Chroma** vector store
-- Runs queries against a local LLM via **Ollama**
-- Uses **LangChain** as the orchestration layer
-- Exposes everything through a **Streamlit** UI
-- Cites sources for every answer
+It lets you upload documents, index them locally, and chat with an LLM that answers questions **grounded in your own data**, with sources.
 
-## Retrieval strategies
+## ✨ Features
+- 📂 Upload & manage PDF / TXT / MD documents
+- 🧠 Local vector database with Chroma
+- 🔍 Multiple retrieval modes (similarity, MMR, score threshold)
+- 💬 Chat interface with source citations
+- 🛠️ Debug mode to inspect retrieved chunks
+- 🔒 Fully local (Ollama-powered LLM & embeddings)
 
-- **Similarity search** — the baseline cosine match
-- **MMR (Maximal Marginal Relevance)** — for diverse, non-redundant results
-- **Score filtering** — drop low-confidence chunks before they reach the model
+## 🏗️ Tech Stack
+- **UI:** Streamlit  
+- **LLM:** Ollama (e.g. llama3.1)  
+- **Embeddings:** nomic-embed-text  
+- **Vector DB:** Chroma  
 
-## Tooling
+## 📦 Installation
 
-I built debugging and document management views into the UI so you can inspect what the retriever is actually returning, swap chunking parameters, and rebuild the index without restarting.
+```bash
+python -m venv .venv
+source .venv/bin/activate
 
-## Why local?
+pip install -r requirements.txt
 
-Because RAG over sensitive documents shouldn't require shipping them to a third-party API. Everything in BuildRAG runs on your laptop.
+ollama serve
+streamlit run app.py
+```
 
-## Stack
-
-`Python` · `Streamlit` · `LangChain` · `Chroma` · `Ollama`
+## 🚀 Run
+```bash
+ollama serve
+streamlit run app.py
+```

@@ -16,6 +16,7 @@ async function loadEntry() {
   const mount = document.querySelector("[data-entry]");
   const backLink = document.querySelector("[data-back]");
   const metaEl = document.querySelector("[data-meta]");
+  const repoLink = document.querySelector("[data-repo]");
 
   if (!mount) return;
 
@@ -29,6 +30,7 @@ async function loadEntry() {
     backLink.textContent = `\u2190 Back to ${type}`;
   }
   if (metaEl) metaEl.textContent = type;
+  if (repoLink) repoLink.hidden = true;
 
   try {
     const [indexRes, mdRes] = await Promise.all([
@@ -60,6 +62,10 @@ async function loadEntry() {
         if (canonical) canonical.setAttribute("href", window.location.href);
 
         if (metaEl && item.date) metaEl.textContent = `${type} · ${item.date}`;
+        if (repoLink && item.repo) {
+          repoLink.href = item.repo;
+          repoLink.hidden = false;
+        }
       }
     }
   } catch (err) {

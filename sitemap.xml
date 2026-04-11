@@ -21,11 +21,19 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://emrecanulu.com/entry.html?type=projects&amp;slug=community-notes-x-rescue</loc>
+    <loc>https://emrecanulu.com/entry.html?type=projects&amp;slug=buildrag</loc>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://emrecanulu.com/entry.html?type=projects&amp;slug=buildrag</loc>
+    <loc>https://emrecanulu.com/entry.html?type=projects&amp;slug=mini-finance-dashboard</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://emrecanulu.com/entry.html?type=projects&amp;slug=teamsquadpy</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://emrecanulu.com/entry.html?type=research&amp;slug=community-notes-x-rescue</loc>
     <priority>0.6</priority>
   </url>
   <url>

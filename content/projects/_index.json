@@ -1,16 +1,26 @@
 [
   {
-    "slug": "community-notes-x-rescue",
-    "title": "Community Notes X Rescue",
-    "date": "March 2026",
-    "excerpt": "A Python research pipeline analyzing X Community Notes — clustering raters and rescuing notes stuck in 'Needs More Ratings'.",
-    "tags": ["Python", "BERTopic", "UMAP", "LLM"]
+    "slug": "mini-finance-dashboard",
+    "title": "Mini Finance Dashboard",
+    "date": "2026",
+    "excerpt": "A production-oriented macro and market dashboard built with Dash, extended with a 20-agent AI workflow for daily news, signals, and sector summaries.",
+    "tags": ["Dash", "Finance", "Agents", "OpenAI"],
+    "repo": "https://github.com/vulonviing/mini-finance-dashboard"
+  },
+  {
+    "slug": "teamsquadpy",
+    "title": "Manager Squad",
+    "date": "2026",
+    "excerpt": "A football analytics package combining StatsBomb event data, typed domain models, tactical features, and a department-style agent architecture for team analysis.",
+    "tags": ["Football Analytics", "StatsBomb", "Agents", "Python"],
+    "repo": "https://github.com/vulonviing/TeamSquadpy"
   },
   {
     "slug": "buildrag",
     "title": "BuildRAG",
-    "date": "January 2026",
-    "excerpt": "A fully local RAG chatbot built with Streamlit, LangChain, Chroma, and Ollama. Document-based Q&A, completely private.",
-    "tags": ["RAG", "LangChain", "Streamlit", "Ollama"]
+    "date": "2025",
+    "excerpt": "A local, production-ready RAG workspace built with Streamlit, Ollama, and Chroma for document-grounded chat with source citations.",
+    "tags": ["RAG", "Streamlit", "Ollama", "Chroma"],
+    "repo": "https://github.com/vulonviing/ragchat"
   }
 ]
