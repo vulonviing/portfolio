@@ -96,8 +96,8 @@
 }
 
 .site-footer {
-  margin-top: 120px;
-  padding: 48px 0 64px;
+  margin-top: 84px;
+  padding: 28px 0 34px;
   border-top: 1px solid var(--color-line-soft);
   background: var(--color-bg-soft);
   transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
@@ -118,6 +118,20 @@
   margin-right: 18px;
 }
 .site-footer a:hover { color: var(--color-fg); }
+
+.home-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-page main {
+  flex: 1;
+}
+
+.home-page .site-footer {
+  margin-top: auto;
+}
 
 main {
   min-height: 60vh;
@@ -178,5 +192,9 @@ main {
   .site-nav ul {
     flex-wrap: wrap;
     gap: 16px;
+  }
+
+  .site-footer {
+    padding: 24px 0 28px;
   }
 }
