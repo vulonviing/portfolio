@@ -1,272 +1,379 @@
 # Manager Squad
 
-Manager Squad is a football analytics package built around event data, typed domain models, a tactical feature pipeline, and a department-style agent architecture for team analysis.
+Manager Squad is an agentic football analysis system built around a simple idea:
+instead of asking one model to explain an entire match in one shot, we let a
+structured team of specialist AI agents study the same match data through
+different tactical lenses, then escalate their findings through a coaching
+pyramid.
 
-The project has moved into **Phase 3**. The data and feature layers are in place, and the first football department has been implemented on top of them.
+This repository is the current implementation of that broader TeamSquad vision.
+It is still evolving, and the design will continue to be updated, but the core
+direction is already clear:
 
-## Project Status
+- one football problem
+- many specialized agents
+- one shared data packet
+- layered reasoning instead of one flat answer
+- a final coaching decision produced through synthesis
 
-### Phase 1
-- Core domain models for competitions, teams, players, matches, lineups, and event types
-- Provider-agnostic data interfaces
-- StatsBomb Open Data integration
-- Raw JSON parsing into typed Python objects
-- Local JSON cache support
+## Vision
 
-### Phase 2
-- Event-level annotations
-- Possession-level feature extraction
-- Team-match tactical feature extraction
-- Feature registry and pipeline orchestration
-- Unit tests for parsing, repository behavior, and feature computation
+The long-term goal is to build a true AI football staff: a TeamSquad made of
+specialist, opinionated, agentic roles that can read the same match from
+different perspectives and argue toward a more useful conclusion.
 
-### Phase 3
-- Department-style orchestration is now live
-- The first department, `TeamUnderstandingDepartment`, is implemented
-- Team-name driven analysis flow is implemented
-- Notebook-driven test drive is implemented
-- Cache inspection CLI is implemented
+The project is not trying to simulate "chat for the sake of chat." The real aim
+is to create a structured analytical organization:
 
-## What Is Implemented
+- leaf analysts read raw football patterns
+- upper departments convert those findings into tactical concepts
+- assistant coaches reinterpret the whole picture through different game models
+- the head coach makes the final football decision
 
-### Data Layer
-- Provider-agnostic `DataLoader` interface
-- `StatsBombLoader` for remote or local StatsBomb Open Data access
-- `MatchRepository` for competitions, matches, events, and lineups
-- `CacheManager` for file-based JSON caching
-- Team-name driven scoped collection via `TeamMatchCollector`
+Over time, this system is expected to become richer, more opinionated, and more
+useful as an exploratory research tool for tactical analysis.
 
-### Domain Layer
-- Typed dataclass models for competitions, teams, players, lineups, matches, and event subclasses such as passes, shots, carries, pressures, duels, recoveries, and goalkeeper actions
+## Core Idea
 
-### Feature Layer
-- Event annotations: progressive passes, progressive carries, final-third entries, penalty-area entries, pressing height flags, zone labels, and channel labels
-- Possession features: chain length, duration, pass count, carry distance, territorial progression, and possession end type
-- Team-match features: build-up patterns, pressing and PPDA, transition metrics, and progression metrics
+StatsBomb event data is valuable, but limited. Because of that, Manager Squad
+does not rely on one monolithic prompt. Instead, it uses a hierarchy:
 
-### Phase 3 Layer
-- `TeamUnderstandingDepartment`
-- SVG-inspired hierarchy with controller, manager, staff analysts, and validators
-- Decision-circle trace: `sense -> analyze -> decide -> act -> validate`
-- Team-name analysis service via `TeamUnderstandingService`
-- Notebook test drive in [phase3_test_drive.ipynb](https://github.com/vulonviing/TeamSquadpy/blob/main/phase3_test_drive.ipynb)
-- Available-data CLI via `python -m manager_squad available-data`
+1. lower departments produce specialized readings
+2. upper departments synthesize those readings into bigger football concepts
+3. assistant coaches reinterpret the synthesis through distinct philosophies
+4. the head coach delivers the final technical verdict
 
-## Architecture
+This makes the pipeline easier to debug, easier to extend, and much closer to
+the idea of a real coaching staff than a single generic LLM response.
+
+## The Pyramid
+
+The default pyramid has four layers.
+
+### 1. Leaf Departments
+
+Leaf agents are the first readers of the shared match context. Each one is a
+separate LLM call with its own identity and markdown prompt.
+
+Examples:
+
+- defense
+- midfield
+- attack
+- pressing
+- transition play
+- forward analysis
+- midfielder analysis
+- defender analysis
+- team identity
+- opponent analysis
+- diagonal passing
+- passing
+- surprise player
+- set pieces
+- tempo
+- width
+- ball winning
+- discipline and risk
+- goalkeeper
+
+Each leaf agent returns structured JSON with:
+
+- `summary`
+- `verdict`
+- `observations`
+- `evidence`
+- `risks`
+- `recommendations`
+
+### 2. Upper Departments
+
+Upper departments do not simply repeat leaf outputs. They combine them into
+higher-level football concepts.
+
+Examples:
+
+- shape and formation interpretation
+- player profile synthesis
+- matchup interpretation
+- game model synthesis
+- special situations synthesis
+
+### 3. Assistant Coaches
+
+Assistant coaches read the upper layer through distinct football ideologies.
+
+Current default assistants:
+
+- control-oriented assistant
+- attack-oriented assistant
+- defense-oriented assistant
+
+They look at the same tactical picture, but prioritize different tradeoffs.
+
+### 4. Head Coach
+
+The head coach reads the full assistant layer and produces the final decision.
+
+The final report includes:
+
+- `summary`
+- `verdict`
+- `tactical_identity`
+- `match_narrative`
+- `executive_summary`
+- `assistant_takeaways`
+- `strategic_priorities`
+- `risk_management`
+- `final_message`
+
+## Agentic Design
+
+This project is intentionally agentic.
+
+That means:
+
+- every department is an explicit role
+- every role has its own markdown prompt contract
+- every role runs as its own LLM session/call
+- outputs move upward through the pyramid
+- upper layers consume full structured JSON, not just short summaries
+
+This is important. The system is not just a list of prompts. It is an
+orchestrated team structure.
+
+## Prompt Architecture
+
+Prompts are stored as markdown files instead of large inline strings in Python.
+That keeps the system easier to inspect, edit, and evolve.
 
 ```text
-StatsBomb Open Data / Local Cache
-                |
-                v
-         StatsBombLoader
-                |
-                v
-         StatsBombParser
-                |
-                v
-          Domain Models
-                |
-                v
-         MatchRepository
-                |
-                v
-         FeaturePipeline
-                |
-                v
-   Structured Football Feature Layers
-                |
-                v
-   Department-Style Agent Orchestration
-                |
-                v
- Team Understanding Department
+manager_squad/agents/prompts/
+├── leaf/
+├── upper/
+├── assistants/
+└── head_coach/
 ```
 
-## Department Catalog
+Each prompt file defines the role's:
 
-### Implemented Department
+- character
+- task
+- tactical lens
+- interpretation rules
+- output contract
 
-#### Team Understanding Department
+This setup was inspired by prompt-as-files best practices and fits the
+TeamSquad idea much better than embedding all behavior inside code.
 
-Purpose:
-Understands a team by combining match context, player usage, tactical features, event patterns, and validation into one department report.
+## Shared Match Context
 
-Hierarchy:
-- `TeamUnderstandingDepartment`: top-level decision orchestrator
-- `TeamUnderstandingController`: builds shared context and publishes the department output
-- `TeamUnderstandingManager`: synthesizes all analyst reports into the final team identity
-- `EvidenceAuditValidator`: checks evidence coverage and support quality
-- `ConsistencyWatchdog`: checks whether the analyst outputs are coherent together
+All agents read the same base context, but interpret it differently.
 
-Staff analysts:
-- `press_analyst`: analyzes pressing behavior and disruption profile
-- `transition_analyst`: analyzes transition speed, regain behavior, and carrying profile
-- `defense_analyst`: analyzes defensive access conceded, ball-winning, and box protection
-- `midfield_analyst`: analyzes midfield control, progression, and tempo access
-- `attack_analyst`: analyzes shot production, xG, and finishing profile
-- `set_piece_analyst`: analyzes set-piece event volume and threat
-- `penalty_analyst`: analyzes penalty sample and taker visibility
-- `goalkeeper_analyst`: analyzes goalkeeper involvement and build-up footprint
-- `squad_analyst`: analyzes trusted starters, squad usage, and player involvement
+The shared context currently includes:
 
-Current behavior:
-- Each analyst is currently deterministic
-- Analysts read structured football features and produce role-specific reports
-- The manager synthesizes those reports into one team identity
-- An optional GPT-5.4 review can be run at the end of the notebook as an extra pass
+- match window summary
+- operational metrics
+- performance metrics
+- behavioral feature layers
+- department briefs
+- player leaders
+- player units
+- player profiles
+- team patterns
+- data availability notes
 
-### Planned Departments
+Recent improvements added richer player-level and pattern-level context so
+agents can reason more concretely about:
 
-These are not implemented yet, but they are the intended next department families:
-- `TeamAnalysisDepartment`
-- `TeamCharacterDepartment`
-- `PlayerUnderstandingDepartment`
-- `PlayerAnalysisDepartment`
-- `OpponentTeamAnalysisDepartment`
-- `OpponentPlayerDepartment`
+- named players
+- zones and corridors
+- pass directions and pass types
+- passing links
+- carry profiles
+- shooting profiles
+- defensive action locations
+- shape clues from lineups and event positions
 
-The long-term goal is to connect these departments into a circle of communicating football analysis agents.
+## Data Limits
 
-## Current Phase 3 Limitation
+Manager Squad is grounded in StatsBomb-style event data, not tracking data.
 
-The current staff analysts are not yet individually powered by an LLM. Right now:
-- department analysts are deterministic
-- the manager synthesis is deterministic
-- GPT-5.4 is only used in the notebook as an optional final review
+The system can use:
 
-This is intentional for the first Phase 3 step because it stabilizes the department contracts, report schema, and hierarchy before introducing live LLM reasoning.
+- player names and nominal lineup positions
+- event locations
+- pass start/end points, angles, lengths, heights, recipients
+- switches, through balls, crosses, cut-backs
+- carry geometry
+- shot xG and shot context
+- pressures, recoveries, interceptions
+- possession and buildup summaries
 
-## Next Step
+The system should not pretend to know:
 
-The next major step is:
+- player height
+- body weight
+- maximum sprint speed
+- acceleration and deceleration
+- tracking-based off-ball running speed
+- exact inter-line distances from tracking data
 
-### LLM-Backed Staff Analysts
+This limitation is now explicitly exposed to agents through the context so they
+can avoid inventing unsupported claims.
 
-Goal:
-Move from deterministic analyst reports to true role-based football agents.
+## Why This Matters
 
-Planned direction:
-- Each staff analyst will get its own GPT-5.4-backed prompt and reasoning pass
-- The manager will synthesize analyst outputs with a second GPT-5.4 pass
-- The existing structured feature layer will remain the evidence base for those prompts
-- Notebook output will show per-analyst LLM responses directly, not only the final optional review
+A normal match-analysis prompt often collapses into vague language:
+"technically strong players," "good attacking quality," "dangerous transitions."
 
-This is the main planned upgrade for the current department before additional departments are added.
+Manager Squad is trying to move away from that. The current design pushes agents
+to be more concrete:
 
-## Installation
+- name the players
+- mention the corridor
+- mention the mechanism
+- mention the pass or carry pattern
+- mention the tactical risk
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .[dev]
-```
+The system is still a work in progress, but that is the direction.
 
-If you want optional OpenAI notebook calls:
+## Current Runtime
 
-```bash
-pip install -e .[llm]
-export OPENAI_API_KEY="your_api_key_here"
+Default model:
+
+- `gemma4:e4b`
+
+Default local runtime:
+
+- `Ollama`
+- `http://127.0.0.1:11434`
+
+## Progress Tracking
+
+Long runs can be monitored step by step.
+
+The package includes:
+
+- progress callbacks
+- live stage updates
+- notebook-friendly loading UI
+- per-agent started/completed/failed events
+
+This makes it much easier to understand where the pyramid is spending time and
+which analyst is currently running.
+
+## Department Selection
+
+You do not need to run the full pyramid every time.
+
+Examples:
+
+- `department_selection="all"` runs the full default pyramid
+- `department_selection=["athena_defense_department", "gaia_ball_winning_department"]`
+  runs only those selected departments
+- `department_selection=["gaia_ball_winning_department", "mnemosyne_game_model_department"]`
+  runs a narrow debug path across tiers
+
+This is especially useful for prompt debugging and fast iteration.
+
+## Notebook Demo
+
+The main notebook is:
+
+- `pyramid_showcase.ipynb`
+
+It is meant to be both a walkthrough and a working demo. It currently shows:
+
+- environment preflight
+- Ollama/model readiness
+- data source and cache checks
+- team selection
+- match-window collection
+- shared context preview
+- department selection
+- live pyramid execution with progress monitoring
+- verdict-focused outputs
+- raw/debug views when needed
+
+## Project Structure
+
+```text
+manager_squad/
+├── core/
+├── data/
+├── features/
+├── llm/
+├── agents/
+│   ├── base.py
+│   ├── llm.py
+│   └── prompts/
+├── orchestration/
+│   ├── context.py
+│   ├── progress.py
+│   ├── squad.py
+│   └── team_analysis_service.py
+└── tests/
 ```
 
 ## Quick Start
 
-### 1. Explore Available Cached Data
+### 1. Start Ollama and pull the model
 
 ```bash
-python -m manager_squad available-data --cache-dir test_cache
+ollama serve
+ollama pull gemma4:e4b
+ollama list
 ```
 
-Example filters:
-
-```bash
-python -m manager_squad available-data --cache-dir test_cache --team Portugal
-python -m manager_squad available-data --cache-dir test_cache --competition "World Cup" --show-teams
-python -m manager_squad available-data --cache-dir test_cache --format json
-```
-
-### 2. Run The Team Understanding Department By Team Name
+### 2. Create the default orchestrator
 
 ```python
-from pathlib import Path
+from manager_squad import DepartmentPyramidOrchestrator, OllamaChatConfig
 
-from manager_squad import TeamUnderstandingService
-from manager_squad.agents import TeamUnderstandingDepartment
-from manager_squad.data.cache import CacheManager
-from manager_squad.data.repository import MatchRepository
-from manager_squad.data.statsbomb import StatsBombLoader
-from manager_squad.data.team_collection import TeamQueryScope
-
-cache = CacheManager(cache_dir=Path("test_cache"))
-loader = StatsBombLoader(cache=cache)
-repository = MatchRepository(loader=loader)
-
-department = TeamUnderstandingDepartment()
-service = TeamUnderstandingService(repository=repository, department=department)
-
-run = service.analyze_team_name(
-    team_name="Portugal",
-    scope=TeamQueryScope(match_limit=3, require_cached_payloads=False),
+config = OllamaChatConfig(model="gemma4:e4b")
+orchestrator = DepartmentPyramidOrchestrator.from_ollama(
+    config,
+    department_selection="all",
 )
+```
 
+### 3. Run an analysis
+
+```python
+from manager_squad import MatchRepository, TeamAnalysisService, TeamQueryScope
+
+service = TeamAnalysisService(repository=repository, orchestrator=orchestrator)
+run = service.analyze_team_name("Team A", scope=TeamQueryScope(match_limit=3))
 report = run.report
-scope = run.collection.scope.to_dict()
-
-print(report.identity_label)
-print(report.executive_summary)
-print(scope)
 ```
 
-### 3. Run The Notebook Test Drive
+### 4. Use the outputs
 
-Use [phase3_test_drive.ipynb](https://github.com/vulonviing/TeamSquadpy/blob/main/phase3_test_drive.ipynb) to:
-- inspect available competitions, teams, and matches
-- insert an API key at the top if desired
-- enter a team name in a single `TEAM NAME?` cell
-- run all staff analysts one by one
-- read the final manager summary
-- optionally run a GPT-5.4 review
+Useful report fields:
 
-## Notebook Flow
+- `report.leaf_reports`
+- `report.upper_reports`
+- `report.assistant_reports`
+- `report.head_coach_report`
+- `report.tactical_identity`
+- `report.executive_summary`
+- `report.to_markdown()`
 
-The Phase 3 notebook is organized in this order:
-- OpenAI API key cell
-- Available-data CLI output
-- Available competitions, teams, and sampled matches
-- Department hierarchy introduction
-- `TEAM NAME?` input cell
-- Team scope and selected match window
-- Staff analyst markdown Q&A
-- Manager summary
-- Optional GPT-5.4 review
+## Validation
 
-If a team is not already cached, the notebook is designed to try downloading missing match payloads and cache them locally. If the remote request fails, the notebook will explain that clearly.
-
-## Development
-
-Run tests:
+For local verification:
 
 ```bash
-pytest -q
+pytest
+ruff check manager_squad tests
 ```
 
-Run linting:
+## Status
 
-```bash
-ruff check .
-```
+This README reflects the current state of the project, not its final form.
+Manager Squad is still being shaped into a stronger TeamSquad system with better
+reasoning, richer tactical detail, and more reliable football interpretation.
 
-Run type checks:
-
-```bash
-mypy manager_squad
-```
-
-## Repository Notes
-
-- `test_cache/` contains local cached data for experimentation and should usually stay out of Git
-- [phase3_test_drive.ipynb](https://github.com/vulonviing/TeamSquadpy/blob/main/phase3_test_drive.ipynb) is the current Phase 3 walkthrough notebook
-- `__pycache__/` and `.pytest_cache/` are generated artifacts and should be ignored
-
-## License
-
-MIT
+The architecture is already in place.
+The prompts, data layers, and analysis quality will continue to evolve.
