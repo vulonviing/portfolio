@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
-  <link rel="shortcut icon" href="assets/img/favicon.svg" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
 
   <title>About Emrecan Ulu — Data Scientist in Munich at Siemens</title>
   <meta name="description" content="About Emrecan Ulu — Data Scientist at Siemens Munich. Background in Python, SQL, ML, LLMs, RAG, and Azure data pipelines. M.Sc. Social and Economic Data Science at Universität Konstanz." />
@@ -19,6 +19,9 @@
   <meta property="og:description" content="Data Scientist at Siemens Munich. GenAI, LLM systems, and scalable data pipelines. M.Sc. Konstanz." />
   <meta property="og:url" content="https://emrecanulu.com/about.html" />
   <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
   <meta property="profile:first_name" content="Emrecan" />
   <meta property="profile:last_name" content="Ulu" />
   <meta property="og:locale" content="en_US" />
@@ -27,6 +30,7 @@
   <meta name="twitter:title" content="About Emrecan Ulu — Data Scientist" />
   <meta name="twitter:description" content="Data Scientist at Siemens Munich. GenAI, LLM, and scalable data pipelines." />
   <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
@@ -51,12 +55,27 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="assets/css/base.css" />
-  <link rel="stylesheet" href="assets/css/layout.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
 </head>
 <body data-page="about">
-  <div data-include="header"></div>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
 
   <main>
     <section class="list-page__header">
@@ -152,8 +171,18 @@
     </section>
   </main>
 
-  <div data-include="footer"></div>
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
 
-  <script src="assets/js/site.js"></script>
+  <script src="/assets/js/site.js"></script>
 </body>
 </html>

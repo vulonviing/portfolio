@@ -3,30 +3,34 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
-  <link rel="shortcut icon" href="assets/img/favicon.svg" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
 
   <title>Research — Emrecan Ulu | NLP, Networks, and Benchmarks</title>
   <meta name="description" content="Research by Emrecan Ulu — language model fine-tuning, benchmark audits, network analysis, and reproducibility studies." />
   <meta name="author" content="Emrecan Ulu" />
   <meta name="keywords" content="Emrecan Ulu research, BABE, MBIB, RoBERTa, NLP, Network Analysis, Reproducibility, Data Science" />
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <link rel="canonical" href="https://emrecanulu.com/research.html" />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Emrecan Ulu" />
-  <meta property="og:title" content="Research — Emrecan Ulu" />
+  <meta property="og:title" content="Research — Emrecan Ulu | NLP, Networks, and Benchmarks" />
   <meta property="og:description" content="Language model fine-tuning, benchmark audits, network analysis, and reproducibility studies." />
   <meta property="og:url" content="https://emrecanulu.com/research.html" />
   <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
   <meta property="og:locale" content="en_US" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Research — Emrecan Ulu" />
-  <meta name="twitter:description" content="NLP fine-tuning, benchmark audits, and network analysis." />
+  <meta name="twitter:title" content="Research — Emrecan Ulu | NLP, Networks, and Benchmarks" />
+  <meta name="twitter:description" content="Language model fine-tuning, benchmark audits, network analysis, and reproducibility studies." />
   <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
 
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -35,7 +39,7 @@
     gtag('config', 'G-LYY1V218NW');
   </script>
 
-  <script>
+<script>
     (function () {
       try {
         const savedTheme = localStorage.getItem("theme-preference");
@@ -49,12 +53,27 @@
     })();
   </script>
 
-  <link rel="stylesheet" href="assets/css/base.css" />
-  <link rel="stylesheet" href="assets/css/layout.css" />
-  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
 </head>
 <body data-page="research">
-  <div data-include="header"></div>
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
 
   <main>
     <section class="list-page__header">
@@ -66,17 +85,73 @@
 
     <section class="section--tight">
       <div class="container">
-        <div class="grid grid--2" data-list="research"></div>
+        <div class="grid grid--2">
+          <article class="card">
+            <div class="card__meta">2026</div>
+            <h2 class="card__title">
+              <a class="card__title-link" href="/research/babe-baseline.html">BABE Baseline — RoBERTa Fine-tune Reproduction</a>
+            </h2>
+            <p class="card__excerpt">Reproducing sentence-level media bias classification on BABE. A clean RoBERTa-base fine-tune that beats published baselines at 0.857 macro-F1.</p>
+            <div class="tag-row"><span class="tag">RoBERTa</span><span class="tag">NLP</span><span class="tag">Reproduction</span></div>
+            <div class="card__actions">
+              <a class="card__cta" href="/research/babe-baseline.html">Read more</a>
+              <a class="card__repo" href="https://github.com/vulonviing/babe-roberta-baseline" target="_blank" rel="noopener noreferrer" aria-label="Open BABE Baseline — RoBERTa Fine-tune Reproduction on GitHub">GitHub</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card__meta">2026</div>
+            <h2 class="card__title">
+              <a class="card__title-link" href="/research/mbib-quality-observatory.html">MBIB Quality Observatory</a>
+            </h2>
+            <p class="card__excerpt">An audit of the Media Bias Identification Benchmark — label noise probes, near-duplicate detection, and LLM review across 8 tasks.</p>
+            <div class="tag-row"><span class="tag">Benchmarking</span><span class="tag">Cleanlab</span><span class="tag">LLM Review</span></div>
+            <div class="card__actions">
+              <a class="card__cta" href="/research/mbib-quality-observatory.html">Read more</a>
+              <a class="card__repo" href="https://github.com/vulonviing/mbib-quality-observatory" target="_blank" rel="noopener noreferrer" aria-label="Open MBIB Quality Observatory on GitHub">GitHub</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card__meta">2025</div>
+            <h2 class="card__title">
+              <a class="card__title-link" href="/research/rec-dating.html">Rec-Dating Project</a>
+            </h2>
+            <p class="card__excerpt">A study of the rec-dating dataset as a role-based bipartite network, separating outgoing rating activity from received attention and applying HITS consistently.</p>
+            <div class="tag-row"><span class="tag">Networks</span><span class="tag">HITS</span><span class="tag">Bipartite</span><span class="tag">Python</span></div>
+            <div class="card__actions">
+              <a class="card__cta" href="/research/rec-dating.html">Read more</a>
+              <a class="card__repo" href="https://github.com/vulonviing/rec-dating-project" target="_blank" rel="noopener noreferrer" aria-label="Open Rec-Dating Project on GitHub">GitHub</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card__meta">2025</div>
+            <h2 class="card__title">
+              <a class="card__title-link" href="/research/community-notes-x-rescue.html">Community Notes X Rescue</a>
+            </h2>
+            <p class="card__excerpt">Full analytical workflow for a paper on rescuing Community Notes stuck in &#x27;Needs More Ratings&#x27; through clustering, rescue simulation, topic modeling, and LLM validation.</p>
+            <div class="tag-row"><span class="tag">Community Notes</span><span class="tag">Clustering</span><span class="tag">Topic Modeling</span><span class="tag">LLM</span></div>
+            <div class="card__actions">
+              <a class="card__cta" href="/research/community-notes-x-rescue.html">Read more</a>
+              <a class="card__repo" href="https://github.com/vulonviing/community-notes-x-rescue" target="_blank" rel="noopener noreferrer" aria-label="Open Community Notes X Rescue on GitHub">GitHub</a>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
+
   </main>
 
-  <div data-include="footer"></div>
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
 
-  <script src="assets/js/site.js"></script>
-  <script src="assets/js/list.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => loadList("research", "[data-list='research']"));
-  </script>
+  <script src="/assets/js/site.js"></script>
 </body>
 </html>

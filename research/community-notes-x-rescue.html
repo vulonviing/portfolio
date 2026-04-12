@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>Community Notes X Rescue — Emrecan Ulu</title>
+  <meta name="description" content="Full analytical workflow for a paper on rescuing Community Notes stuck in &#x27;Needs More Ratings&#x27; through clustering, rescue simulation, topic modeling, and LLM validation." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="Community Notes X Rescue, research by Emrecan Ulu, Community Notes, Clustering, Topic Modeling, LLM" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/research/community-notes-x-rescue.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="Community Notes X Rescue — Emrecan Ulu" />
+  <meta property="og:description" content="Full analytical workflow for a paper on rescuing Community Notes stuck in &#x27;Needs More Ratings&#x27; through clustering, rescue simulation, topic modeling, and LLM validation." />
+  <meta property="og:url" content="https://emrecanulu.com/research/community-notes-x-rescue.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Community Notes X Rescue — Emrecan Ulu" />
+  <meta name="twitter:description" content="Full analytical workflow for a paper on rescuing Community Notes stuck in &#x27;Needs More Ratings&#x27; through clustering, rescue simulation, topic modeling, and LLM validation." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "headline": "Community Notes X Rescue",
+  "description": "Full analytical workflow for a paper on rescuing Community Notes stuck in 'Needs More Ratings' through clustering, rescue simulation, topic modeling, and LLM validation.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/research/community-notes-x-rescue.html",
+  "url": "https://emrecanulu.com/research/community-notes-x-rescue.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "Community Notes",
+    "Clustering",
+    "Topic Modeling",
+    "LLM"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="research">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/research.html">Research</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/community-notes-x-rescue" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Research · 2025</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>Rescuing Notes from Needs More Ratings: Behavioral Clustering in Community Notes on X</h1>
+<p>This repository contains the full analytical workflow for the paper.</p>
+<p>This study was prepared as a final project for the University of Konstanz course <a href="https://github.com/carinahausladen/konstanz-ai-behavior-2026">AI, Society, and Human Behavior: Research Methods in Context</a> in Winter Semester 2025/26.</p>
+<p>The project is organized as a notebook-first pipeline with reusable logic extracted into <code>src/</code>. The workflow moves from data sampling to user clustering, note scoring, rescue simulation, topic modeling, LLM-based validation, figure generation, and paper compilation.</p>
+<p>The main goal of the project is to study whether a meaningful subset of Community Notes stuck in the <code>Needs More Ratings</code> state can be rescued by a representative cross-cluster selection rule rather than a simple pooled-majority rule.</p>
+<h2>What This Repository Contains</h2>
+<ul><li><code>Paper file/main.tex</code></li></ul>
+<p>LaTeX source of the paper.</p>
+<ul><li><code>Paper file/references.bib</code></li></ul>
+<p>BibTeX references.</p>
+<ul><li><code>src/</code></li></ul>
+<p>Reusable Python modules for clustering, scoring, topic analysis, plotting helpers, and path/config handling.</p>
+<ul><li><code>notebooks/</code></li></ul>
+<p>Ordered analysis notebooks (see Workflow Overview below for execution order) and one standalone tutorial (<code>Gabriel_tutorial_for_LLMs_in_social_science_research.ipynb</code>) from OpenAI's Gabriel library for using LLMs in social-science research.</p>
+<ul><li><code>data/interim/</code></li></ul>
+<p>Intermediate outputs created after clustering; distributed through the external data bundle rather than Git.</p>
+<ul><li><code>data/processed/</code></li></ul>
+<p>Processed outputs used by downstream analysis and figures; distributed through the external data bundle rather than Git.</p>
+<ul><li><code>data/gabriel/</code></li></ul>
+<p>Cached and saved outputs from the Gabriel LLM workflow; distributed through the external data bundle rather than Git.</p>
+<ul><li><code>figures/paper/</code></li></ul>
+<p>Paper-ready PDF and PNG figures.</p>
+<ul><li><code>master_sample.csv</code></li></ul>
+<p>The large sampled ratings table used as the starting point for the modular pipeline; distributed separately from the Git repository.</p>
+<h2>Data Availability</h2>
+<p>To keep the Git repository lightweight and pushable, the large analytical data artifacts are <strong>not stored in this repository</strong>.</p>
+<p>This project is built on a <strong>sampled analytical dataset</strong>, not on the full raw Community Notes production dataset. The shareable replication bundle starts from <code>master_sample.csv</code> and the downstream parquet outputs. Readers who want the full upstream raw files should use the official Community Notes download sources linked below.</p>
+<p>In particular, a fresh clone should <strong>not</strong> be expected to contain:</p>
+<ul><li><code>master_sample.csv</code></li><li><code>data/interim/*.parquet</code></li><li><code>data/processed/*.parquet</code></li><li><code>data/gabriel/</code> caches and saved outputs</li></ul>
+<p>The code, notebooks, and paper sources are versioned here, but large generated datasets should be distributed separately, for example through an external data archive, a release asset, or a cloud storage link documented in this README.</p>
+<h2>External Data Download And Setup</h2>
+<p>If you want to reproduce the sampled analytical pipeline used in the paper without rebuilding the raw upstream files, download the external data bundle from:</p>
+<ul><li>Google Drive folder: <code>https://drive.google.com/file/d/18fKA8sHn4ULetghboSboNBnWm-BcrO_O/view?usp=sharing</code></li></ul>
+<p>The downloadable bundle should be a single archive such as:</p>
+<ul><li><code>release-assets-bundle.zip</code></li></ul>
+<p>Important notes:</p>
+<ul><li>this bundle is based on the sampled analytical dataset used in the paper</li><li>it is <strong>not</strong> the full raw Community Notes production dataset</li><li>if you want to reconstruct the pipeline from raw upstream exports, use the official Community Notes links in the next section instead</li></ul>
+<p>Recommended setup steps after downloading:</p>
+<ol><li>Move <code>release-assets-bundle.zip</code> into the repository root.</li><li>Extract it in the repository root:</li></ol>
+<pre><code class="language-bash">unzip release-assets-bundle.zip</code></pre>
+<ol><li>Move the extracted bundle files from <code>release-assets/data-v1/</code> into the repository root:</li></ol>
+<pre><code class="language-bash">mv release-assets/data-v1/community-notes-x-data-bundle.tar.gz .
+mv release-assets/data-v1/master_sample.csv.gz .
+mv release-assets/data-v1/SHA256SUMS.txt .</code></pre>
+<ol><li>Optionally verify file integrity:</li></ol>
+<pre><code class="language-bash">shasum -a 256 -c SHA256SUMS.txt</code></pre>
+<ol><li>Decompress the sampled analytical table:</li></ol>
+<pre><code class="language-bash">gunzip master_sample.csv.gz</code></pre>
+<ol><li>Extract the downstream parquet and Gabriel outputs:</li></ol>
+<pre><code class="language-bash">tar -xzf community-notes-x-data-bundle.tar.gz</code></pre>
+<ol><li>Confirm that the repository root now contains <code>master_sample.csv</code> and that the <code>data/interim/</code>, <code>data/processed/</code>, and <code>data/gabriel/</code> folders are populated.</li></ol>
+<p>After that, you can start directly from <code>notebooks/01_clustering.ipynb</code>.</p>
+<h2>Reproducibility Scope</h2>
+<p>There are two distinct reproducibility levels in this project:</p>
+<ol><li><strong>Full upstream reconstruction from raw platform files</strong></li></ol>
+<p>This starts from the original raw Community Notes exports and rebuilds <code>master_sample.csv</code>.</p>
+<ol><li><strong>Downstream reconstruction from the sampled analytical table</strong></li></ol>
+<p>This starts from <code>master_sample.csv</code> and rebuilds the clustering, rescue, topic, Gabriel, and plotting outputs.</p>
+<p>For most readers, the practical reproducibility boundary is <strong><code>master_sample.csv</code> onward</strong>. The sampling step exists and is documented in <code>notebooks/master sampling.ipynb</code>, but it requires access to raw upstream files that are not part of the modular notebook sequence.</p>
+<h2>Expected Raw Inputs for the Sampling Stage</h2>
+<p>The notebook <code>notebooks/master sampling.ipynb</code> expects the following files in the project root:</p>
+<ul><li><code>notes-00000.tsv</code></li><li><code>ratings-*.tsv</code></li><li><code>noteStatusHistory-00000.tsv</code></li></ul>
+<p>These raw public snapshots are <strong>not bundled in this repository</strong>. They must be downloaded separately from X's public Community Notes data sources.</p>
+<p>Official starting points:</p>
+<ul><li>Public data download entry point: <code>https://x.com/i/communitynotes/download-data</code></li><li>Community Notes Guide download page: <code>https://communitynotes.x.com/guide/en/under-the-hood/download-data</code></li><li>Official public repository and documentation hub: <code>https://github.com/twitter/communitynotes</code></li></ul>
+<p>That notebook creates:</p>
+<ul><li><code>master_sample.csv</code></li></ul>
+<p>This file is large and serves as the analytical entry point for the rest of the project.</p>
+<h2>Workflow Overview</h2>
+<p>The intended execution order is:</p>
+<ol><li><code>notebooks/master sampling.ipynb</code></li><li><code>notebooks/01_clustering.ipynb</code></li><li><code>notebooks/02_scoring.ipynb</code></li><li><code>notebooks/03_topics.ipynb</code></li><li><code>notebooks/05_gabriel_check.ipynb</code> (optional but used in the paper)</li><li><code>notebooks/06_plots.ipynb</code></li><li>Compile <code>Paper file/main.tex</code></li></ol>
+<p>The notebook <code>notebooks/04_plots.ipynb</code> is exploratory and not required for the final paper outputs.</p>
+<h2>Step-by-Step Pipeline</h2>
+<h3>1. Master Sampling</h3>
+<p>Notebook:</p>
+<ul><li><code>notebooks/master sampling.ipynb</code></li></ul>
+<p>Purpose:</p>
+<ul><li>restrict the universe to tweets with at least 3 distinct notes</li><li>build a lightweight tweet-level political proxy using note summaries</li><li>classify tweets into <code>political</code> and <code>non_political</code></li><li>allocate the sample with a <code>65% political / 35% non-political</code> balance</li><li>balance the political share across political subtopics</li><li>draw a <code>30%</code> sample of ratings</li><li>merge note metadata and status history into the sampled table</li></ul>
+<p>Key output:</p>
+<ul><li><code>master_sample.csv</code></li></ul>
+<p>Important note:</p>
+<ul><li>this notebook reconstructs the sampled analytical universe</li><li>if you do not have the raw upstream TSV files, start from the existing <code>master_sample.csv</code></li><li>raw snapshots are obtained from X's public Community Notes downloads rather than from this repository</li><li>topic modeling is not used to build the sample itself; it is applied later to the sampled analytical table after clustering and scoring</li></ul>
+<h3>2. Clustering</h3>
+<p>Notebook:</p>
+<ul><li><code>notebooks/01_clustering.ipynb</code></li></ul>
+<p>Core idea:</p>
+<ul><li>cluster <strong>users</strong>, not notes</li><li>recover latent rating blocs from co-voting patterns</li></ul>
+<p>What the notebook does:</p>
+<ul><li>loads <code>master_sample.csv</code></li><li>keeps only <code>HELPFUL</code> and <code>NOT_HELPFUL</code> ratings</li><li>maps those ratings to a binary vote</li><li>applies the timeliness filter</li><li>targets roughly <code>5,000</code> of the most-rated notes and <code>10,000</code> of the most-active raters</li><li>builds the user-note matrix</li><li>mean-centers observed votes by user</li><li>zero-fills only for similarity construction</li><li>computes cosine similarity on the centered matrix</li><li>sets affinity to zero when user pairs share no co-rated note</li><li>runs spectral clustering</li><li>evaluates candidate <code>K</code> values with silhouette and stability diagnostics</li><li>saves cluster assignments and intermediate tables for downstream use</li></ul>
+<p>Outputs:</p>
+<ul><li><code>data/interim/ratings_filtered.parquet</code></li><li><code>data/interim/ratings_clustered.parquet</code></li><li><code>data/interim/user_clusters.parquet</code></li><li><code>data/interim/silhouette_over_k.parquet</code></li><li><code>data/interim/stability_over_k.parquet</code></li><li><code>data/interim/user_stats.parquet</code></li><li><code>data/interim/cluster_summary.parquet</code></li></ul>
+<h3>3. Scoring and Rescue Simulation</h3>
+<p>Notebook:</p>
+<ul><li><code>notebooks/02_scoring.ipynb</code></li></ul>
+<p>What the notebook does:</p>
+<ul><li>loads clustered ratings from <code>data/interim/ratings_clustered.parquet</code></li><li>computes note-level pooled approval</li><li>computes cluster-specific approval</li><li>applies the <code>0.5</code> fallback when a cluster has no observed rating on a note</li><li>enforces the minimum per-cluster rater threshold for bridge scoring</li><li>computes the geometric-mean bridge score</li><li>computes disagreement measures</li><li>simulates tweet-level selection rules:</li><li><code>Simple Majoritarian Rule</code></li><li><code>Representative</code></li><li><code>Pluralistic-K</code></li><li>creates summary tables used by the paper and downstream notebooks</li><li>runs robustness checks for alternative bridge aggregators and epsilon sensitivity</li></ul>
+<p>Main outputs:</p>
+<ul><li><code>data/processed/scores.parquet</code></li><li><code>data/processed/final_table.parquet</code></li><li><code>data/processed/rescue_summary.parquet</code></li><li><code>data/processed/pluralistic_breakdown.parquet</code></li><li><code>data/processed/selection_log.parquet</code></li><li><code>data/processed/selection_status_summary.parquet</code></li></ul>
+<p>Authoritative note:</p>
+<ul><li>for exact downstream reproduction of the paper's representative selections, use <code>selection_log.parquet</code> as the authoritative selection output</li><li>helper calculations that sort only on <code>bridge_score</code> can behave differently under exact ties unless the same deterministic tie-breaking rule is used everywhere</li></ul>
+<p>Tie note:</p>
+<ul><li>in practice, the important edge case is when two notes attached to the same tweet receive the exact same <code>bridge_score</code></li><li>if helper logic uses a different secondary ordering rule, the winning note can differ even though the bridge score is identical</li><li>this matters because one tied note can already be <code>CURRENTLY_RATED_HELPFUL</code> while the other remains <code>NEEDS_MORE_RATINGS</code></li><li>the repository therefore treats <code>selection_log.parquet</code> as the authoritative downstream record of representative picks</li></ul>
+<h3>4. Topic Modeling</h3>
+<p>Notebook:</p>
+<ul><li><code>notebooks/03_topics.ipynb</code></li></ul>
+<p>What the notebook does:</p>
+<ul><li>loads <code>scores.parquet</code> and selection outputs</li><li>prepares note text for topic analysis</li><li>fits BERTopic on note summaries</li><li>attaches topic names and shortened labels</li><li>computes topic-level disagreement structure</li><li>computes topic salience by cluster</li><li>computes topic-level rescue and failure summaries</li><li>compares which topics are surfaced by different selection rules</li></ul>
+<p>Outputs:</p>
+<ul><li><code>data/processed/topic_notes.parquet</code></li><li><code>data/processed/topic_cluster_stats.parquet</code></li><li><code>data/processed/topic_exemplars.parquet</code></li><li><code>data/processed/topic_salience.parquet</code></li><li><code>data/processed/topic_salience_pivot.parquet</code></li><li><code>data/processed/topic_rescue_stats.parquet</code></li><li><code>data/processed/topic_strategy_summary.parquet</code></li><li><code>data/processed/topic_strategy_pivot.parquet</code></li><li><code>data/processed/topic_selection_overlap.parquet</code></li></ul>
+<h3>5. Gabriel LLM Validation</h3>
+<p>Notebook:</p>
+<ul><li><code>notebooks/05_gabriel_check.ipynb</code></li></ul>
+<p>Purpose:</p>
+<ul><li>evaluate whether representative-rescued notes look substantively worth rescuing</li></ul>
+<p>What the notebook does:</p>
+<ul><li>loads processed rescue outputs</li><li>isolates representative-rescued notes</li><li>builds <code>llm_context</code> strings combining note text and selected metadata</li><li>runs Gabriel classification for:</li><li>political topic class</li><li>troll vs non-troll</li><li>runs Gabriel rating for:</li><li>rescue worthiness</li><li>informational value</li><li>evidentiary specificity</li><li>troll likelihood</li><li>clarity</li><li>runs blind validation by removing score metadata from the context</li><li>compares representative-rescued notes with majoritarian-only rescued notes</li><li>writes reusable caches so repeated runs can resume rather than starting over</li></ul>
+<p>Main save locations:</p>
+<ul><li><code>data/gabriel/rescue_notes_100pct_politics_classify/</code></li><li><code>data/gabriel/rescue_notes_100pct_troll_classify/</code></li><li><code>data/gabriel/rescue_notes_100pct_rescue_rate/</code></li><li><code>data/gabriel/rescue_notes_100pct_blind_rescue_rate/</code></li><li><code>data/gabriel/rescue_notes_100pct_maj_rescue_rate/</code></li><li><code>data/gabriel/cache/</code></li></ul>
+<p>Important note:</p>
+<ul><li>this notebook requires an OpenAI API key and network access when run fresh</li><li>cached outputs in <code>data/gabriel/</code> make later reruns cheaper and faster</li><li>repository-level documentation for this stage is collected in <code>LLM_APPENDIX.md</code></li></ul>
+<h3>6. Final Paper Figures</h3>
+<p>Notebook:</p>
+<ul><li><code>notebooks/06_plots.ipynb</code></li></ul>
+<p>What the notebook does:</p>
+<ul><li>loads prepared outputs only</li><li>generates the paper-ready figures</li><li>saves each figure to <code>figures/paper/</code> as both PDF and PNG</li></ul>
+<p>Expected figure targets:</p>
+<ul><li><code>figures/paper/figure_01_cluster_diagnostics.pdf</code></li><li><code>figures/paper/figure_03_strategy_status_counts.pdf</code></li><li><code>figures/paper/figure_04_high_disagreement_topics.pdf</code></li><li><code>figures/paper/figure_05_topic_cluster_polarity.pdf</code></li><li><code>figures/paper/figure_06_gabriel_politics.pdf</code></li><li><code>figures/paper/figure_07_gabriel_ratings.pdf</code></li><li><code>figures/paper/figure_08_troll_topic_pockets.pdf</code></li><li><code>figures/paper/figure_A1_cluster_tfidf.pdf</code></li><li><code>figures/paper/figure_A2a_disagreement_direction_bar.pdf</code></li><li><code>figures/paper/figure_A2b_disagreement_direction_scatter.pdf</code></li><li><code>figures/paper/figure_A3_user_profiling.pdf</code></li></ul>
+<h3>7. Paper Compilation</h3>
+<p>Paper source:</p>
+<ul><li><code>Paper file/main.tex</code></li></ul>
+<p>Compiling the paper requires the figure files and bibliography to already exist.</p>
+<p>Typical local compile sequence:</p>
+<pre><code class="language-bash">cd &quot;Paper file&quot;
+latexmk -pdf main.tex</code></pre>
+<p>This should produce:</p>
+<ul><li><code>Paper file/main.pdf</code></li></ul>
+<h2>Suggested Runtime Order for a New User</h2>
+<p>If you downloaded the external sampled data bundle:</p>
+<ol><li>Place <code>release-assets-bundle.zip</code> in the repository root and extract it.</li><li>Move <code>community-notes-x-data-bundle.tar.gz</code>, <code>master_sample.csv.gz</code>, and <code>SHA256SUMS.txt</code> from <code>release-assets/data-v1/</code> into the repository root.</li><li>Run <code>shasum -a 256 -c SHA256SUMS.txt</code> if you want an integrity check.</li><li>Run <code>gunzip master_sample.csv.gz</code>.</li><li>Extract <code>community-notes-x-data-bundle.tar.gz</code>.</li><li>Open <code>notebooks/01_clustering.ipynb</code> and run all cells.</li><li>Run <code>notebooks/02_scoring.ipynb</code>.</li><li>Run <code>notebooks/03_topics.ipynb</code>.</li><li>If you want the full paper replication, run <code>notebooks/05_gabriel_check.ipynb</code>.</li><li>Run <code>notebooks/06_plots.ipynb</code>.</li><li>Compile <code>Paper file/main.tex</code>.</li></ol>
+<p>If you want to rebuild everything from the raw platform exports:</p>
+<ol><li>Place <code>notes-00000.tsv</code>, <code>ratings-*.tsv</code>, and <code>noteStatusHistory-00000.tsv</code> in the repository root.</li><li>Run <code>notebooks/master sampling.ipynb</code>.</li><li>Confirm that <code>master_sample.csv</code> was created.</li><li>Continue with the modular notebooks in numeric order.</li></ol>
+<h2>Python Dependencies</h2>
+<p>This repository now includes:</p>
+<ul><li><code>requirements.txt</code></li></ul>
+<p>pinned package versions for the notebook workflow</p>
+<ul><li><code>.env.example</code></li></ul>
+<p>local runtime template for environment variables plus a commented record of the reference environment used during development</p>
+<p>At minimum, the workflow depends on:</p>
+<ul><li><code>python</code></li><li><code>pandas</code></li><li><code>numpy</code></li><li><code>scikit-learn</code></li><li><code>matplotlib</code></li><li><code>seaborn</code></li><li><code>pyarrow</code> or another parquet backend</li><li><code>bertopic</code></li><li><code>sentence-transformers</code></li><li><code>umap-learn</code></li><li><code>openai-gabriel</code></li><li><code>jupyter</code></li></ul>
+<p>Additional system dependencies may be needed for:</p>
+<ul><li>LaTeX compilation (<code>latexmk</code>, TeX distribution)</li><li>transformer model downloads</li><li>OpenAI/Gabriel API calls</li></ul>
+<p>Recommended setup:</p>
+<pre><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt</code></pre>
+<p>If you want to use environment variables instead of hard-coding API keys in notebooks:</p>
+<ol><li>copy <code>.env.example</code> to <code>.env</code></li><li>fill in <code>OPENAI_API_KEY</code></li><li>load it locally however you normally manage environment variables</li></ol>
+<h2>Limitations</h2>
+<ul><li>The analytical sample is intentionally structured rather than platform-representative.</li><li>The full raw platform dataset is larger than the modular pipeline input and may not be available to all readers.</li><li>The sampling stage depends on raw TSV files outside the modular notebook chain.</li><li>The workflow is notebook-based, so execution order matters.</li><li>Some parts of the LLM workflow rely on cached outputs and an external API.</li><li>Model aliases such as <code>gpt-5-mini</code> may evolve over time, so exact LLM reruns may drift unless versions and run dates are documented.</li><li>Exact ties in note selection can change outcomes unless tie-breaking is explicitly standardized.</li><li>A pinned <code>requirements.txt</code> is provided, but OS-level and model-level differences can still affect exact reruns.</li></ul>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>

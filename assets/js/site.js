@@ -1,15 +1,3 @@
-async function injectPartial(selector, url) {
-  const host = document.querySelector(selector);
-  if (!host) return;
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(res.statusText);
-    host.innerHTML = await res.text();
-  } catch (err) {
-    console.warn(`Could not load partial ${url}:`, err);
-  }
-}
-
 function highlightNav() {
   const page = document.body.dataset.page;
   if (!page) return;
@@ -102,12 +90,8 @@ if (typeof themeMedia.addEventListener === "function") {
   themeMedia.addListener(handleSystemThemeChange);
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   syncThemeWithPreference();
-  await Promise.all([
-    injectPartial("[data-include='header']", "partials/header.html"),
-    injectPartial("[data-include='footer']", "partials/footer.html"),
-  ]);
   highlightNav();
   setYear();
   setupThemeToggle();

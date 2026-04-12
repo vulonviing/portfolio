@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>Rec-Dating Project — Emrecan Ulu</title>
+  <meta name="description" content="A study of the rec-dating dataset as a role-based bipartite network, separating outgoing rating activity from received attention and applying HITS consistently." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="Rec-Dating Project, research by Emrecan Ulu, Networks, HITS, Bipartite, Python" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/research/rec-dating.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="Rec-Dating Project — Emrecan Ulu" />
+  <meta property="og:description" content="A study of the rec-dating dataset as a role-based bipartite network, separating outgoing rating activity from received attention and applying HITS consistently." />
+  <meta property="og:url" content="https://emrecanulu.com/research/rec-dating.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Rec-Dating Project — Emrecan Ulu" />
+  <meta name="twitter:description" content="A study of the rec-dating dataset as a role-based bipartite network, separating outgoing rating activity from received attention and applying HITS consistently." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "headline": "Rec-Dating Project",
+  "description": "A study of the rec-dating dataset as a role-based bipartite network, separating outgoing rating activity from received attention and applying HITS consistently.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/research/rec-dating.html",
+  "url": "https://emrecanulu.com/research/rec-dating.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "Networks",
+    "HITS",
+    "Bipartite",
+    "Python"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="research">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/research.html">Research</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/rec-dating-project" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Research · 2025</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>Rec-Dating Project</h1>
+<p>This project studies the <code>rec-dating</code> dataset as a role-based bipartite network.</p>
+<p>The notebooks are arranged in four steps and can be run in order from data preparation to the final figures.</p>
+<h2>Core Idea</h2>
+<ul><li><code>rater</code> nodes send ratings</li><li><code>profile</code> nodes receive ratings</li><li>edge weight is the observed score from <code>1</code> to <code>10</code></li></ul>
+<p>This framing lets us separate outgoing activity from received attention and apply network measures such as HITS in a role-consistent way.</p>
+<h2>Main Questions</h2>
+<ol><li>How strongly do popularity and prestige align on the profile side?</li><li>How concentrated is received attention?</li><li>Do the profiles dominating overall interaction also dominate high-rating buckets?</li><li>Which profile-side features are most aligned with elite interaction and elite high-rating status?</li></ol>
+<h2>Project Structure</h2>
+<ul><li><code>data/</code>: raw dataset</li><li><code>src/rec_dating_project/</code>: reusable project code</li><li><code>scripts/</code>: analysis scripts used by the notebooks</li><li><code>notebooks/</code>: the ordered notebook workflow</li><li><code>paper/</code>: LaTeX paper draft and bibliography</li><li><code>outputs/data/</code>: generated tables reused across notebooks</li><li><code>outputs/figures/</code>: generated figures reused in notebooks and paper</li></ul>
+<h2>Environment Setup</h2>
+<p>The project was last checked with <code>Python 3.11.9</code>.</p>
+<p>From the project root:</p>
+<pre><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt</code></pre>
+<p>The raw dataset is expected at:</p>
+<pre><code class="language-text">data/rec-dating/rec-dating.edges</code></pre>
+<p>Download it manually from the Network Repository page and place it at the path above:</p>
+<pre><code class="language-text">https://networkrepository.com/rec-dating.php</code></pre>
+<h2>Recommended Notebook Workflow</h2>
+<p>Run the notebooks in this order:</p>
+<ol><li><code>notebooks/01_data_preparation.ipynb</code></li><li><code>notebooks/02_rec_dating_exploration.ipynb</code></li><li><code>notebooks/03_applications.ipynb</code></li><li><code>notebooks/04_final_plots_for_paper.ipynb</code></li></ol>
+<p>What each notebook does:</p>
+<ul><li><code>01</code>: inspects the raw file, explains the role-based modeling choice, and builds the cached dataset summary</li><li><code>02</code>: explores popularity, prestige, inequality, and descriptive plots</li><li><code>03</code>: applies the framework to bucket concentration and feature alignment</li><li><code>04</code>: gathers the final figures and reference values used to check the project outputs</li></ul>
+<h2>How To Run The Notebooks</h2>
+<h3>Option A: Interactive</h3>
+<p>Launch JupyterLab from the project root:</p>
+<pre><code class="language-bash">jupyter lab</code></pre>
+<p>Then open the notebooks and run them in the numbered order above.</p>
+<h3>Option B: Fully Reproducible Terminal Execution</h3>
+<p>If you want to execute everything from the terminal:</p>
+<pre><code class="language-bash">MPLCONFIGDIR=/tmp/matplotlib-codex python3 -m nbconvert --to notebook --execute notebooks/01_data_preparation.ipynb --inplace --ExecutePreprocessor.timeout=1200
+MPLCONFIGDIR=/tmp/matplotlib-codex python3 -m nbconvert --to notebook --execute notebooks/02_rec_dating_exploration.ipynb --inplace --ExecutePreprocessor.timeout=1200
+MPLCONFIGDIR=/tmp/matplotlib-codex python3 -m nbconvert --to notebook --execute notebooks/03_applications.ipynb --inplace --ExecutePreprocessor.timeout=1200
+MPLCONFIGDIR=/tmp/matplotlib-codex python3 -m nbconvert --to notebook --execute notebooks/04_final_plots_for_paper.ipynb --inplace --ExecutePreprocessor.timeout=1200</code></pre>
+<p>The <code>MPLCONFIGDIR</code> prefix helps on headless or restricted environments where Matplotlib cannot write to its default cache directory.</p>
+<h2>Generated Outputs And Rebuild Behavior</h2>
+<ul><li>The notebooks reuse cached files in <code>outputs/data/</code> and <code>outputs/figures/</code> when they already exist.</li><li>Missing artifacts are rebuilt automatically by the relevant scripts.</li><li>If you want a full refresh, set <code>FORCE_REBUILD = True</code> in the setup cell of the notebook you are running.</li></ul>
+<h2>Scripts Used By The Notebooks</h2>
+<p>The notebooks rely on these scripts:</p>
+<ul><li><code>scripts/01_dataset_overview.py</code></li><li><code>scripts/02_full_project_analysis.py</code></li><li><code>scripts/03_profile_rating_extremes.py</code></li><li><code>scripts/04_profile_feature_alignment.py</code></li><li><code>scripts/05_degree_distribution_fit.py</code></li></ul>
+<p>If the notebook templates ever need to be regenerated, run:</p>
+<pre><code class="language-bash">python3 scripts/06_rebuild_notebooks.py</code></pre>
+<h2>Paper Reproduction</h2>
+<p>After <code>04_final_plots_for_paper.ipynb</code> has been executed, the paper figures should be available under <code>outputs/figures/</code>.</p>
+<p>To compile the paper from the project root:</p>
+<pre><code class="language-bash">latexmk -pdf -cd paper/main.tex</code></pre>
+<h2>Notes</h2>
+<ul><li>The dataset is large, so cached artifacts are used intentionally to keep the notebook workflow responsive.</li><li>The last notebook is a final check that the generated figures and summary values still line up with the rest of the project.</li></ul>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>

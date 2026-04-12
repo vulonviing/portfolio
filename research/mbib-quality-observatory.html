@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>MBIB Quality Observatory — Emrecan Ulu</title>
+  <meta name="description" content="An audit of the Media Bias Identification Benchmark — label noise probes, near-duplicate detection, and LLM review across 8 tasks." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="MBIB Quality Observatory, research by Emrecan Ulu, Benchmarking, Cleanlab, LLM Review" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/research/mbib-quality-observatory.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="MBIB Quality Observatory — Emrecan Ulu" />
+  <meta property="og:description" content="An audit of the Media Bias Identification Benchmark — label noise probes, near-duplicate detection, and LLM review across 8 tasks." />
+  <meta property="og:url" content="https://emrecanulu.com/research/mbib-quality-observatory.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MBIB Quality Observatory — Emrecan Ulu" />
+  <meta name="twitter:description" content="An audit of the Media Bias Identification Benchmark — label noise probes, near-duplicate detection, and LLM review across 8 tasks." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "headline": "MBIB Quality Observatory",
+  "description": "An audit of the Media Bias Identification Benchmark — label noise probes, near-duplicate detection, and LLM review across 8 tasks.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/research/mbib-quality-observatory.html",
+  "url": "https://emrecanulu.com/research/mbib-quality-observatory.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "Benchmarking",
+    "Cleanlab",
+    "LLM Review"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="research">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/research.html">Research</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/mbib-quality-observatory" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Research · 2026</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>MBIB Quality Observatory</h1>
+<p>This repository audits the <strong>Media Bias Identification Benchmark (MBIB)</strong>. It keeps the summary tables, figures, task cards, and LLM review exports under <code>results/</code> and <code>reports/</code>. Large dataset caches and downloaded model weights are not tracked in git.</p>
+<p>The pipeline includes:</p>
+<ul><li>dataset loading and normalization for all 8 MBIB tasks</li><li>label balance, sentence length, and cross-task overlap checks</li><li>near-duplicate detection</li><li>three embedding-based cleanlab probes for label-noise estimation</li><li>zero-shot transfer with a BABE-fine-tuned RoBERTa baseline</li><li>LLM review of flagged rows</li></ul>
+<h2>Quick start</h2>
+<pre><code class="language-bash">python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt</code></pre>
+<p>If you want to run notebook 06, add your API key to <code>.env</code>:</p>
+<pre><code class="language-bash">OPENAI_API_KEY=...</code></pre>
+<h2>Reproducing the full pipeline</h2>
+<p>Run the notebooks in order:</p>
+<table><thead><tr><th>Notebook</th><th>Purpose</th></tr></thead><tbody><tr><td><code>01_load_mbib.ipynb</code></td><td>Download MBIB from Hugging Face and cache per-task parquet files</td></tr><tr><td><code>02_quality_metrics.ipynb</code></td><td>Compute size, balance, length, vocabulary, and cross-task overlap summaries</td></tr><tr><td><code>03_duplicates_and_noise.ipynb</code></td><td>Detect near-duplicates and run the three cleanlab probes</td></tr><tr><td><code>04_error_analysis.ipynb</code></td><td>Evaluate the BABE baseline across MBIB tasks</td></tr><tr><td><code>05_export_report.ipynb</code></td><td>Build the master summary table and final report inputs</td></tr><tr><td><code>06_gabriel_validation.ipynb</code></td><td>Run LLM review on flagged rows</td></tr><tr><td><code>07_results_walkthrough.ipynb</code></td><td>Load the saved results and summarize them</td></tr></tbody></table>
+<p>To regenerate the markdown task cards from the committed summaries:</p>
+<pre><code class="language-bash">python -m scripts.regenerate_reports</code></pre>
+<p>To review the saved results, open <code>notebooks/07_results_walkthrough.ipynb</code>.</p>
+<h2>External downloads</h2>
+<p>These files are required to rerun the pipeline, but they are not tracked here.</p>
+<table><thead><tr><th>Component</th><th>Link</th><th>Used in</th></tr></thead><tbody><tr><td>MBIB dataset</td><td>https://huggingface.co/datasets/mediabiasgroup/mbib-base</td><td>Notebook 01</td></tr><tr><td>MiniLM</td><td>https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2</td><td>Near-duplicate search and label-noise probe</td></tr><tr><td>BGE-small</td><td>https://huggingface.co/BAAI/bge-small-en-v1.5</td><td>Label-noise probe</td></tr><tr><td>E5-small</td><td>https://huggingface.co/intfloat/e5-small-v2</td><td>Label-noise probe</td></tr><tr><td>BABE RoBERTa baseline</td><td>https://huggingface.co/vulonviing/roberta-babe-baseline</td><td>Notebook 04</td></tr><tr><td>BABE baseline training repo</td><td>https://github.com/vulonviing/babe-roberta-baseline</td><td>Reference for the baseline model</td></tr></tbody></table>
+<p>Notes:</p>
+<ul><li><code>01_load_mbib.ipynb</code> downloads the dataset and writes local parquet caches to <code>data/processed/</code>.</li><li><code>sentence-transformers</code> and <code>transformers</code> download model weights to your local cache on first use.</li><li>The repo keeps the analysis outputs, not the raw cached inputs.</li></ul>
+<h2>Results Summary</h2>
+<p>The tracked summaries cover <strong>810,953 rows</strong> across 8 MBIB tasks.</p>
+<ul><li>The largest overlap pairs are <code>linguistic_bias</code> ↔ <code>racial_bias</code> (8,940 shared sentences), <code>gender_bias</code> ↔ <code>linguistic_bias</code> (8,574), <code>gender_bias</code> ↔ <code>racial_bias</code> (7,056), <code>gender_bias</code> ↔ <code>hate_speech</code> (6,816), and <code>cognitive_bias</code> ↔ <code>fake_news</code> (5,230).</li><li>The highest mean noise rates are in <code>linguistic_bias</code>, <code>cognitive_bias</code>, and <code>fake_news</code>. The lowest is <code>gender_bias</code>.</li><li>Near-duplicate rates stay low across the benchmark. The highest sampled near-duplicate rate is <code>gender_bias</code> at 1.16%.</li><li>The highest macro-F1 is <code>political_bias</code> (<code>0.6856</code>). The lowest is <code>racial_bias</code> (<code>0.3492</code>).</li><li>LLM disagreement is highest for <code>political_bias</code> (71%) and lowest for <code>racial_bias</code> (23%).</li></ul>
+<h2>Key findings</h2>
+<h3>1. Cross-task leakage is substantial</h3>
+<p>The largest quality problem is not class imbalance or duplication. It is task leakage across the benchmark.</p>
+<ul><li><code>linguistic_bias</code> ↔ <code>racial_bias</code>: <strong>8,940</strong> shared sentences</li><li><code>gender_bias</code> ↔ <code>linguistic_bias</code>: <strong>8,574</strong></li><li><code>gender_bias</code> ↔ <code>racial_bias</code>: <strong>7,056</strong></li><li><code>gender_bias</code> ↔ <code>hate_speech</code>: <strong>6,816</strong></li><li><code>hate_speech</code> ↔ <code>linguistic_bias</code>: <strong>6,414</strong></li><li><code>cognitive_bias</code> ↔ <code>fake_news</code>: <strong>5,230</strong></li></ul>
+<p>This can inflate transfer results when the same sentence appears across tasks.</p>
+<h3>2. The three cleanlab probes agree on which tasks are noisiest</h3>
+<p>Mean issue rates from the three embedding probes:</p>
+<table><thead><tr><th>Task</th><th style="text-align:right">MiniLM</th><th style="text-align:right">BGE-small</th><th style="text-align:right">E5-small</th></tr></thead><tbody><tr><td><code>linguistic_bias</code></td><td style="text-align:right">39.52%</td><td style="text-align:right">40.28%</td><td style="text-align:right">38.72%</td></tr><tr><td><code>cognitive_bias</code></td><td style="text-align:right">40.00%</td><td style="text-align:right">38.50%</td><td style="text-align:right">38.10%</td></tr><tr><td><code>fake_news</code></td><td style="text-align:right">37.56%</td><td style="text-align:right">35.80%</td><td style="text-align:right">36.20%</td></tr><tr><td><code>political_bias</code></td><td style="text-align:right">26.18%</td><td style="text-align:right">24.50%</td><td style="text-align:right">22.68%</td></tr><tr><td><code>racial_bias</code></td><td style="text-align:right">23.18%</td><td style="text-align:right">21.48%</td><td style="text-align:right">22.96%</td></tr><tr><td><code>text_level_bias</code></td><td style="text-align:right">20.26%</td><td style="text-align:right">19.46%</td><td style="text-align:right">19.26%</td></tr><tr><td><code>hate_speech</code></td><td style="text-align:right">15.78%</td><td style="text-align:right">11.82%</td><td style="text-align:right">13.02%</td></tr><tr><td><code>gender_bias</code></td><td style="text-align:right">11.74%</td><td style="text-align:right">11.58%</td><td style="text-align:right">12.30%</td></tr></tbody></table>
+<p>The ordering is stable across probes. <code>linguistic_bias</code>, <code>cognitive_bias</code>, and <code>fake_news</code> consistently look the least reliable. <code>gender_bias</code> is consistently the cleanest.</p>
+<h3>3. Duplicates are not the main problem</h3>
+<p>Exact duplicate rates are all below <strong>0.24%</strong>. Sampled near-duplicate rates remain low as well, between <strong>0.00%</strong> and <strong>1.16%</strong>.</p>
+<p>That means the benchmark issues are mostly about annotation quality and task boundaries, not bulk repetition.</p>
+<h3>4. Zero-shot transfer is highly uneven</h3>
+<p>Macro-F1 of the BABE-fine-tuned RoBERTa baseline on the 5k evaluation sample:</p>
+<table><thead><tr><th>Task</th><th style="text-align:right">Macro-F1</th></tr></thead><tbody><tr><td><code>political_bias</code></td><td style="text-align:right">0.6856</td></tr><tr><td><code>text_level_bias</code></td><td style="text-align:right">0.5935</td></tr><tr><td><code>linguistic_bias</code></td><td style="text-align:right">0.5524</td></tr><tr><td><code>cognitive_bias</code></td><td style="text-align:right">0.5284</td></tr><tr><td><code>gender_bias</code></td><td style="text-align:right">0.5064</td></tr><tr><td><code>hate_speech</code></td><td style="text-align:right">0.5049</td></tr><tr><td><code>fake_news</code></td><td style="text-align:right">0.5043</td></tr><tr><td><code>racial_bias</code></td><td style="text-align:right">0.3492</td></tr></tbody></table>
+<p><code>political_bias</code> has the highest macro-F1 and <code>racial_bias</code> the lowest. That gap matches the broader variation across tasks.</p>
+<h3>5. LLM review shows high disagreement on many flagged rows</h3>
+<p>Disagreement between the committed labels and the LLM review on 100 flagged rows per task:</p>
+<table><thead><tr><th>Task</th><th style="text-align:right">Disagreement rate</th></tr></thead><tbody><tr><td><code>political_bias</code></td><td style="text-align:right">71%</td></tr><tr><td><code>linguistic_bias</code></td><td style="text-align:right">69%</td></tr><tr><td><code>text_level_bias</code></td><td style="text-align:right">61%</td></tr><tr><td><code>cognitive_bias</code></td><td style="text-align:right">60%</td></tr><tr><td><code>hate_speech</code></td><td style="text-align:right">50%</td></tr><tr><td><code>fake_news</code></td><td style="text-align:right">45%</td></tr><tr><td><code>gender_bias</code></td><td style="text-align:right">27%</td></tr><tr><td><code>racial_bias</code></td><td style="text-align:right">23%</td></tr></tbody></table>
+<p>Disagreement is highest in <code>political_bias</code>, <code>linguistic_bias</code>, and <code>cognitive_bias</code>. <code>racial_bias</code> is lower, but still not negligible.</p>
+<h3>6. Combined View</h3>
+<p>Across the pipeline, the same pattern keeps showing up:</p>
+<ul><li>the largest tasks are also where cross-task reuse is most visible</li><li>label-noise estimates and LLM disagreement both point to unstable annotations in a small subset of tasks</li><li>duplicate rates stay low, so the benchmark’s weak points are not simple deduplication issues</li><li>the benchmark should be read as a mixed-quality collection of tasks rather than a uniformly clean shared standard</li></ul>
+<h2>Representative examples</h2>
+<p>These examples come from the saved flagged pool and LLM review outputs. They show how the embedding filter and the LLM review differ.</p>
+<h3>A. High-consensus flags that look like clear annotation mistakes</h3>
+<table><thead><tr><th>Task</th><th>Text</th><th style="text-align:right">Original</th><th style="text-align:right">Score</th><th style="text-align:right">LLM</th><th>Why it matters</th></tr></thead><tbody><tr><td><code>hate_speech</code></td><td>"waiting for the day i m not working and a white hoe talk to me crazy cause i ma beat her ass"</td><td style="text-align:right">0</td><td style="text-align:right">3</td><td style="text-align:right">-</td><td>The given label says clean, but the sentence contains explicit slur-driven hostility.</td></tr><tr><td><code>hate_speech</code></td><td>"my girlfriend is a nurse in ny and it has slowed down but sure argue with a primary source of information"</td><td style="text-align:right">1</td><td style="text-align:right">3</td><td style="text-align:right">0</td><td>A normal argument was labeled as hate speech.</td></tr><tr><td><code>cognitive_bias</code></td><td>"Gun homicide is down 49 percent in the past 12 years"</td><td style="text-align:right">1</td><td style="text-align:right">3</td><td style="text-align:right">0</td><td>A factual claim was labeled as cognitive bias.</td></tr><tr><td><code>cognitive_bias</code></td><td>"Usually it s about 900 a month to get health coverage Florida s program has reduced that on average to about 150 a month"</td><td style="text-align:right">1</td><td style="text-align:right">3</td><td style="text-align:right">0</td><td>A factual cost comparison was labeled as cognitive bias.</td></tr><tr><td><code>political_bias</code></td><td>"Featured image via Flickr user Gage Skidmore CC BY SA 2 0"</td><td style="text-align:right">1</td><td style="text-align:right">3</td><td style="text-align:right">0</td><td>A photo attribution line was labeled as political bias.</td></tr><tr><td><code>linguistic_bias</code></td><td>"platform 3 is used by northbound trains on the ecml down slow line and trains on the hertford loop line use platform 4"</td><td style="text-align:right">1</td><td style="text-align:right">3</td><td style="text-align:right">0</td><td>A train-platform description was labeled as linguistic bias.</td></tr><tr><td><code>linguistic_bias</code></td><td>"bobby bare jr born june 28 1966 is a grammy nominated american musician who has recorded several solo albums"</td><td style="text-align:right">1</td><td style="text-align:right">3</td><td style="text-align:right">0</td><td>A biographical sentence was labeled as linguistic bias.</td></tr></tbody></table>
+<h3>B. "Word trap" false alarms dismissed by the LLM</h3>
+<p>The smaller models often react to surface words without understanding the actual claim.</p>
+<table><thead><tr><th>Task</th><th>Text</th><th style="text-align:right">Original</th><th>Trigger words</th><th style="text-align:right">LLM</th></tr></thead><tbody><tr><td><code>gender_bias</code></td><td>"cleaning if my wife is feeling down ill go out of my way to do extra cleaning and it makes her light up every time"</td><td style="text-align:right">0</td><td>wife, cleaning</td><td style="text-align:right">0</td></tr><tr><td><code>gender_bias</code></td><td>"the show said her mom is a nurse which is why she was going with her to ethiopia to scope out the hospitals"</td><td style="text-align:right">0</td><td>her, mom, nurse</td><td style="text-align:right">0</td></tr><tr><td><code>racial_bias</code></td><td>"i love cooking and my wife is a frequent smoker and loves good food so hell yes id be interested"</td><td style="text-align:right">0</td><td>wife</td><td style="text-align:right">0</td></tr><tr><td><code>racial_bias</code></td><td>"my wife is a teacher im a nurse i feel this so much thats exactly what its like and its infuriating and unbelievable"</td><td style="text-align:right">0</td><td>wife, nurse</td><td style="text-align:right">0</td></tr></tbody></table>
+<h3>C. Political criticism is not the same as hate speech</h3>
+<p>The LLM layer is useful when the sentence is aggressive but not identity-targeted.</p>
+<table><thead><tr><th>Text</th><th style="text-align:right">Original</th><th style="text-align:right">LLM</th><th>Interpretation</th></tr></thead><tbody><tr><td>"The pathological liar and thief is Trump He constantly lied..."</td><td style="text-align:right">0</td><td style="text-align:right">0</td><td>Harsh political criticism, not hate speech.</td></tr><tr><td>"Sounds racist to me So much for a color blind society"</td><td style="text-align:right">0</td><td style="text-align:right">0</td><td>Commenting on racism is not itself hate speech.</td></tr><tr><td>"Mike5 that s a horrible attitude And delicate Donald Trump can t even take satire on TV"</td><td style="text-align:right">0</td><td style="text-align:right">0</td><td>Political mockery, not identity-directed hate.</td></tr></tbody></table>
+<h3>D. Formally Worded Racist Claims That Small Models Missed</h3>
+<p>Some hard cases use formal or technical wording rather than explicit slurs.</p>
+<table><thead><tr><th>Text</th><th style="text-align:right">Original</th><th style="text-align:right">Score</th><th>Small-model pattern</th><th style="text-align:right">LLM</th></tr></thead><tbody><tr><td>"there is scientific evidence that backs the fact that black people are just less intelligent than other races thats just how it is"</td><td style="text-align:right">1</td><td style="text-align:right">3</td><td>The wording sounds formal and factual, so the small models wanted to flip it</td><td style="text-align:right">1</td></tr><tr><td>"there is no scientific basis to argue that africans are genetically less intelligent than whites theyve got smaller brains"</td><td style="text-align:right">1</td><td style="text-align:right">3</td><td>Mixed framing hides the racist content</td><td style="text-align:right">1</td></tr><tr><td>"black people are the best aggressive helpers"</td><td style="text-align:right">0</td><td style="text-align:right">3</td><td>The label is unstable and the sentence is racially loaded</td><td style="text-align:right">1</td></tr></tbody></table>
+<p>These rows are a good example of where embeddings alone are not enough.</p>
+<h3>E. Some rows appear to be assigned to the wrong task</h3>
+<table><thead><tr><th>Task</th><th>Text</th><th style="text-align:right">Original</th><th>Likely issue</th></tr></thead><tbody><tr><td><code>racial_bias</code></td><td>"us gays are indecisive im shocked"</td><td style="text-align:right">0</td><td>Sexual-orientation content inside the racial-bias task.</td></tr><tr><td><code>racial_bias</code></td><td>"a good girl is a nurse a bad girl becomes a doctor"</td><td style="text-align:right">0</td><td>Gender stereotype, not racial bias.</td></tr><tr><td><code>racial_bias</code></td><td>"i was legitimately suspected to be gay in high school because im emotionally sensitive not that being gay is bad though"</td><td style="text-align:right">1</td><td>Again, sexual-orientation content rather than racial bias.</td></tr></tbody></table>
+<h3>F. Rows Where the LLM Changed or Confirmed the Label</h3>
+<table><thead><tr><th>Task</th><th>Text</th><th style="text-align:right">Original</th><th style="text-align:right">Score</th><th>What happened</th></tr></thead><tbody><tr><td><code>fake_news</code></td><td>"Spanish was the first European language spoken in this country"</td><td style="text-align:right">0</td><td style="text-align:right">2</td><td>A context-sensitive historical claim. The LLM kept it as clean.</td></tr><tr><td><code>text_level_bias</code></td><td>"Cat s look cute but they are actually quite vile creatures"</td><td style="text-align:right">0</td><td style="text-align:right">3</td><td>The LLM treated the full sentence as biased or toxic and flipped it to 1.</td></tr><tr><td><code>gender_bias</code></td><td>"Melissa shouldn t talk economics That s like me talking about a new designer purse or something"</td><td style="text-align:right">1</td><td style="text-align:right">3</td><td>The LLM confirmed the stereotype rather than dismissing it.</td></tr></tbody></table>
+<h2>Why These Examples Matter</h2>
+<ul><li>the filter stage surfaces a broad candidate pool</li><li>the review stage removes many keyword-based false alarms</li><li>some benchmark problems are annotation errors, while others are task-assignment errors</li><li>the hardest cases combine label quality, task boundaries, and wording</li></ul>
+<h2>Repository layout</h2>
+<pre><code class="language-text">.
+├── data/
+│   └── processed/
+│       └── .gitkeep
+├── notebooks/
+├── reports/
+│   ├── cognitive_bias.md
+│   ├── fake_news.md
+│   ├── gender_bias.md
+│   ├── hate_speech.md
+│   ├── linguistic_bias.md
+│   ├── political_bias.md
+│   ├── racial_bias.md
+│   └── text_level_bias.md
+├── results/
+├── scripts/
+│   ├── export_top_flagged_to_csv.py
+│   ├── regenerate_reports.py
+│   └── run_extra_validation.py
+├── src/
+├── tests/
+├── .gitignore
+├── README.md
+└── requirements.txt</code></pre>
+<h2>Notes for this repo</h2>
+<ul><li><code>results/</code> is versioned so the analysis can be reviewed without rerunning the notebooks.</li><li><code>data/processed/</code> is ignored because the local parquet cache is large and can be rebuilt.</li><li>The active pipeline uses the three-model cleanlab workflow.</li></ul>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>

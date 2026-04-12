@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>BABE Baseline — RoBERTa Fine-tune Reproduction — Emrecan Ulu</title>
+  <meta name="description" content="Reproducing sentence-level media bias classification on BABE. A clean RoBERTa-base fine-tune that beats published baselines at 0.857 macro-F1." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="BABE Baseline — RoBERTa Fine-tune Reproduction, research by Emrecan Ulu, RoBERTa, NLP, Reproduction" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/research/babe-baseline.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="BABE Baseline — RoBERTa Fine-tune Reproduction — Emrecan Ulu" />
+  <meta property="og:description" content="Reproducing sentence-level media bias classification on BABE. A clean RoBERTa-base fine-tune that beats published baselines at 0.857 macro-F1." />
+  <meta property="og:url" content="https://emrecanulu.com/research/babe-baseline.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="BABE Baseline — RoBERTa Fine-tune Reproduction — Emrecan Ulu" />
+  <meta name="twitter:description" content="Reproducing sentence-level media bias classification on BABE. A clean RoBERTa-base fine-tune that beats published baselines at 0.857 macro-F1." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "headline": "BABE Baseline — RoBERTa Fine-tune Reproduction",
+  "description": "Reproducing sentence-level media bias classification on BABE. A clean RoBERTa-base fine-tune that beats published baselines at 0.857 macro-F1.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/research/babe-baseline.html",
+  "url": "https://emrecanulu.com/research/babe-baseline.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "RoBERTa",
+    "NLP",
+    "Reproduction"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="research">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/research.html">Research</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/babe-roberta-baseline" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Research · 2026</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>BABE Baseline — RoBERTa Fine-tune Reproduction</h1>
+<p>Reproduction of sentence-level media bias classification on the BABE dataset (Spinde et al., EMNLP Findings 2021), using RoBERTa-base.</p>
+<h2>Goal</h2>
+<p>Reproduce the binary biased / non-biased sentence classifier from BABE and compare against published baselines:</p>
+<ul><li>Spinde et al. 2021 (distant supervision pre-train + BABE fine-tune): F1 ≈ 0.80</li><li>Krieger et al. 2022 (DA-RoBERTa, JCDL): F1 ≈ 0.81</li></ul>
+<p>Target: match or exceed published baselines with a clean RoBERTa-base fine-tune (no distant supervision, no DAPT).</p>
+<h2>Results</h2>
+<p><strong>5-fold stratified cross-validation on BABE:</strong></p>
+<table><thead><tr><th>Model</th><th>Macro-F1</th></tr></thead><tbody><tr><td>Spinde et al. 2021 (distant supervision + BABE)</td><td>0.804</td></tr><tr><td>Krieger et al. 2022 (DA-RoBERTa, DAPT, JCDL)</td><td>0.814</td></tr><tr><td><strong>This repo (RoBERTa-base, 5-fold CV)</strong></td><td><strong>0.857 ± 0.012</strong></td></tr></tbody></table>
+<p><img src="https://raw.githubusercontent.com/vulonviing/babe-roberta-baseline/main/results/baseline_comparison.png" alt="Baseline comparison" loading="lazy" /></p>
+<h3>K-fold summary</h3>
+<table><thead><tr><th>Metric</th><th>Mean ± Std</th></tr></thead><tbody><tr><td>Macro-F1</td><td>0.857 ± 0.012</td></tr><tr><td>Accuracy</td><td>0.858 ± 0.012</td></tr><tr><td>Precision (macro)</td><td>0.856 ± 0.011</td></tr><tr><td>Recall (macro)</td><td>0.859 ± 0.012</td></tr><tr><td>Biased F1</td><td>0.869 ± 0.011</td></tr></tbody></table>
+<p>Per-fold macro-F1: 0.876, 0.854, 0.845, 0.852, 0.856. Best fold is <code>fold_0</code> with macro-F1 <code>0.876</code>, which is the checkpoint selected for Hugging Face release.</p>
+<h3>Held-out quick-run evaluation</h3>
+<p>On a held-out single-split test run (<code>n=468</code>), the model reaches <code>0.870</code> macro-F1.</p>
+<table><thead><tr><th></th><th>Pred non-biased</th><th>Pred biased</th></tr></thead><tbody><tr><td>True non-biased (207)</td><td>180</td><td>27</td></tr><tr><td>True biased (261)</td><td>33</td><td>228</td></tr></tbody></table>
+<p><img src="https://raw.githubusercontent.com/vulonviing/babe-roberta-baseline/main/results/confusion_matrix.png" alt="Confusion matrix" loading="lazy" /></p>
+<p>This quick-run split is slightly optimistic relative to the 5-fold mean, so the cross-validation number is the main result to report. See <code>results/</code> for full metrics and error analysis.</p>
+<h2>Model access</h2>
+<ul><li>Training code and notebooks: <a href="https://github.com/vulonviing/babe-roberta-baseline">vulonviing/babe-roberta-baseline</a></li><li>Trained model weights and tokenizer: <a href="https://huggingface.co/vulonviing/roberta-babe-baseline">vulonviing/roberta-babe-baseline</a></li><li>GitHub is for code, notebooks, documentation, and result artifacts in <code>results/</code>.</li><li>Hugging Face Hub is for the released checkpoint (<code>fold_0</code>) and model card.</li><li>Model weights are intentionally <strong>not</strong> stored in git.</li><li>Release notebook: <code>notebooks/huggingface_upload.ipynb</code></li></ul>
+<h2>What is excluded from git?</h2>
+<p>The repo keeps code and lightweight artifacts under version control, but excludes large or regenerable files:</p>
+<ul><li><code>models/</code> for local checkpoints</li><li><code>data/raw/</code> for downloaded source data</li><li><code>data/processed/</code> for regenerated parquet splits</li><li><code>wandb/</code> for experiment logs</li><li><code>.venv/</code> and Python cache files</li></ul>
+<p>Download the released model from Hugging Face instead of GitHub:</p>
+<pre><code class="language-python">from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+repo_id = &quot;vulonviing/roberta-babe-baseline&quot;
+tokenizer = AutoTokenizer.from_pretrained(repo_id)
+model = AutoModelForSequenceClassification.from_pretrained(repo_id)</code></pre>
+<h2>Key findings</h2>
+<ul><li>A plain RoBERTa-base fine-tune is enough to reproduce the BABE task strongly: 5-fold CV reaches <code>0.857 ± 0.012</code> macro-F1, above the published baselines listed above.</li><li>The quick held-out run reaches <code>0.870</code> macro-F1, which is slightly optimistic relative to the CV mean but consistent with the same overall result.</li><li>Errors are concentrated in subtle framing and loaded-language cases rather than only overtly emotional or partisan wording.</li></ul>
+<p>For details, see:</p>
+<ul><li><code>notebooks/02_data_exploration.ipynb</code> for class balance, length statistics, and sample sentences.</li><li><code>notebooks/04_evaluation.ipynb</code> for confusion matrix, misclassified examples, and error analysis.</li><li><code>notebooks/05_final_report.ipynb</code> for the final comparison table, summary figures, and reporting-ready takeaways.</li></ul>
+<h2>Model details</h2>
+<table><thead><tr><th>Item</th><th>Value</th></tr></thead><tbody><tr><td>Base model</td><td><code>roberta-base</code></td></tr><tr><td>Task</td><td>Sentence-level media bias classification</td></tr><tr><td>Labels</td><td><code>non-biased</code>, <code>biased</code></td></tr><tr><td>Dataset</td><td><code>mediabiasgroup/BABE</code></td></tr><tr><td>Released checkpoint</td><td><code>models/fold_0/checkpoint-532</code></td></tr><tr><td>Hugging Face repo</td><td><a href="https://huggingface.co/vulonviing/roberta-babe-baseline">vulonviing/roberta-babe-baseline</a></td></tr><tr><td>Max sequence length</td><td><code>128</code></td></tr><tr><td>Epochs</td><td><code>4</code></td></tr><tr><td>Learning rate</td><td><code>2e-5</code></td></tr><tr><td>Batch size</td><td><code>16</code> train / <code>32</code> eval</td></tr><tr><td>Weight decay</td><td><code>0.01</code></td></tr><tr><td>Warmup ratio</td><td><code>0.1</code></td></tr><tr><td>Random seed</td><td><code>42</code></td></tr></tbody></table>
+<h2>Pipeline</h2>
+<p>The project is a pipeline of 5 notebooks, each calling functions from <code>src/</code>. Notebooks are thin orchestrators; logic lives in scripts.</p>
+<table><thead><tr><th>Notebook</th><th>Purpose</th></tr></thead><tbody><tr><td><code>01_data_preparation.ipynb</code></td><td>Download BABE from HuggingFace, clean, split, save processed parquet</td></tr><tr><td><code>02_data_exploration.ipynb</code></td><td>Class balance, length distributions, vocab stats, sample sentences</td></tr><tr><td><code>03_fine_tuning.ipynb</code></td><td>Tokenize, fine-tune RoBERTa-base with HF Trainer, log to W&amp;B</td></tr><tr><td><code>04_evaluation.ipynb</code></td><td>5-fold CV scores, confusion matrix, error analysis</td></tr><tr><td><code>05_final_report.ipynb</code></td><td>Final plots and comparison table vs published baselines</td></tr></tbody></table>
+<p>Run notebooks in order. Each is idempotent — re-running won't break the next.</p>
+<p>For model release, use <code>notebooks/huggingface_upload.ipynb</code>. It is intentionally separate from the numbered pipeline above and only prepares/uploads the final Hugging Face checkpoint.</p>
+<h2>Project structure</h2>
+<pre><code>.
+├── src/                    # importable Python package
+│   ├── config.py           # paths, hyperparameters, constants
+│   ├── data.py             # dataset loading, splits, preprocessing
+│   ├── model.py            # model + tokenizer factory
+│   ├── train.py            # training loop wrapper
+│   ├── evaluate.py         # metrics, k-fold CV
+│   └── viz.py              # plotting helpers
+├── notebooks/              # pipeline notebooks (01 → 05) + separate HF upload notebook
+├── data/
+│   ├── raw/                # untouched HF download
+│   └── processed/          # cleaned parquet splits
+├── models/                 # saved checkpoints
+├── results/                # metrics, plots, error analysis
+├── requirements.txt
+└── README.md</code></pre>
+<h2>Setup</h2>
+<pre><code class="language-bash">python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt</code></pre>
+<p>If you have a GPU, install the matching <code>torch</code> build first. CPU works but training will be slow — Colab / Kaggle recommended for <code>03_fine_tuning.ipynb</code>.</p>
+<h2>Data</h2>
+<p>BABE is loaded from HuggingFace: <code>mediabiasgroup/BABE</code>. The dataset is publicly licensed for research use; see the dataset card on HF for details. No raw data is committed to git.</p>
+<h2>Reproducibility</h2>
+<ul><li>Fixed seeds (<code>src/config.SEED = 42</code>)</li><li>Pinned dependency versions in <code>requirements.txt</code></li><li>Processed splits saved as parquet so notebooks 02–05 don't re-download</li><li>Final model published to HuggingFace Hub: <code>vulonviing/roberta-babe-baseline</code> (after run)</li></ul>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>

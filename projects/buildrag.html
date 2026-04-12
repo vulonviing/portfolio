@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>BuildRAG — Emrecan Ulu</title>
+  <meta name="description" content="A local, production-ready RAG workspace built with Streamlit, Ollama, and Chroma for document-grounded chat with source citations." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="BuildRAG, projects by Emrecan Ulu, RAG, Streamlit, Ollama, Chroma" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/projects/buildrag.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="BuildRAG — Emrecan Ulu" />
+  <meta property="og:description" content="A local, production-ready RAG workspace built with Streamlit, Ollama, and Chroma for document-grounded chat with source citations." />
+  <meta property="og:url" content="https://emrecanulu.com/projects/buildrag.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="BuildRAG — Emrecan Ulu" />
+  <meta name="twitter:description" content="A local, production-ready RAG workspace built with Streamlit, Ollama, and Chroma for document-grounded chat with source citations." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "BuildRAG",
+  "description": "A local, production-ready RAG workspace built with Streamlit, Ollama, and Chroma for document-grounded chat with source citations.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/projects/buildrag.html",
+  "url": "https://emrecanulu.com/projects/buildrag.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "RAG",
+    "Streamlit",
+    "Ollama",
+    "Chroma"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="projects">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/projects.html">Projects</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/ragchat" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Projects · 2025</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>BuildRAG</h1>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2c66433e-beb5-43aa-ab26-11dbbc77dd68" width="1200">
+</p>
+<p><strong>BuildRAG</strong> is a local, production-ready <strong>Retrieval-Augmented Generation (RAG)</strong> workspace built with <strong>Streamlit</strong>, <strong>Ollama</strong>, and <strong>Chroma</strong>.</p>
+<p>It lets you upload documents, index them locally, and chat with an LLM that answers questions <strong>grounded in your own data</strong>, with sources.</p>
+<h2>✨ Features</h2>
+<ul><li>📂 Upload &amp; manage PDF / TXT / MD documents</li><li>🧠 Local vector database with Chroma</li><li>🔍 Multiple retrieval modes (similarity, MMR, score threshold)</li><li>💬 Chat interface with source citations</li><li>🛠️ Debug mode to inspect retrieved chunks</li><li>🔒 Fully local (Ollama-powered LLM &amp; embeddings)</li></ul>
+<h2>🏗️ Tech Stack</h2>
+<ul><li><strong>UI:</strong> Streamlit</li><li><strong>LLM:</strong> Ollama (e.g. llama3.1)</li><li><strong>Embeddings:</strong> nomic-embed-text</li><li><strong>Vector DB:</strong> Chroma</li></ul>
+<h2>📦 Installation</h2>
+<pre><code class="language-bash">python -m venv .venv
+source .venv/bin/activate
+
+pip install -r requirements.txt
+
+ollama serve
+streamlit run app.py</code></pre>
+<h2>🚀 Run</h2>
+<pre><code class="language-bash">ollama serve
+streamlit run app.py</code></pre>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>
