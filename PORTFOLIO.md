@@ -2,6 +2,7 @@
 
 A static portfolio in plain HTML, CSS, and a tiny bit of JS.
 Markdown drives the generated detail pages for Projects and Research.
+Project entries can also be synced automatically from GitHub READMEs.
 
 Live at <https://emrecanulu.com>.
 
@@ -76,6 +77,50 @@ python3 scripts/build_static_site.py
 ```
 
 Same flow for `content/research/`.
+
+## Auto-sync from GitHub README
+
+If you want a project or research page to mirror the README in its GitHub repo, add
+`content_source` to the matching entry in `content/projects/_index.json` or
+`content/research/_index.json`:
+
+```json
+{
+  "slug": "my-thing",
+  "title": "My Thing",
+  "date": "2026",
+  "excerpt": "One-sentence hook.",
+  "tags": ["Python", "ML"],
+  "repo": "https://github.com/vulonviing/my-thing",
+  "content_source": {
+    "type": "github_readme",
+    "branch": "main",
+    "path": "README.md"
+  }
+}
+```
+
+Then run:
+
+```bash
+python3 scripts/sync_github_readmes.py
+python3 scripts/build_static_site.py
+```
+
+The sync script:
+
+- downloads the configured README from GitHub
+- rewrites relative links and images to absolute GitHub URLs
+- overwrites the matching `content/<section>/<slug>.md`
+
+This repo also includes `.github/workflows/sync-readmes.yml`, which runs hourly and can
+be triggered manually from GitHub Actions. That workflow syncs READMEs, rebuilds the
+static pages, and commits the updated files back to the portfolio repo automatically.
+
+If you want near-instant updates right after a push to a project repo, the same workflow
+also accepts a `repository_dispatch` event with the type `sync-project-readmes`. That
+lets a source repo trigger the portfolio sync immediately after its own `README.md`
+changes.
 
 ## SEO
 

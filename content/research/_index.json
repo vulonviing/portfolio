@@ -5,7 +5,12 @@
     "date": "2026",
     "excerpt": "Reproducing sentence-level media bias classification on BABE. A clean RoBERTa-base fine-tune that beats published baselines at 0.857 macro-F1.",
     "tags": ["RoBERTa", "NLP", "Reproduction"],
-    "repo": "https://github.com/vulonviing/babe-roberta-baseline"
+    "repo": "https://github.com/vulonviing/babe-roberta-baseline",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
   },
   {
     "slug": "mbib-quality-observatory",
@@ -13,7 +18,12 @@
     "date": "2026",
     "excerpt": "An audit of the Media Bias Identification Benchmark — label noise probes, near-duplicate detection, and LLM review across 8 tasks.",
     "tags": ["Benchmarking", "Cleanlab", "LLM Review"],
-    "repo": "https://github.com/vulonviing/mbib-quality-observatory"
+    "repo": "https://github.com/vulonviing/mbib-quality-observatory",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
   },
   {
     "slug": "rec-dating",
@@ -21,7 +31,12 @@
     "date": "2025",
     "excerpt": "A study of the rec-dating dataset as a role-based bipartite network, separating outgoing rating activity from received attention and applying HITS consistently.",
     "tags": ["Networks", "HITS", "Bipartite", "Python"],
-    "repo": "https://github.com/vulonviing/rec-dating-project"
+    "repo": "https://github.com/vulonviing/rec-dating-project",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
   },
   {
     "slug": "community-notes-x-rescue",
@@ -29,6 +44,11 @@
     "date": "2025",
     "excerpt": "Full analytical workflow for a paper on rescuing Community Notes stuck in 'Needs More Ratings' through clustering, rescue simulation, topic modeling, and LLM validation.",
     "tags": ["Community Notes", "Clustering", "Topic Modeling", "LLM"],
-    "repo": "https://github.com/vulonviing/community-notes-x-rescue"
+    "repo": "https://github.com/vulonviing/community-notes-x-rescue",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
   }
 ]
