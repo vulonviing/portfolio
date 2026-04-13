@@ -3,11 +3,9 @@ from __future__ import annotations
 import html
 import json
 import re
-from datetime import datetime
+import sys
 from pathlib import Path
 from typing import Iterable
-
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -123,12 +121,40 @@ def escape_attr(value: str) -> str:
     return html.escape(value, quote=True)
 
 
-def parse_inline(text: str) -> str:
+def restore_placeholders(text: str, placeholders: dict[str, str]) -> str:
+    restored = text
+    for _ in range(len(placeholders) + 1):
+        updated = restored
+        for key, fragment in placeholders.items():
+            updated = updated.replace(key, fragment)
+        if updated == restored:
+            break
+        restored = updated
+    return restored
+
+
+def parse_markdown_destination(destination: str) -> str:
+    trimmed = html.unescape(destination).strip()
+    if not trimmed:
+        return ""
+
+    if trimmed.startswith("<"):
+        end = trimmed.find(">")
+        if end != -1:
+            return trimmed[1:end].strip()
+
+    match = re.match(r"(\S+)", trimmed)
+    if match:
+        return match.group(1)
+    return trimmed
+
+
+def render_text_spans(text: str) -> str:
     escaped = html.escape(text, quote=False)
     placeholders: dict[str, str] = {}
 
     def stash(fragment: str) -> str:
-        key = f"@@INLINE_{len(placeholders)}@@"
+        key = f"@@SPAN_{len(placeholders)}@@"
         placeholders[key] = fragment
         return key
 
@@ -137,26 +163,43 @@ def parse_inline(text: str) -> str:
         lambda match: stash(f"<code>{match.group(1)}</code>"),
         escaped,
     )
-    escaped = re.sub(
+    escaped = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", escaped)
+    escaped = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", escaped)
+    return restore_placeholders(escaped, placeholders)
+
+
+def parse_inline(text: str) -> str:
+    placeholders: dict[str, str] = {}
+
+    def stash(fragment: str) -> str:
+        key = f"@@INLINE_{len(placeholders)}@@"
+        placeholders[key] = fragment
+        return key
+
+    text = re.sub(
         r"!\[([^\]]*)\]\(([^)]+)\)",
         lambda match: stash(
-            f'<img src="{escape_attr(match.group(2).strip())}" alt="{escape_attr(match.group(1).strip())}" loading="lazy" />'
+            f'<img src="{escape_attr(parse_markdown_destination(match.group(2)))}" '
+            f'alt="{escape_attr(match.group(1).strip())}" loading="lazy" />'
         ),
-        escaped,
+        text,
     )
     escaped = re.sub(
         r"\[([^\]]+)\]\(([^)]+)\)",
         lambda match: stash(
-            f'<a href="{escape_attr(match.group(2).strip())}">{match.group(1)}</a>'
+            f'<a href="{escape_attr(parse_markdown_destination(match.group(2)))}">'
+            f"{render_text_spans(match.group(1))}</a>"
         ),
-        escaped,
+        text,
     )
-    escaped = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", escaped)
-    escaped = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", escaped)
+    return restore_placeholders(render_text_spans(escaped), placeholders)
 
-    for key, fragment in placeholders.items():
-        escaped = escaped.replace(key, fragment)
-    return escaped
+
+def write_text_if_changed(path: Path, content: str) -> bool:
+    if path.exists() and path.read_text(encoding="utf-8") == content:
+        return False
+    path.write_text(content, encoding="utf-8")
+    return True
 
 
 def split_table_row(line: str) -> list[str]:
@@ -525,7 +568,7 @@ def build_list_pages() -> None:
             keywords=config["keywords"],
             og_description=config["og_description"],
         )
-        (ROOT / f"{section}.html").write_text(page, encoding="utf-8")
+        write_text_if_changed(ROOT / f"{section}.html", page)
 
 
 def render_entry_main(section: str, item: dict, content_html: str) -> str:
@@ -566,8 +609,7 @@ def generate_entry_pages() -> list[tuple[str, Path]]:
         items = load_index(section)
         output_dir = ROOT / section
         output_dir.mkdir(exist_ok=True)
-        for existing in output_dir.glob("*.html"):
-            existing.unlink()
+        expected_files: set[str] = set()
 
         for item in items:
             markdown_path = ROOT / "content" / section / f'{item["slug"]}.md'
@@ -588,8 +630,12 @@ def generate_entry_pages() -> list[tuple[str, Path]]:
                 keywords=keywords,
             )
             output_path = output_dir / f'{item["slug"]}.html'
-            output_path.write_text(page, encoding="utf-8")
+            write_text_if_changed(output_path, page)
+            expected_files.add(output_path.name)
             generated.append((canonical_url, markdown_path))
+        for existing in output_dir.glob("*.html"):
+            if existing.name not in expected_files:
+                existing.unlink()
     return generated
 
 
@@ -603,24 +649,23 @@ def build_sitemap(entry_sources: list[tuple[str, Path]]) -> None:
     pages.extend((url, source, "0.6") for url, source in entry_sources)
 
     chunks = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for url, source, priority in pages:
-        lastmod = source.stat().st_mtime
-        date = datetime.fromtimestamp(lastmod).date().isoformat()
+    for url, _source, priority in pages:
         chunks.extend(
             [
                 "  <url>",
                 f"    <loc>{html.escape(url)}</loc>",
-                f"    <lastmod>{date}</lastmod>",
                 "    <changefreq>monthly</changefreq>",
                 f"    <priority>{priority}</priority>",
                 "  </url>",
             ]
         )
     chunks.append("</urlset>")
-    (ROOT / "sitemap.xml").write_text("\n".join(chunks) + "\n", encoding="utf-8")
+    write_text_if_changed(ROOT / "sitemap.xml", "\n".join(chunks) + "\n")
 
 
-def load_font(size: int, *, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+def load_font(size: int, *, bold: bool = False):
+    from PIL import ImageFont
+
     if bold:
         candidates = [
             ("/System/Library/Fonts/Helvetica.ttc", 1),
@@ -649,6 +694,8 @@ def load_font(size: int, *, bold: bool = False) -> ImageFont.FreeTypeFont | Imag
 
 
 def build_og_cover() -> None:
+    from PIL import Image, ImageDraw, ImageFilter
+
     width, height = 1200, 630
     base = Image.new("RGBA", (width, height), "#0c0f14")
     draw = ImageDraw.Draw(base)
@@ -699,12 +746,22 @@ def build_og_cover() -> None:
     base.convert("RGB").save(output_path, format="PNG", optimize=True)
 
 
-def main() -> None:
+def main(argv: list[str]) -> int:
+    refresh_og_cover = False
+    if argv:
+        if argv == ["--refresh-og-cover"]:
+            refresh_og_cover = True
+        else:
+            print("Usage: python scripts/build_static_site.py [--refresh-og-cover]", file=sys.stderr)
+            return 2
+
     build_list_pages()
     entry_sources = generate_entry_pages()
     build_sitemap(entry_sources)
-    build_og_cover()
+    if refresh_og_cover:
+        build_og_cover()
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main(sys.argv[1:]))
