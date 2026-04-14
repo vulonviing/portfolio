@@ -19,6 +19,7 @@ export default function Voices() {
   const { t } = useLang();
   const [doubters, setDoubters] = useState([]);
   const [revealed, setRevealed] = useState(false);
+  const [quoteReady, setQuoteReady] = useState(false);
   const doubterLines = t.voices.doubters;
 
   const remainingIndices = useMemo(
@@ -32,6 +33,7 @@ export default function Voices() {
   const handleSummon = () => {
     if (revealed) return;
     if (doubters.length >= MAX_DOUBTERS) {
+      setQuoteReady(false);
       setRevealed(true);
       return;
     }
@@ -48,8 +50,10 @@ export default function Voices() {
   };
 
   const handleReset = () => {
+    if (!quoteReady) return;
     setDoubters([]);
     setRevealed(false);
+    setQuoteReady(false);
   };
 
   return (
@@ -83,7 +87,10 @@ export default function Voices() {
         {revealed && (
           <div className="terim">
             <span className="terim__halo" aria-hidden="true" />
-            <blockquote className="terim__quote">
+            <blockquote
+              className="terim__quote"
+              onAnimationEnd={() => setQuoteReady(true)}
+            >
               {t.voices.terimQuote.part1}{' '}
               <span className="terim__dark">{t.voices.terimQuote.dark}</span>{' '}
               {t.voices.terimQuote.part2}{' '}
@@ -115,6 +122,7 @@ export default function Voices() {
             type="button"
             className="voices__button voices__button--ghost"
             onClick={handleReset}
+            disabled={!quoteReady}
           >
             {t.voices.reset}
           </button>

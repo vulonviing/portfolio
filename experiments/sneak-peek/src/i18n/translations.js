@@ -122,7 +122,7 @@ export const translations = {
     footer: {
       title: 'The Interactive Phenomenology of Winning',
       text:
-        'Fatih Terim’in mücadele anlayışı etrafında, zaman, momentum ve vazgeçmeme üzerine interaktif bir deneyim.',
+        'Mücadele anlayışı etrafında, zaman, momentum ve vazgeçmeme üzerine interaktif bir deneyim.',
       tagline: 'Kaybetmek mümkündür. Vazgeçmek zorunlu değildir.',
     },
     intro: {
@@ -376,7 +376,7 @@ export const translations = {
     footer: {
       title: 'The Interactive Phenomenology of Winning',
       text:
-        "An interactive experience built around Fatih Terim's idea of struggle — on time, momentum, and refusing to surrender.",
+        'An interactive experience built around a philosophy of struggle — about time, momentum, and refusing to surrender.',
       tagline: 'Losing is possible. Surrendering is not required.',
     },
     intro: {
@@ -631,7 +631,7 @@ export const translations = {
     footer: {
       title: 'The Interactive Phenomenology of Winning',
       text:
-        'Ein interaktives Erlebnis rund um Fatih Terims Kampfverständnis — über Zeit, Momentum und den Willen, nicht aufzugeben.',
+        'Ein interaktives Erlebnis rund um eine Philosophie des Kampfes — über Zeit, Momentum und den Willen, nicht aufzugeben.',
       tagline: 'Verlieren ist möglich. Aufgeben ist nicht notwendig.',
     },
     intro: {
@@ -885,7 +885,7 @@ export const translations = {
     footer: {
       title: 'The Interactive Phenomenology of Winning',
       text:
-        'Une expérience interactive autour de la conception de la lutte chez Fatih Terim — sur le temps, l’élan et le refus de renoncer.',
+        'Une expérience interactive autour d’une philosophie de la lutte — sur le temps, l’élan et le refus de renoncer.',
       tagline: 'Perdre est possible. Renoncer n’est pas obligatoire.',
     },
     intro: {
