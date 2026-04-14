@@ -84,7 +84,7 @@ export const translations = {
       title: 'Konuşanlar',
       lede:
         'Sahaya çıkmayan herkesin bir sözü vardır. Ekrana dokun — etrafını saran sesler birer birer konuşsun. Son sözü kimin söyleyeceğine bakalım.',
-      hint: 'Başlamak için dokun.',
+      hint: 'Başlamak için aşağıdaki düğmeye dokun.',
       button: {
         start: 'Bir ses çağır',
         more: 'Bir ses daha',
@@ -338,7 +338,7 @@ export const translations = {
       title: 'The Speakers',
       lede:
         "Everyone who isn't on the pitch has a word to say. Tap the screen — let the voices around you speak one by one. Let's see who gets the last word.",
-      hint: 'Tap to begin.',
+      hint: 'Tap the button below.',
       button: {
         start: 'Summon a voice',
         more: 'One more voice',
@@ -593,7 +593,7 @@ export const translations = {
       title: 'Die Stimmen',
       lede:
         'Jeder, der nicht auf dem Platz steht, hat etwas zu sagen. Tippe auf den Bildschirm — lass die Stimmen um dich herum eine nach der anderen sprechen. Mal sehen, wer das letzte Wort hat.',
-      hint: 'Zum Starten tippen.',
+      hint: 'Tippe auf die Taste unten.',
       button: {
         start: 'Eine Stimme rufen',
         more: 'Eine Stimme mehr',
@@ -847,7 +847,7 @@ export const translations = {
       title: 'Les Voix',
       lede:
         'Chacun qui n’est pas sur le terrain a un mot à dire. Touche l’écran — laisse les voix qui t’entourent parler une à une. On verra qui aura le dernier mot.',
-      hint: 'Touche pour commencer.',
+      hint: 'Touche le bouton ci-dessous.',
       button: {
         start: 'Appeler une voix',
         more: 'Une voix de plus',

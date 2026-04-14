@@ -102,7 +102,10 @@ export default function Voices() {
         )}
 
         {!doubters.length && !revealed && (
-          <div className="voices__hint">{t.voices.hint}</div>
+          <div className="voices__hint" aria-hidden="true">
+            <span className="voices__hint-label">{t.voices.hint}</span>
+            <span className="voices__hint-arrow" />
+          </div>
         )}
       </div>
 
