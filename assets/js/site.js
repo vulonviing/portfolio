@@ -12,6 +12,36 @@ function setYear() {
   });
 }
 
+function injectSneakPeekTeaser() {
+  if (document.querySelector("[data-sneak-peek-teaser]")) return;
+
+  const footer = document.querySelector(".site-footer");
+  if (!footer) return;
+
+  const footerLinks = footer.querySelectorAll("a");
+  const mediumLink = Array.from(footerLinks).find((link) =>
+    link.href.includes("medium.com/@emrecanulu"),
+  );
+
+  if (!mediumLink) return;
+
+  const teaser = document.createElement("a");
+  teaser.href = "/sneak-peek/";
+  teaser.className = "site-footer__sneak-peek";
+  teaser.dataset.sneakPeekTeaser = "true";
+  teaser.setAttribute("aria-label", "Open the Sneak Peek experience");
+  teaser.setAttribute("title", "Open Sneak Peek");
+  teaser.setAttribute("rel", "nofollow");
+  teaser.innerHTML = `
+    <span class="site-footer__sneak-peek-label">
+      <span class="site-footer__sneak-peek-word site-footer__sneak-peek-word--gold">Sneak</span>
+      <span class="site-footer__sneak-peek-word site-footer__sneak-peek-word--ember">Peek</span>
+    </span>
+  `;
+
+  mediumLink.insertAdjacentElement("afterend", teaser);
+}
+
 const THEME_KEY = "theme-preference";
 const themeMedia = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -95,4 +125,5 @@ document.addEventListener("DOMContentLoaded", () => {
   highlightNav();
   setYear();
   setupThemeToggle();
+  injectSneakPeekTeaser();
 });

@@ -1,0 +1,139 @@
+.nav {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  transition: backdrop-filter 0.2s ease, background 0.25s ease,
+    border-color 0.25s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.nav--scrolled {
+  background: rgba(5, 8, 22, 0.75);
+  backdrop-filter: saturate(140%) blur(10px);
+  border-bottom-color: var(--border-soft);
+}
+
+.nav__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+.nav__logo-mark {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+  transform: rotate(45deg);
+}
+
+.nav__links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0 auto 0 8px;
+  padding: 0;
+}
+
+.nav__links a {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  position: relative;
+  padding: 6px 2px;
+  transition: color 0.18s ease;
+}
+
+.nav__links a:hover {
+  color: var(--text-primary);
+}
+
+.nav__links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: right 0.25s ease;
+}
+
+.nav__links a:hover::after {
+  right: 0;
+}
+
+.nav__meta {
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  opacity: 0.65;
+}
+
+.nav__aux {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav__back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color 0.18s ease, border-color 0.18s ease,
+    background 0.18s ease, transform 0.18s ease;
+}
+
+.nav__back:hover {
+  color: var(--text-primary);
+  border-color: rgba(255, 180, 0, 0.28);
+  background: rgba(255, 180, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 780px) {
+  .nav__links {
+    display: none;
+  }
+
+  .nav__aux {
+    margin-left: auto;
+  }
+
+  .nav__meta {
+    display: none;
+  }
+
+  .nav__back {
+    min-height: 30px;
+    padding: 0 10px;
+    letter-spacing: 0.12em;
+  }
+}

@@ -1,0 +1,237 @@
+.time-toggle {
+  padding: 40px 0;
+  --phase-base: #1a2033;
+  --phase-accent: #ffb400;
+  --phase-accent-soft: #ffd97a;
+  transition: background 0.6s ease;
+}
+
+.time-toggle__tabs {
+  display: flex;
+  gap: 10px;
+  margin: 28px 0 28px;
+  flex-wrap: wrap;
+}
+
+.time-toggle__tab {
+  flex: 1 1 180px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: 10px;
+  text-align: left;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.time-toggle__tab:hover {
+  color: var(--text-primary);
+  border-color: var(--phase-accent);
+}
+
+.time-toggle__tab--active {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0)
+  );
+  border-color: var(--phase-accent);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 1px var(--phase-accent) inset,
+    0 18px 40px -20px var(--phase-accent);
+}
+
+.time-toggle__tab-min {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--phase-accent);
+}
+
+.time-toggle__tab-label {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.time-toggle__stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 40px;
+  border-radius: 16px;
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0) 50%
+    ),
+    var(--phase-base);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: background 0.7s ease, border-color 0.7s ease;
+}
+
+.time-toggle__glow {
+  position: absolute;
+  inset: auto -10% -40% -10%;
+  height: 60%;
+  background: radial-gradient(
+    ellipse at 50% 100%,
+    var(--phase-accent) 0%,
+    transparent 60%
+  );
+  opacity: 0.22;
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+.time-toggle__clock {
+  display: flex;
+  justify-content: center;
+}
+
+.time-toggle__body {
+  position: relative;
+  z-index: 1;
+}
+
+.time-toggle__mood {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.time-toggle__mood em {
+  font-style: normal;
+  color: var(--phase-accent);
+}
+
+.time-toggle__headline {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 14px;
+  color: var(--text-primary);
+}
+
+.time-toggle__text {
+  color: var(--text-secondary);
+  max-width: 60ch;
+  margin-bottom: 22px;
+}
+
+.time-toggle__quote {
+  margin: 0;
+  padding: 16px 20px;
+  border-left: 3px solid var(--phase-accent);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-primary);
+  font-style: italic;
+  font-size: 1.02rem;
+  letter-spacing: 0.005em;
+}
+
+/* Clock */
+.clock {
+  position: relative;
+  width: 220px;
+  height: 220px;
+}
+
+.clock__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.clock__tick {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.18);
+  transform-origin: 50% 110px;
+}
+
+.clock__tick--major {
+  height: 14px;
+  background: var(--phase-accent);
+}
+
+.clock__hand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 95px;
+  background: var(--phase-accent);
+  transform-origin: 50% 100%;
+  box-shadow: 0 0 14px var(--phase-accent);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  margin: -95px 0 0 -1px;
+}
+
+.clock__center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--phase-accent);
+  box-shadow: 0 0 20px var(--phase-accent);
+}
+
+.clock__readout {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -40px;
+  text-align: center;
+  font-family: var(--font-heading);
+  letter-spacing: 0.1em;
+}
+
+.clock__minute {
+  font-size: 2.2rem;
+  color: var(--phase-accent);
+}
+
+.clock__suffix {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-left: 6px;
+}
+
+@media (max-width: 820px) {
+  .time-toggle__stage {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+  .clock {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto;
+  }
+  .clock__tick {
+    transform-origin: 50% 90px;
+  }
+  .clock__hand {
+    height: 80px;
+    margin: -80px 0 0 -1px;
+  }
+}

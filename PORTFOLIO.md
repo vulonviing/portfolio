@@ -16,6 +16,13 @@ python3 -m http.server 8000
 
 Then open <http://localhost:8000>.
 
+To work on the Sneak Peek experiment source:
+
+```bash
+cd experiments/sneak-peek
+npm run dev
+```
+
 ## File map
 
 ```
@@ -33,6 +40,9 @@ Then open <http://localhost:8000>.
 ├── sitemap.xml             SEO sitemap
 ├── scripts/build_static_site.py
 │                           Generates static detail pages and sitemap
+├── sneak-peek/             Built static output for the Sneak Peek experiment
+├── experiments/
+│   └── sneak-peek/         React/Vite source for the Sneak Peek experiment
 │
 ├── assets/
 │   ├── css/

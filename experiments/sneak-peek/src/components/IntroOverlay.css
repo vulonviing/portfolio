@@ -1,0 +1,240 @@
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  animation: intro-in 0.5s ease both;
+}
+
+.intro--closing {
+  animation: intro-out 0.5s ease both;
+}
+
+.intro__backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      600px 400px at 50% 40%,
+      rgba(255, 180, 0, 0.22),
+      transparent 60%
+    ),
+    radial-gradient(
+      800px 500px at 20% 80%,
+      rgba(179, 18, 55, 0.25),
+      transparent 60%
+    ),
+    rgba(2, 3, 10, 0.85);
+  backdrop-filter: blur(18px) saturate(130%);
+}
+
+.intro__card {
+  position: relative;
+  width: min(560px, 100%);
+  padding: 40px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0) 60%
+    ),
+    rgba(11, 16, 40, 0.92);
+  box-shadow: 0 50px 120px -40px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 180, 0, 0.08) inset;
+  text-align: left;
+}
+
+.intro__eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+
+.intro__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  color: var(--text-primary);
+}
+
+.intro__text {
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  margin-bottom: 20px;
+  max-width: 52ch;
+}
+
+.intro__language {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.intro__language-label {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.intro__actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.intro__btn {
+  flex: 1 1 180px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 22px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.intro__btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.intro__btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.intro__btn--primary {
+  background: var(--accent);
+  color: var(--bg-deep);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(255, 180, 0, 0.35),
+    0 16px 40px -14px rgba(255, 180, 0, 0.6);
+}
+
+.intro__btn--primary:hover:not(:disabled) {
+  color: var(--bg-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(255, 180, 0, 0.55),
+    0 22px 50px -12px rgba(255, 180, 0, 0.75);
+}
+
+.intro__btn-icon {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 14px;
+}
+
+.intro__btn-icon span {
+  width: 3px;
+  background: currentColor;
+  border-radius: 1px;
+  animation: intro-bars 0.9s ease-in-out infinite;
+}
+
+.intro__btn-icon span:nth-child(1) {
+  height: 60%;
+  animation-delay: -0.2s;
+}
+.intro__btn-icon span:nth-child(2) {
+  height: 100%;
+  animation-delay: -0.5s;
+}
+.intro__btn-icon span:nth-child(3) {
+  height: 40%;
+  animation-delay: -0.8s;
+}
+
+.intro__hint {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--text-secondary);
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+@keyframes intro-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes intro-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes intro-bars {
+  0%,
+  100% {
+    transform: scaleY(0.4);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.intro__card {
+  animation: intro-card-in 0.6s 0.05s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.intro--closing .intro__card {
+  animation: intro-card-out 0.4s ease both;
+}
+
+@keyframes intro-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes intro-card-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+@media (max-width: 480px) {
+  .intro__card {
+    padding: 28px 22px;
+  }
+}
