@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>AI Best Practices — Emrecan Ulu</title>
+  <meta name="description" content="A distilled, practical reference for working effectively with AI — concept deep-dives, prompt patterns, a drop-in project checker, and a starter template, summarized from 10 Anthropic courses and mirrored in English and Turkish." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="AI Best Practices, projects by Emrecan Ulu, Prompt Engineering, Claude Code, MCP, Agent Skills, Guide" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/projects/ai-best-practices.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="AI Best Practices — Emrecan Ulu" />
+  <meta property="og:description" content="A distilled, practical reference for working effectively with AI — concept deep-dives, prompt patterns, a drop-in project checker, and a starter template, summarized from 10 Anthropic courses and mirrored in English and Turkish." />
+  <meta property="og:url" content="https://emrecanulu.com/projects/ai-best-practices.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AI Best Practices — Emrecan Ulu" />
+  <meta name="twitter:description" content="A distilled, practical reference for working effectively with AI — concept deep-dives, prompt patterns, a drop-in project checker, and a starter template, summarized from 10 Anthropic courses and mirrored in English and Turkish." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "AI Best Practices",
+  "description": "A distilled, practical reference for working effectively with AI — concept deep-dives, prompt patterns, a drop-in project checker, and a starter template, summarized from 10 Anthropic courses and mirrored in English and Turkish.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/projects/ai-best-practices.html",
+  "url": "https://emrecanulu.com/projects/ai-best-practices.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "Prompt Engineering",
+    "Claude Code",
+    "MCP",
+    "Agent Skills",
+    "Guide"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="projects">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/projects.html">Projects</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/ai-best-practices" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Projects · 2026</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>AI Best Practices -- A Practical Guide from Anthropic Courses</h1>
+<p><strong>Language:</strong> English | <a href="https://github.com/vulonviing/ai-best-practices/blob/main/tr/README.md">Turkish</a></p>
+<p>This repo is a distilled summary of 10 courses from Anthropic's <a href="https://anthropic.skilljar.com/">Skilljar</a> training platform. The goal is not to pile up theory; it is to give someone who wants to use AI <strong>better than average, without spending hours watching videos</strong> a consistent, practical reference they can keep close.</p>
+<h2>What Is This Repo Based On?</h2>
+<p>The concepts were extracted from notes across these 10 courses:</p>
+<table><thead><tr><th>Course</th><th>What It Teaches</th></tr></thead><tbody><tr><td><strong>AI Capabilities and Limitations</strong></td><td>How models work (next-token prediction), what they cannot do (hallucination, knowledge cutoff, working memory), and how to diagnose which mechanism caused a mistake.</td></tr><tr><td><strong>AI Fluency Framework and Foundations</strong></td><td>The 4D Framework: Delegation, Description, Discernment, Diligence. A universal frame for responsible, effective AI work.</td></tr><tr><td><strong>Claude 101</strong></td><td>Claude's core capabilities: Projects, Artifacts, Connectors, Research mode, custom instructions, memory.</td></tr><tr><td><strong>Claude Code 101</strong></td><td>The agentic loop in the terminal: explore -&gt; plan -&gt; code -&gt; commit. CLAUDE.md, context management, plan mode.</td></tr><tr><td><strong>Claude Code in Action</strong></td><td>Claude Code in real projects: MCP server setup, UI testing with Playwright, GitHub Actions, hooks, SDK.</td></tr><tr><td><strong>Introduction to Claude Cowork</strong></td><td>Cowork as a delegation environment that handles files, scheduled tasks, and plugins.</td></tr><tr><td><strong>Introduction to agent skills</strong></td><td>Skills: reusable, automatically triggered instruction packages built around SKILL.md.</td></tr><tr><td><strong>Introduction to subagents</strong></td><td>Subagents: specialized helpers that run in a separate context without polluting the main chat.</td></tr><tr><td><strong>Introduction to Model Context Protocol</strong></td><td>MCP fundamentals: tools, resources, prompts, and client-server architecture.</td></tr><tr><td><strong>Model Context Protocol Advanced Topics</strong></td><td>Sampling, logging, transport (stdio / HTTP / streamable), roots, progress notifications.</td></tr></tbody></table>
+<h2>Language Structure</h2>
+<p>The main repository structure is English. Turkish is kept as an optional mirrored version under <a href="https://github.com/vulonviing/ai-best-practices/blob/main/tr"><code>tr/</code></a>:</p>
+<ul><li>English entry point: <a href="https://github.com/vulonviing/ai-best-practices/blob/main/README.md"><code>README.md</code></a></li><li>Turkish entry point: <a href="https://github.com/vulonviing/ai-best-practices/blob/main/tr/README.md"><code>tr/README.md</code></a></li><li>English docs stay in the root folders: <a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts"><code>concepts/</code></a>, <a href="https://github.com/vulonviing/ai-best-practices/blob/main/checker"><code>checker/</code></a>, <a href="https://github.com/vulonviing/ai-best-practices/blob/main/starter-template"><code>starter-template/</code></a></li><li>Turkish docs mirror the same structure under <a href="https://github.com/vulonviing/ai-best-practices/blob/main/tr"><code>tr/</code></a></li></ul>
+<h2>How To Use This Repo</h2>
+<p>There are three layers:</p>
+<ol><li><strong>Skimmable:</strong> <a href="https://github.com/vulonviing/ai-best-practices/blob/main/how-to-write-better.md">how-to-write-better.md</a> -- all concepts in one file, with real-world examples, without going too deep. Read it over a tea break.</li><li><strong>Detailed:</strong> <a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts">concepts/</a> -- focused documents for each concept, deep enough without drowning you.</li><li><strong>Applied:</strong></li></ol>
+<ul><li><a href="https://github.com/vulonviing/ai-best-practices/blob/main/checker">checker/</a> -- a drop-in folder that audits an existing project against AI best practices.</li><li><a href="https://github.com/vulonviing/ai-best-practices/blob/main/starter-template">starter-template/</a> -- a fill-in template for starting a new project from zero.</li></ul>
+<h2>Navigator</h2>
+<h3>Quick Start</h3>
+<ul><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/how-to-write-better.md">how-to-write-better.md</a></strong> -- A skimmable walkthrough of all concepts + examples</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/prompt-examples.md">prompt-examples.md</a></strong> -- Real-world prompt + follow-up examples you can copy and adapt</li></ul>
+<h3>Concept Deep Dives</h3>
+<ul><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/prompt-engineering.md">concepts/prompt-engineering.md</a></strong> -- Prompt writing, few-shot examples, chain-of-thought, XML tagging</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/4d-framework.md">concepts/4d-framework.md</a></strong> -- Delegation, Description, Discernment, Diligence</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/ai-capabilities-and-limits.md">concepts/ai-capabilities-and-limits.md</a></strong> -- What models actually do, hallucination, context windows</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/context-management.md">concepts/context-management.md</a></strong> -- Managing the context window well: compact, clear, @file</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/claude-md.md">concepts/claude-md.md</a></strong> -- CLAUDE.md: how to write project memory</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/skills.md">concepts/skills.md</a></strong> -- Agent Skills: SKILL.md, frontmatter, progressive disclosure</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/subagents.md">concepts/subagents.md</a></strong> -- When to use subagents, and when not to</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/mcp.md">concepts/mcp.md</a></strong> -- Model Context Protocol: tools, resources, transport</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/hooks.md">concepts/hooks.md</a></strong> -- Automation with pre/post-tool-use hooks</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/slash-commands.md">concepts/slash-commands.md</a></strong> -- Custom slash commands</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/modes-chat-cowork-code.md">concepts/modes-chat-cowork-code.md</a></strong> -- Which mode fits which job</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/projects-and-memory.md">concepts/projects-and-memory.md</a></strong> -- Projects, Artifacts, memory, custom instructions</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/connectors.md">concepts/connectors.md</a></strong> -- Google Drive, Slack, Gmail integrations</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/file-organization.md">concepts/file-organization.md</a></strong> -- Folder structure and organization for AI-ready projects</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/concepts/workflow-patterns.md">concepts/workflow-patterns.md</a></strong> -- Sustainable workflows, iteration, scheduled tasks</li></ul>
+<h3>Applied</h3>
+<ul><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/checker">checker/</a></strong> -- Audit an existing project</li><li><strong><a href="https://github.com/vulonviing/ai-best-practices/blob/main/starter-template">starter-template/</a></strong> -- Start a new project by filling in the template</li></ul>
+<hr />
+<blockquote><p>This repo is designed as a living document. As the concepts change, the related files should be updated. Each file starts with a short "what this is for / when to read it" section.</p></blockquote>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>

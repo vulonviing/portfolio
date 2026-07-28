@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>PaperHub — Emrecan Ulu</title>
+  <meta name="description" content="A Python package that fetches HuggingFace Daily Papers by date and gives each paper its own concurrent AI summarization agent — a terminal REPL and a Jupyter API across OpenAI, Anthropic, Gemini, and Ollama." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="PaperHub, projects by Emrecan Ulu, Python, CLI, Agents, LLM, HuggingFace, Jupyter" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/projects/paperhub.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="PaperHub — Emrecan Ulu" />
+  <meta property="og:description" content="A Python package that fetches HuggingFace Daily Papers by date and gives each paper its own concurrent AI summarization agent — a terminal REPL and a Jupyter API across OpenAI, Anthropic, Gemini, and Ollama." />
+  <meta property="og:url" content="https://emrecanulu.com/projects/paperhub.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PaperHub — Emrecan Ulu" />
+  <meta name="twitter:description" content="A Python package that fetches HuggingFace Daily Papers by date and gives each paper its own concurrent AI summarization agent — a terminal REPL and a Jupyter API across OpenAI, Anthropic, Gemini, and Ollama." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "PaperHub",
+  "description": "A Python package that fetches HuggingFace Daily Papers by date and gives each paper its own concurrent AI summarization agent — a terminal REPL and a Jupyter API across OpenAI, Anthropic, Gemini, and Ollama.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/projects/paperhub.html",
+  "url": "https://emrecanulu.com/projects/paperhub.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "Python",
+    "CLI",
+    "Agents",
+    "LLM",
+    "HuggingFace",
+    "Jupyter"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="projects">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/projects.html">Projects</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/paperhub" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Projects · 2026</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>PaperHub</h1>
+<p>PaperHub fetches HuggingFace Daily Papers by programmatic date filters, assigns each paper to its own AI summarization agent, and renders Jupyter-friendly summaries by default.</p>
+<p>Two ways to use PaperHub:</p>
+<ol><li><strong>Terminal CLI</strong> (<code>paperhub</code>) — interactive launcher with a REPL interface. <strong>Primary mode.</strong></li><li><strong>Python / Jupyter</strong> — import <code>PaperHub</code> and call <code>hub.run(...)</code> directly.</li></ol>
+<h2>Install</h2>
+<pre><code class="language-bash">pip install paperhub</code></pre>
+<p>Optional provider extras:</p>
+<pre><code class="language-bash">pip install &quot;paperhub[anthropic]&quot;  # adds the Anthropic client
+pip install &quot;paperhub[google]&quot;     # adds the Google Gemini client</code></pre>
+<p>For local models via Ollama, no extra package is needed — install <a href="https://ollama.com">Ollama</a> and pull the model before use:</p>
+<pre><code class="language-bash">ollama pull gemma4:e2b   # ~2 B parameters, fast on CPU
+ollama pull gemma4:e4b   # ~4 B parameters, higher quality</code></pre>
+<h2>Configuration</h2>
+<p>PaperHub reads configuration from shell environment variables and from its own per-user config file. The CLI can save provider keys for you without touching a project-level <code>.env</code> file:</p>
+<pre><code class="language-bash">paperhub set-key openai
+paperhub set-key anthropic
+paperhub set-key google
+paperhub check-llm
+paperhub check-llm ollama     # no key needed — checks local Ollama server
+paperhub api-keys
+paperhub config-path</code></pre>
+<p>Inside the interactive launcher, use <code>/set-key openai</code>. The config file lives under the OS-specific user config directory, for example <code>~/Library/Application Support/paperhub/.env</code> on macOS. Environment variables still override values saved there.</p>
+<p>After <code>set-key</code>, PaperHub immediately sends one tiny request to the selected provider/model and reports whether the key and LLM are working. You can repeat that check later with <code>paperhub check-llm</code> or <code>/check-llm</code>.</p>
+<table><thead><tr><th>Variable</th><th>Purpose</th></tr></thead><tbody><tr><td><code>OPENAI_API_KEY</code></td><td>Default provider key</td></tr><tr><td><code>ANTHROPIC_API_KEY</code></td><td>Optional, used when <code>--provider anthropic</code></td></tr><tr><td><code>GOOGLE_API_KEY</code></td><td>Optional, used when <code>--provider google</code></td></tr><tr><td><code>PAPERHUB_PROVIDER</code></td><td>Override default provider (default: openai)</td></tr><tr><td><code>PAPERHUB_MODEL</code></td><td>Optional global model override</td></tr><tr><td><code>PAPERHUB_OPENAI_MODEL</code></td><td>OpenAI default model (default: gpt-5.4-mini)</td></tr><tr><td><code>PAPERHUB_OPENAI_REASONING_EFFORT</code></td><td>OpenAI reasoning effort (default: medium)</td></tr><tr><td><code>PAPERHUB_ANTHROPIC_MODEL</code></td><td>Anthropic default model (default: claude-sonnet-4-6)</td></tr><tr><td><code>PAPERHUB_GOOGLE_MODEL</code></td><td>Google default model (default: gemini-3-flash-preview)</td></tr><tr><td><code>PAPERHUB_OLLAMA_MODEL</code></td><td>Ollama default model (default: gemma4:e2b)</td></tr><tr><td><code>PAPERHUB_OLLAMA_BASE_URL</code></td><td>Ollama server URL (default: http://localhost:11434/v1)</td></tr><tr><td><code>PAPERHUB_CONCURRENCY</code></td><td>Max concurrent paper agents (default: 5)</td></tr><tr><td><code>PAPERHUB_MAX_PDF_CHARS</code></td><td>Truncation cap for PDF text (default: 60000)</td></tr><tr><td><code>PAPERHUB_CACHE_DIR</code></td><td>Override the on-disk cache location</td></tr><tr><td><code>PAPERHUB_REQUEST_TIMEOUT_S</code></td><td>HTTP request timeout in seconds (default: 30)</td></tr></tbody></table>
+<h2>Terminal CLI (Primary)</h2>
+<p>Start the interactive launcher:</p>
+<pre><code class="language-bash">paperhub</code></pre>
+<p>The launcher opens a REPL with a status dashboard showing the current provider, model, API key state, date range, and top paper count. Use commands to configure and run:</p>
+<pre><code class="language-text">/help
+/status
+/version
+/provider
+/provider openai
+/provider ollama
+/model
+/model gpt-5.4-mini
+/model gpt-4.1-mini
+/model default
+/language
+/language tr
+/date 2026-05
+/date 2026-05-15
+/date 2026-W18
+/date 2026-05-01 2026-05-31
+/top 5
+/concurrency 2
+/metadata
+/run
+/set-key openai
+/keys
+/check-llm
+/check-llm ollama
+/config-path
+/guide
+/api-keys
+/clear-cache
+/clear-cache summaries
+/clear-cache pdfs
+/clear-cache keys openai
+/clear
+/quit</code></pre>
+<h3>Date formats for <code>/date</code></h3>
+<table><thead><tr><th>Example</th><th>Period</th><th>Description</th></tr></thead><tbody><tr><td><code>/date 2026-05</code></td><td>month</td><td>May 2026</td></tr><tr><td><code>/date 2026</code></td><td>year</td><td>Full year 2026</td></tr><tr><td><code>/date 2026-05-15</code></td><td>day</td><td>Single day</td></tr><tr><td><code>/date 2026-W18</code></td><td>week</td><td>ISO week 18 of 2026</td></tr><tr><td><code>/date 2026-05-01 2026-05-31</code></td><td>custom</td><td>Inclusive date range</td></tr></tbody></table>
+<p><code>/metadata</code> fetches HuggingFace paper metadata only and does not call an LLM. If the selected provider key is missing, <code>/run</code> prints setup guidance. <code>/api-keys</code> shows key status and setup help. <code>/check-llm</code> sends a tiny live provider request and confirms that the selected key/model can respond. <code>/clear-cache</code> deletes cached summaries/PDFs, and <code>/clear-cache keys openai</code> removes a saved cloud-provider key from PaperHub's user config.</p>
+<p>CLI startup commands are available without entering the launcher:</p>
+<pre><code class="language-bash">paperhub version
+paperhub set-key openai
+paperhub keys
+paperhub check-llm
+paperhub check-llm ollama
+paperhub api-keys
+paperhub config-path
+paperhub clear-cache summaries
+paperhub clear-cache keys openai</code></pre>
+<p>You can also pass startup flags:</p>
+<pre><code class="language-bash">paperhub --provider anthropic
+paperhub --model claude-sonnet-4-6
+paperhub --provider ollama --model gemma4:e2b
+paperhub --language tr
+paperhub --top-n 10
+paperhub --concurrency 2</code></pre>
+<h2>Python / Jupyter API</h2>
+<pre><code class="language-python">from datetime import date
+from paperhub import PaperHub
+
+# OpenAI — default reasoning model
+hub = PaperHub(provider=&quot;openai&quot;)
+hub.run(period=&quot;month&quot;, year=2026, month=5, top_n=10)
+
+# OpenAI — budget option (standard chat pricing, no reasoning tokens)
+hub = PaperHub(provider=&quot;openai&quot;, model=&quot;gpt-4.1-mini&quot;)
+hub.run(period=&quot;month&quot;, year=2026, month=5, top_n=10)
+
+# Local model via Ollama (no API key required)
+hub = PaperHub(provider=&quot;ollama&quot;, model=&quot;gemma4:e2b&quot;)
+hub.run(period=&quot;month&quot;, year=2026, month=5, top_n=5)
+
+# Single day
+hub.run(period=&quot;day&quot;, year=2026, month=5, day=1, top_n=5)
+
+# ISO week
+hub.run(period=&quot;week&quot;, year=2026, week=18, top_n=5)
+
+# Full year
+hub.run(period=&quot;year&quot;, year=2026, top_n=20)
+
+# Custom range
+hub.run(period=&quot;custom&quot;, start=date(2026, 4, 15), end=date(2026, 4, 30), top_n=15)</code></pre>
+<p><code>run</code> returns a <code>list[PaperSummary]</code>; in non-Jupyter contexts pass <code>display=False</code> and call <code>render_plain</code> yourself if you do not need the Markdown side effect.</p>
+<p>For a step-by-step notebook, open <code>examples/03_jupyter_quickstart.ipynb</code>.</p>
+<h2>Provider Selection</h2>
+<pre><code class="language-python">PaperHub(provider=&quot;openai&quot;)                             # OpenAI default model
+PaperHub(provider=&quot;openai&quot;, model=&quot;gpt-5.4-mini&quot;)       # reasoning model (default)
+PaperHub(provider=&quot;openai&quot;, model=&quot;gpt-4.1-mini&quot;)       # budget: no reasoning tokens
+PaperHub(provider=&quot;anthropic&quot;)                          # Anthropic default model
+PaperHub(provider=&quot;anthropic&quot;, model=&quot;claude-sonnet-4-6&quot;)
+PaperHub(provider=&quot;google&quot;, model=&quot;gemini-3-flash-preview&quot;)
+PaperHub(provider=&quot;ollama&quot;, model=&quot;gemma4:e2b&quot;)         # local — no API key needed
+PaperHub(provider=&quot;ollama&quot;, model=&quot;gemma4:e4b&quot;)         # local — higher quality</code></pre>
+<p>If <code>model</code> is omitted, PaperHub picks the selected provider's default model. Provider-specific config values such as <code>PAPERHUB_OPENAI_MODEL</code> override those defaults. <code>PAPERHUB_MODEL</code> remains available as a global override. OpenAI uses <code>PAPERHUB_OPENAI_REASONING_EFFORT=medium</code> by default; set it to an empty value to let the OpenAI API choose its model default.</p>
+<p>Provider SDKs are imported lazily — installing <code>paperhub</code> includes the OpenAI SDK by default. Anthropic and Google require their optional extras. Ollama uses its native local HTTP API first and falls back to Ollama's OpenAI-compatible endpoint, so no extra Python package is needed beyond the base install.</p>
+<h3>OpenAI model guide</h3>
+<table><thead><tr><th>Model</th><th>Type</th><th>When to use</th></tr></thead><tbody><tr><td><code>gpt-5.4-mini</code> (default)</td><td>Reasoning</td><td>Best quality, uses reasoning tokens</td></tr><tr><td><code>gpt-4.1-mini</code></td><td>Standard chat</td><td>Budget option — lower cost, no reasoning budget</td></tr></tbody></table>
+<h3>Local models via Ollama</h3>
+<p>PaperHub connects to Ollama's OpenAI-compatible endpoint at <code>http://localhost:11434/v1</code> by default. No API key is required.</p>
+<pre><code class="language-bash"># Install Ollama: https://ollama.com
+ollama pull gemma4:e2b    # ~2 B params — good for CPU inference
+ollama pull gemma4:e4b    # ~4 B params — better quality
+
+# Verify before running PaperHub:
+paperhub check-llm ollama</code></pre>
+<p>Override the server URL if Ollama runs on a different host:</p>
+<pre><code class="language-bash">export PAPERHUB_OLLAMA_BASE_URL=http://192.168.1.10:11434/v1</code></pre>
+<h2>Caching</h2>
+<p>PaperHub caches metadata, PDF text, and summaries in the OS-specific user cache directory, for example <code>~/Library/Caches/paperhub/paperhub.sqlite</code> on macOS and <code>~/.cache/paperhub/paperhub.sqlite</code> on Linux. Override with <code>PAPERHUB_CACHE_DIR</code>. Summary entries are keyed by <code>(arxiv_id, model, language)</code>, so swapping models or output language gives you a clean re-run while keeping the PDF download free.</p>
+<p>A second invocation with the same papers and model:</p>
+<ul><li>Reuses the cached PDF text (no arXiv hit, no extraction).</li><li>Reuses the cached summary (no LLM call).</li></ul>
+<h2>Tests, Lint, Typecheck, Build</h2>
+<pre><code class="language-bash">python3 -m pytest          # unit tests, no live network or LLM keys needed
+python3 -m ruff check .
+python3 -m ruff format --check .
+python3 -m mypy src tests
+python3 -m build           # build wheel + sdist</code></pre>
+<p>The unit tests use a fake LLM client and <code>httpx.MockTransport</code>; no real provider keys are required.</p>
+<h2>Project Layout</h2>
+<pre><code>src/paperhub/
+  __init__.py           # PaperHub public API
+  config.py             # Settings (pydantic-settings)
+  models.py             # PaperMeta, PaperSummary, RunRequest
+  dates.py              # period → (start, end)
+  fetchers/             # HF JSON API (default) + HTML fallback
+  pdf/                  # arXiv download + text extraction
+  agents/               # LLMClient protocol + provider clients + PaperAgent
+    openai_client.py    # OpenAI (default, included)
+    anthropic_client.py # Anthropic (optional extra)
+    google_client.py    # Google Gemini (optional extra)
+    ollama_client.py    # Ollama local models (no extra needed)
+  orchestrator.py       # asyncio.Semaphore parallelism
+  cache.py              # SQLite cache
+  formatter.py          # Markdown / plain-text rendering
+  interactive_cli.py    # `paperhub` interactive launcher
+tests/                  # pytest suite, mocked HTTP and fake LLM
+docs/ARCHITECTURE.md
+docs/HOW_TO_START.md
+docs/API_KEYS.md
+examples/README.md
+examples/03_jupyter_quickstart.ipynb</code></pre>
+<h2>Troubleshooting</h2>
+<ul><li><em>"No papers found"</em>: HuggingFace may not yet have published Daily Papers</li></ul>
+<p>for that date. Use <code>/metadata</code> in the interactive launcher to check the fetcher without an LLM call.</p>
+<ul><li><em>PDF text comes back tiny</em>: some arXiv PDFs use unusual layouts. PaperHub</li></ul>
+<p>falls back to <code>pdfplumber</code>; if both extractors are short, the agent will pass through the abstract as the input text instead of failing.</p>
+<ul><li><em>Ollama connection error</em>: make sure Ollama is running (<code>ollama serve</code>) and</li></ul>
+<p>the model is pulled (<code>ollama pull gemma4:e2b</code>). Run <code>paperhub check-llm ollama</code> to verify before starting a full run.</p>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>

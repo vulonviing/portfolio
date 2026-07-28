@@ -26,6 +26,32 @@
     }
   },
   {
+    "slug": "paperhub",
+    "title": "PaperHub",
+    "date": "2026",
+    "excerpt": "A Python package that fetches HuggingFace Daily Papers by date and gives each paper its own concurrent AI summarization agent — a terminal REPL and a Jupyter API across OpenAI, Anthropic, Gemini, and Ollama.",
+    "tags": ["Python", "CLI", "Agents", "LLM", "HuggingFace", "Jupyter"],
+    "repo": "https://github.com/vulonviing/paperhub",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
+  },
+  {
+    "slug": "ai-best-practices",
+    "title": "AI Best Practices",
+    "date": "2026",
+    "excerpt": "A distilled, practical reference for working effectively with AI — concept deep-dives, prompt patterns, a drop-in project checker, and a starter template, summarized from 10 Anthropic courses and mirrored in English and Turkish.",
+    "tags": ["Prompt Engineering", "Claude Code", "MCP", "Agent Skills", "Guide"],
+    "repo": "https://github.com/vulonviing/ai-best-practices",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
+  },
+  {
     "slug": "mini-finance-dashboard",
     "title": "Mini Finance Dashboard",
     "date": "2026",
