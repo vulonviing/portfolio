@@ -1,5 +1,44 @@
 [
   {
+    "slug": "ccu-jupyter-client",
+    "title": "CCU Terminal Client",
+    "date": "2026",
+    "excerpt": "A native macOS CLI for direct, authenticated access to a personal JupyterHub terminal over HTTPS/WSS — reattachable shells, one-off commands, and checksum-verified file transfers, with tokens kept only in Keychain.",
+    "tags": ["macOS", "CLI", "JupyterHub", "Python", "Security"],
+    "repo": "https://github.com/vulonviing/ccu-jupyter-client",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
+  },
+  {
+    "slug": "agents-deck",
+    "title": "Agents Deck",
+    "date": "2026",
+    "excerpt": "A local-only macOS menu bar app that monitors verified Claude Code and Codex subscription usage — real reset windows, session cost, and freshness, with no account, backend, or telemetry.",
+    "tags": ["macOS", "Menu Bar App", "Claude Code", "Codex"],
+    "repo": "https://github.com/vulonviing/agents-deck",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
+  },
+  {
+    "slug": "subjectivity-bias-pipeline",
+    "title": "Media Bias Pipeline",
+    "date": "2026",
+    "excerpt": "An end-to-end pipeline that turns English news articles into a fine-tuning-ready dataset for sentence-level media bias detection — RSS crawl, cleaning, a proxy classifier, and LLM+VLM annotation.",
+    "tags": ["NLP", "Media Bias", "LLM", "VLM", "Python"],
+    "repo": "https://github.com/vulonviing/subjectivity-bias-pipeline",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
+  },
+  {
     "slug": "mini-finance-dashboard",
     "title": "Mini Finance Dashboard",
     "date": "2026",

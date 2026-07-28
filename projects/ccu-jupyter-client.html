@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>CCU Terminal Client — Emrecan Ulu</title>
+  <meta name="description" content="A native macOS CLI for direct, authenticated access to a personal JupyterHub terminal over HTTPS/WSS — reattachable shells, one-off commands, and checksum-verified file transfers, with tokens kept only in Keychain." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="CCU Terminal Client, projects by Emrecan Ulu, macOS, CLI, JupyterHub, Python, Security" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/projects/ccu-jupyter-client.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="CCU Terminal Client — Emrecan Ulu" />
+  <meta property="og:description" content="A native macOS CLI for direct, authenticated access to a personal JupyterHub terminal over HTTPS/WSS — reattachable shells, one-off commands, and checksum-verified file transfers, with tokens kept only in Keychain." />
+  <meta property="og:url" content="https://emrecanulu.com/projects/ccu-jupyter-client.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CCU Terminal Client — Emrecan Ulu" />
+  <meta name="twitter:description" content="A native macOS CLI for direct, authenticated access to a personal JupyterHub terminal over HTTPS/WSS — reattachable shells, one-off commands, and checksum-verified file transfers, with tokens kept only in Keychain." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "CCU Terminal Client",
+  "description": "A native macOS CLI for direct, authenticated access to a personal JupyterHub terminal over HTTPS/WSS — reattachable shells, one-off commands, and checksum-verified file transfers, with tokens kept only in Keychain.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/projects/ccu-jupyter-client.html",
+  "url": "https://emrecanulu.com/projects/ccu-jupyter-client.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "macOS",
+    "CLI",
+    "JupyterHub",
+    "Python",
+    "Security"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="projects">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/projects.html">Projects</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/ccu-jupyter-client" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Projects · 2026</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>CCU Direct Terminal Client</h1>
+<p>CCU is a local macOS client for direct, authenticated access to a personal CCU JupyterHub terminal. It uses the same REST and WebSocket APIs as JupyterLab.</p>
+<p>If your JupyterHub-hosted server doubles as your daily driver, CCU gives you a plain terminal in it — reattachable shell sessions, one-off command execution, and small file transfers — from a native macOS CLI instead of the browser tab.</p>
+<pre><code class="language-text">Local Mac -&gt; verified HTTPS/WSS -&gt; CCU JupyterHub -&gt; personal Jupyter terminal</code></pre>
+<p>There is no tunnel, relay, public listener, remote SSH daemon, or software installation inside the Jupyter server. JupyterHub tokens remain exclusively in macOS Keychain. See <a href="https://github.com/vulonviing/ccu-jupyter-client/blob/main/SECURITY.md">SECURITY.md</a> for the full credential and network model.</p>
+<h2>Features</h2>
+<ul><li>Persistent, reattachable remote shell (<code>ccu shell</code>)</li><li>Disposable one-off command execution (<code>ccu exec</code>)</li><li>Small file upload/download with overwrite protection and checksum verification</li><li>Config split between a non-secret local manifest and a Keychain-only token —</li></ul>
+<p>a token never touches disk, an env var, or a log</p>
+<ul><li>Strict URL, redirect, and TLS validation; no insecure fallback modes</li></ul>
+<h2>Quick start</h2>
+<p>Requirements: macOS, Python 3.11 or newer, <a href="https://docs.astral.sh/uv/"><code>uv</code></a>, a running personal Jupyter server, and access to the JupyterHub token page.</p>
+<p>Install the local client from this directory:</p>
+<pre><code class="language-bash">bash install-local.sh</code></pre>
+<p>Create a private non-secret setup manifest:</p>
+<pre><code class="language-bash">cp ccu.example.toml ccu.local.toml
+chmod 600 ccu.local.toml</code></pre>
+<p>Edit <code>ccu.local.toml</code> with the full browser URL for your own JupyterLab server. Never add a token, password, cookie, or private key to this file.</p>
+<pre><code class="language-toml">schema_version = 1
+profile = &quot;personal&quot;
+server_url = &quot;https://HOST/user/USERNAME/lab&quot;
+default_terminal = &quot;ccu_main&quot;</code></pre>
+<p>Import the manifest, store a 24-hour server-scoped token, and verify access:</p>
+<pre><code class="language-bash">ccu setup --config ccu.local.toml
+ccu auth store personal
+ccu doctor -p personal
+ccu exec -p personal -- whoami</code></pre>
+<p>The last command should print <code>jovyan</code>. The setup manifest contains no credential; runtime profile data is stored in <code>~/.config/ccu/profiles.toml</code> and the live token is stored only in Keychain.</p>
+<h2>Daily use</h2>
+<p>Open or reattach the persistent terminal:</p>
+<pre><code class="language-bash">ccu shell -p personal</code></pre>
+<p>Press <code>Ctrl-]</code> to detach without closing the remote terminal. Run a disposable command with:</p>
+<pre><code class="language-bash">ccu exec -p personal -- nvidia-smi</code></pre>
+<p>Transfer individual files up to 25 MiB:</p>
+<pre><code class="language-bash">ccu upload -p personal local_script.py project/local_script.py
+ccu download -p personal project/result.json result.json</code></pre>
+<p>Existing destinations require <code>--force</code>. Use Git or the platform-supported transfer mechanism for repositories, datasets, checkpoints, and directories.</p>
+<h2>Documentation</h2>
+<ul><li><a href="https://github.com/vulonviing/ccu-jupyter-client/blob/main/docs/SETUP.md">Setup guide</a>: installation, manifest fields, token creation,</li></ul>
+<p>migration, rotation, restart recovery, and uninstall.</p>
+<ul><li><a href="https://github.com/vulonviing/ccu-jupyter-client/blob/main/docs/CLI.md">CLI reference</a>: every command and safety-relevant option.</li><li><a href="https://github.com/vulonviing/ccu-jupyter-client/blob/main/SECURITY.md">Security model</a>: credential, network, terminal, and transfer</li></ul>
+<p>guarantees.</p>
+<ul><li><a href="https://github.com/vulonviing/ccu-jupyter-client/blob/main/RULES.md">Operational rules</a>: resource use, lifecycle, and cleanup policy.</li><li><a href="https://github.com/vulonviing/ccu-jupyter-client/blob/main/ARCHITECTURE.md">Architecture</a>: component and data-flow boundaries.</li><li><a href="https://github.com/vulonviing/ccu-jupyter-client/blob/main/TROUBLESHOOTING.md">Troubleshooting</a>: exact failure recovery guidance.</li></ul>
+<h2>Developer validation</h2>
+<p>Run the complete repository gate from this directory:</p>
+<pre><code class="language-bash">bash scripts/validate.sh</code></pre>
+<p>It performs a frozen dependency sync, unit tests, Ruff, shell syntax checks, and a redacted token-leak scan that includes local untracked files.</p>
+<h2>License</h2>
+<p><a href="https://github.com/vulonviing/ccu-jupyter-client/blob/main/LICENSE">MIT</a></p>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>
