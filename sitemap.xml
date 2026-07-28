@@ -56,6 +56,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://emrecanulu.com/research/social-intuition-vectors.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://emrecanulu.com/research/subjectivity-bias-pipeline.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

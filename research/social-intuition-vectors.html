@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>Warmth &amp; Competence in LLM Hiring — Emrecan Ulu</title>
+  <meta name="description" content="A mechanistic-interpretability study testing whether warmth and competence form linearly probeable directions in open-weight LLMs, and whether activation steering along those directions shifts hiring callback decisions." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="Warmth &amp; Competence in LLM Hiring, research by Emrecan Ulu, Mechanistic Interpretability, LLM, Hiring Bias, Concept Vectors, Activation Steering, Python" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/research/social-intuition-vectors.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="Warmth &amp; Competence in LLM Hiring — Emrecan Ulu" />
+  <meta property="og:description" content="A mechanistic-interpretability study testing whether warmth and competence form linearly probeable directions in open-weight LLMs, and whether activation steering along those directions shifts hiring callback decisions." />
+  <meta property="og:url" content="https://emrecanulu.com/research/social-intuition-vectors.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Warmth &amp; Competence in LLM Hiring — Emrecan Ulu" />
+  <meta name="twitter:description" content="A mechanistic-interpretability study testing whether warmth and competence form linearly probeable directions in open-weight LLMs, and whether activation steering along those directions shifts hiring callback decisions." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "headline": "Warmth & Competence in LLM Hiring",
+  "description": "A mechanistic-interpretability study testing whether warmth and competence form linearly probeable directions in open-weight LLMs, and whether activation steering along those directions shifts hiring callback decisions.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/research/social-intuition-vectors.html",
+  "url": "https://emrecanulu.com/research/social-intuition-vectors.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "Mechanistic Interpretability",
+    "LLM",
+    "Hiring Bias",
+    "Concept Vectors",
+    "Activation Steering",
+    "Python"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="research">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/research.html">Research</a>
+          <a class="entry__repo" href="https://github.com/JorgeLastraCerda/social-intuition-vectors" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Research · 2026</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>Probing Warmth &amp; Competence Representations in LLM Hiring Decisions</h1>
+<h2>Abstract</h2>
+<p>Large language models (LLMs) are increasingly positioned as decision-support tools in hiring, yet little is known about how their internal representations encode social perceptions that are known to shape human labor-market discrimination. This project investigates whether LLMs represent the two core dimensions of the Stereotype Content Model, warmth and competence, as linearly probeable internal directions, and whether these representations causally influence callback recommendations in hiring tasks.</p>
+<p>We propose a mechanistic-interpretability pipeline that adapts recent concept-vector methods from work on emotion representations in LLMs. First, we construct synthetic text corpora that contrast high and low warmth and high and low competence while controlling for topic and surface form. We then run an open-weights language model with residual-stream access, extract activations at a middle-late layer, and derive warmth and competence vectors from condition contrasts. These vectors will be validated on held-out text and against human warmth and competence ratings from meta-analyzed North American correspondence studies. To test causal relevance, we will apply activation steering along the extracted vectors during a binary callback recommendation task and measure whether increasing or suppressing warmth and competence changes model recommendations. Finally, model callback disparities will be compared with documented human callback disparities across social signals.</p>
+<p>This study connects social-psychological theories of stereotyping with mechanistic interpretability. Rather than treating hiring bias only as an output-level phenomenon, it asks whether stereotype-relevant dimensions are encoded inside model activations and whether those encodings help drive downstream decisions. The resulting framework is intended to distinguish three possibilities: that warmth and competence are not robustly represented, that they are represented but behaviorally inert, or that they function as causal internal features shaping hiring recommendations. By linking internal model geometry to human benchmark data, the project aims to provide a more precise basis for auditing and eventually mitigating bias in LLM-assisted hiring systems.</p>
+<p>Do large language models encode <strong>warmth</strong> and <strong>competence</strong>, the two dimensions of the Stereotype Content Model, as internal, linearly probeable representations? If so, do those representations causally shape who the model recommends for a callback?</p>
+<p>This project adapts an interpretability pipeline originally built for emotion concepts and points it at hiring discrimination. The model behavior is then benchmarked against human correspondence-study data.</p>
+<h2>Background</h2>
+<p>Two pieces of prior work motivate this project:</p>
+<ul><li><strong>Sofroniew, Lindsey et al. (2026), _Emotion Concepts and their Function in a Large Language Model_.</strong> This work shows that emotion concepts can exist inside a language model as linear vectors and that those vectors can causally influence behavior. This project adapts that method from emotion concepts to warmth and competence.</li><li><strong>Gallo, Hausladen et al. (2024), _Perceived warmth and competence predict callback rates in meta-analyzed North American labor market experiments_.</strong> This work meta-analyzes correspondence studies and links perceived warmth and competence to callback disparities. This project uses it as the human benchmark.</li></ul>
+<p>The bridge is simple: if emotions can be represented as causal internal directions, warmth and competence may be represented that way too, and they may help explain hiring bias in model outputs.</p>
+<h2>Research Questions</h2>
+<ol><li><strong>Existence:</strong> Can we extract linear warmth and competence vectors from an open-weights model?</li><li><strong>Alignment:</strong> Do those probes track human warmth/competence ratings of the same social signals?</li><li><strong>Causality:</strong> Does steering the vectors shift model callback recommendations?</li><li><strong>Benchmark:</strong> Do the model's callback disparities reproduce documented human hiring bias?</li></ol>
+<h2>Method Overview</h2>
+<ol><li>Generate synthetic stories exhibiting high/low warmth and high/low competence.</li><li>Extract residual-stream activations and build concept vectors.</li><li>Validate probes against held-out text and human warmth/competence ratings.</li><li>Run steering experiments on a callback recommendation task.</li><li>Benchmark model callback disparities against the PLOS ONE human data.</li></ol>
+<p>See <code>PLAN.md</code> for the phased implementation plan and <code>AGENTS.md</code> for working conventions.</p>
+<h2>Pilot Experiment: Warmth Is Linearly Probeable</h2>
+<p>Before building the full extraction pipeline, we ran two self-contained smoke tests on the Windows development machine (NVIDIA RTX 4050 Laptop GPU, Python 3.13, PyTorch 2.7.1+cu128, TransformerLens 3.3.0) to verify that the core machinery — residual-stream extraction, linear probing, and causal activation steering — works with a real open-weights model. Both tests use <code>Qwen/Qwen2.5-1.5B-Instruct</code> (28 layers, d\_model 1536) with the probe layer set to <code>round((28 - 1) × 0.66) = 18</code> (<code>blocks.18.hook_resid_post</code>). All random state is seeded at <code>20260527</code>.</p>
+<h3>Test 1 — Wiring check (1 warm + 1 cold sentence)</h3>
+<p><code>scripts/smoke_test_activations.py</code> confirmed that (a) the model loads onto the GPU, (b) two semantically opposite sentences produce distinct residual-stream activations, and (c) a forward hook that injects a random unit vector at alpha = 0.5 causally shifts the output distribution. This test checks infrastructure, not signal quality.</p>
+<table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Residual norm (warm)</td><td>65.50</td></tr><tr><td>Residual norm (cold)</td><td>63.25</td></tr><tr><td>Diff-vector norm</td><td>25.88</td></tr><tr><td>Cosine(warm, cold)</td><td>0.918</td></tr><tr><td>Max logit delta (random steering, alpha=0.5)</td><td>0.344</td></tr><tr><td>Status</td><td>PASS</td></tr></tbody></table>
+<p>Note: this test activates from <code>start_token=50</code>, which — because the sentences are shorter than 50 tokens — collapses to the single last token. Diff-vector norm and the probe-test norm are therefore not directly comparable.</p>
+<h3>Test 2 — Linear probe (50 warm + 50 cold sentences)</h3>
+<p><code>scripts/smoke_test_probe.py</code> uses 50 hand-written warm sentences and 50 hand-written cold sentences matched in grammatical register and length. The only systematic variable is warmth. Activations are mean-pooled from token 1 onward (content tokens only). The warmth direction is estimated as the difference of class mean activations. A logistic regression probe is then trained and evaluated with 5-fold stratified cross-validation on the full 100-sentence matrix.</p>
+<p><strong>Sentences</strong> are short, third-person, and parallel in structure. Warm sentences depict behaviors such as offering help, showing care, and acknowledging others. Cold sentences depict matched behaviors such as ignoring requests, withholding help, and dismissing others.</p>
+<h4>Results</h4>
+<table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Model</td><td>Qwen/Qwen2.5-1.5B-Instruct</td></tr><tr><td>Layer</td><td>18 / 28 (frac = 0.66)</td></tr><tr><td>d\_model</td><td>1536</td></tr><tr><td>n warm / cold</td><td>50 / 50</td></tr><tr><td>Diff-vector norm</td><td>6.63</td></tr><tr><td>Cosine(mean\_warm, mean\_cold)</td><td>0.9915</td></tr><tr><td>Projection mean (warm)</td><td>+3.55 +/- 2.49</td></tr><tr><td>Projection mean (cold)</td><td>-3.08 +/- 2.45</td></tr><tr><td>Cohen's d</td><td><strong>2.68</strong></td></tr><tr><td>5-fold CV probe accuracy</td><td><strong>0.83 +/- 0.04</strong></td></tr><tr><td>Fold scores</td><td>[0.90, 0.80, 0.80, 0.80, 0.85]</td></tr><tr><td>Chance baseline</td><td>0.50</td></tr><tr><td>Mean residual norm at layer 18</td><td>53.98</td></tr><tr><td>Steering alpha (0.5 x mean resid norm)</td><td>26.99</td></tr><tr><td>Max logit delta (warmth-direction steering)</td><td><strong>6.375</strong></td></tr><tr><td>Status</td><td>PASS</td></tr></tbody></table>
+<h4>Interpretation</h4>
+<ul><li><strong>Cohen's d = 2.68.</strong> In social-science conventions, d &gt; 0.8 is a large effect. d = 2.68 indicates</li></ul>
+<p>that the warmth and cold sentence populations occupy clearly separated regions along the warmth direction. The two class projections (mean +3.55 vs -3.08) are well outside each other's one-sigma band.</p>
+<ul><li><strong>Probe accuracy = 0.83 (chance = 0.50).</strong> A linear logistic regression, evaluated in</li></ul>
+<p>cross-validation, correctly decodes the warmth label in 83 % of sentences from a single layer's residual stream. This is consistent with warmth being encoded as an approximately linear direction at this layer. The result is not near-ceiling (accuracy could in principle reach 1.0 with a large enough corpus), which is expected with only 100 hand-written sentences.</p>
+<ul><li><strong>Max logit delta = 6.375 (warmth) vs 0.344 (random, Test 1).</strong> Steering along the estimated</li></ul>
+<p>warmth direction shifts the output logits far more than steering along a random vector. Note: these two numbers are not directly comparable — Test 1 used alpha = 0.5 (absolute) while Test 2 used alpha = 26.99 (0.5 × mean residual norm), a ~54× difference in injected magnitude. The restructured smoke tests (<code>smoke_tests/</code>) fix this by using equal-magnitude random controls in every test. Causal claims require the full steering experiment with the hiring-task prompt.</p>
+<ul><li><strong>High mean-vector cosine (0.9915).</strong> The mean residual activations for warm and cold sentences</li></ul>
+<p>point in nearly the same overall direction; the warmth signal is a relatively small, consistent offset on top of a large shared magnitude. This is typical for concept directions in mid-to-late residual layers and is the reason projection-based analysis (rather than raw distance) is the appropriate measure.</p>
+<h4>Limitations</h4>
+<p>This pilot addresses Research Question 1 (Existence) for warmth only, on a small, hand-written stimulus set. Specific limitations that the main pipeline addresses:</p>
+<ul><li>Stimuli are 100 hand-written sentences. The main experiment uses approximately 4,800 API-generated</li></ul>
+<p>stories (100 topics x 12 stories x 4 conditions) with systematic topic control.</p>
+<ul><li>Only warmth is tested here. Competence is the second target dimension and is untested so far.</li><li>Only one model (Qwen2.5-1.5B-Instruct) and one layer (18) are evaluated. The probe-layer fraction</li></ul>
+<p>0.66 will be applied to larger models on SCCKN.</p>
+<ul><li>No alignment against human warmth ratings yet (Research Question 2).</li><li>No hiring-task context yet (Research Questions 3 and 4). The steering alpha here is computed from</li></ul>
+<p>residual-stream norms on the probing sentences, not from the eventual hiring-prompt context.</p>
+<h4>Reproducing</h4>
+<pre><code class="language-bash">python scripts/smoke_test_activations.py                        # wiring check
+python scripts/smoke_test_probe.py                             # 50+50 probe
+python scripts/smoke_test_probe.py --device cpu --fallback-cpu-model gpt2   # CPU fallback</code></pre>
+<p>Logs are written to <code>results/logs/smoke_test_*.json</code> and <code>results/logs/smoke_test_probe_*.json</code>.</p>
+<h2>Smoke Test Suite (<code>smoke_tests/</code>)</h2>
+<p>The pilot work above (Qwen2.5-1.5B) has been reorganised into a structured suite that compares three model + tooling combinations on identical stimuli:</p>
+<table><thead><tr><th>Directory</th><th>Model</th><th>Tooling</th><th>Key addition</th></tr></thead><tbody><tr><td><code>smoke_tests/qwen_transformerlens/</code></td><td>Qwen2.5-1.5B-Instruct</td><td>TransformerLens</td><td>Baseline (original pilot)</td></tr><tr><td><code>smoke_tests/gemma3_transformerlens/</code></td><td><strong>Gemma 3 12B-IT</strong></td><td>TransformerLens + GemmaScope 2</td><td>SAE warmth-vs-tone decomposition</td></tr><tr><td><code>smoke_tests/gemma4_nnsight/</code></td><td><strong>Gemma 4 12B-IT</strong></td><td>nnsight</td><td>Exploratory; no SAE tooling yet</td></tr><tr><td><code>smoke_tests/gemma4_transformerlens/</code></td><td><strong>Gemma 4 31B / 26B-A4B</strong></td><td>TransformerLens 3 Bridge</td><td>Current production path; dense and MoE residual-stream support</td></tr></tbody></table>
+<p>All three tests use the same 100 sentences (<code>smoke_tests/stimuli.py</code>) and report a <code>warmth_random_ratio</code> computed with <strong>equal-magnitude</strong> random and warmth vectors for a fair comparison.  Results go to each test's own <code>results/</code> subdirectory.</p>
+<p><strong>Model commitment and scale-up path.</strong> The smoke tests run at 12B (fits on a single L40 48 GB GPU on SCCKN) to enable a fair Gemma 3 vs Gemma 4 comparison. The committed model for the core result is <strong>Gemma 3 12B-IT</strong> (<code>google/gemma-3-12b-it</code>) with GemmaScope 2 SAE decomposition to address the warmth-vs-valence confound. The scale-up target — pending validation that 12B results replicate — is <strong>Gemma 3 27B-IT</strong> (<code>google/gemma-3-27b-it</code>, ~54 GB bf16, runs on scc214's RTX 6000 96 GB). This door is intentionally left open and will be entered once the 12B smoke results are satisfactory.</p>
+<p>Run on SCCKN (GPU required for meaningful signal):</p>
+<pre><code class="language-bash">qsub jobs/sge/smoke_qwen.sh
+qsub jobs/sge/smoke_gemma3.sh
+qsub jobs/sge/smoke_gemma4.sh</code></pre>
+<p>See <code>smoke_tests/README.md</code> for full details and <code>docs/SCCKN_WINDOWS.md</code> for Windows → cluster connection setup.</p>
+<h3>Smoke Test Results (SCCKN, Gemma 3 12B-IT)</h3>
+<p>Run 2026-06-08 on <code>scc214</code> (NVIDIA RTX PRO 6000 Blackwell, 96 GB). Seed <code>20260527</code>.</p>
+<table><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>Model</td><td>google/gemma-3-12b-it</td></tr><tr><td>Layer</td><td>31 / 48 (frac = 0.66)</td></tr><tr><td>d\_model</td><td>3840</td></tr><tr><td>n warm / cold</td><td>50 / 50</td></tr><tr><td>Diff-vector norm</td><td>1484.6</td></tr><tr><td>Cosine(mean\_warm, mean\_cold)</td><td>0.99975</td></tr><tr><td>Cohen's d (in-sample)</td><td>2.896</td></tr><tr><td>5-fold CV probe accuracy</td><td><strong>0.86 ± 0.08</strong></td></tr><tr><td>Fold scores</td><td>[0.95, 0.80, 0.95, 0.75, 0.85]</td></tr><tr><td>Chance baseline</td><td>0.50</td></tr><tr><td>Mean residual norm at layer 31</td><td>66184.6</td></tr><tr><td>Steering alpha (0.5 × mean resid norm)</td><td>33092.3</td></tr><tr><td>Max logit delta (warmth-direction steering)</td><td>40.0</td></tr><tr><td>Max logit delta (equal-magnitude random)</td><td>20.75</td></tr><tr><td>Warmth / random ratio</td><td><strong>1.93×</strong></td></tr><tr><td>SAE CV accuracy (GemmaScope 2 layer\_31\_width\_16k\_l0\_medium)</td><td>0.61 ± 0.07</td></tr><tr><td>Status</td><td><strong>PASS</strong></td></tr></tbody></table>
+<p><strong>Gemma 4 outcome (nnsight, 4B and 12B): zero results.</strong> Both Gemma 4 sizes failed with the same two errors: (1) Gemma 4 is registered as <code>AutoModelForImageTextToText</code> (multimodal) — nnsight's <code>LanguageModel()</code> cannot load it; <code>VisionLanguageModel</code> is required but does not resolve the processor (<code>Gemma4Processor</code>/<code>Gemma4UnifiedProcessor</code> import fails). (2) <code>Gemma4Config</code> lacks the <code>num_hidden_layers</code> attribute that nnsight uses to map layer indices. Root cause: nnsight 0.6 (released Feb 2026) predates Gemma 4 (Apr 2026). No results were obtained from either Gemma 4 run. Gemma 4 is dropped from the pipeline until nnsight adds native support.</p>
+<p><strong>Current Gemma 4 path (2026-07-15).</strong> The nnsight result above is retained as historical context, but it no longer blocks the project. TransformerLens 3.5.1 provides a <code>TransformerBridge</code> adapter for Gemma 4, including the 31B dense and 26B-A4B MoE models. The production pipeline uses raw Hugging Face weights, native Gemma 4 chat templates for Yes/No decisions, and <code>blocks.&lt;layer&gt;.hook_resid_post</code> aliases for residual-stream access. It does not enable legacy weight folding or collect MoE router/expert activations.</p>
+<p>Prepare and submit the gated SCCKN runs from the repository root:</p>
+<pre><code class="language-bash">bash jobs/setup_gemma4_env.sh
+bash jobs/sge/submit_gemma4.sh --smoke
+# Review results/logs/smoke_gemma4_{31b,26b_a4b}.json, then:
+bash jobs/sge/submit_gemma4.sh --full</code></pre>
+<p>To rerun only the corrected 31B smoke and add the 12B Unified smoke, without resubmitting the already validated 26B-A4B model:</p>
+<pre><code class="language-bash">bash jobs/sge/submit_gemma4.sh --smoke-31b-12b</code></pre>
+<p>Submit the write-once, fully serial Gemma 4 Stage 1--3 replication chain (12B, 26B-A4B, and 31B within each stage):</p>
+<pre><code class="language-bash">bash jobs/sge/submit_gemma4_stages_1_3.sh --dry-run
+bash jobs/sge/submit_gemma4_stages_1_3.sh</code></pre>
+<p>The real submission leaves the first of nine jobs user-held until its manifest and step-log entry have been synchronized. Release the printed first job ID only after that synchronization; every stage refuses to overwrite canonical outputs.</p>
+<p>The full chain reproduces extraction, probe validation, layer sweep, neutral-corpus PCA, dense steering, broad/local/denoised hiring steering, the 282-name audit, disparity, mediation, and the 149-name R4 analysis. SAE and MoE-specific analyses are excluded.</p>
+<h4>Audit (Gemma 3 12B smoke)</h4>
+<p>The 0.86 CV accuracy clears the pre-specified &gt;0.80 threshold and improves on the Qwen pilot (0.83). The following caveats apply before treating this as a production-quality signal.</p>
+<ol><li><strong>Cohen's d is in-sample.</strong> d = 2.90 is computed on the same 100 sentences used to fit the</li></ol>
+<p>warmth direction — it measures separation, not generalization. The cross-validated probe accuracy (0.86) is the correct held-out figure.</p>
+<ol><li><strong>Causal signal is modest.</strong> With an equal-magnitude random control, warmth steering</li></ol>
+<p>achieves a logit delta of 40.0 vs 20.75 for random — a <strong>1.93× ratio</strong>, not the previously-reported (and since retracted) "18×." The ~2× ratio is consistent with warmth being one of many active directions at this layer. A meaningful causal claim requires the full hiring-task steering experiment, where the warmth vector is injected during a callback recommendation and measured against an equal-magnitude random baseline.</p>
+<ol><li><strong>Valence confound is unresolved.</strong> The SAE probe (GemmaScope 2 <code>layer_31_width_16k_l0_medium</code>)</li></ol>
+<p>achieves <strong>sae\_cv\_mean = 0.61 ± 0.07</strong> — barely above chance (0.50) and far below the raw-residual probe (0.86). The top warm-minus-cold SAE features are small in magnitude and mixed in sign. This gap has two possible interpretations: the warmth direction is spread across many features (no single warmth-specific feature), or the direction is dominated by general-valence features that the SAE correctly refuses to label as warmth-specific. Both are concerning. <strong>Neuronpedia inspection of the top features is required before any warmth-vs-valence claim can be made.</strong> This is the project's primary open methodological risk.</p>
+<ol><li><strong>Residual-stream geometry.</strong> Cosine(warm, cold) = 0.99975 and diff_norm / mean_resid_norm</li></ol>
+<p>≈ 1484.6 / 66184.6 ≈ 2.2 %. Warmth is a tiny, consistent offset riding on a large shared activation magnitude. This geometry (typical for mid-late concept directions) justifies the projection-based analysis and confirms that raw cosine distance between individual sentence activations would be uninformative.</p>
+<ol><li><strong>Scope.</strong> This run tests warmth only, on one model, at one layer, using 100 hand-written</li></ol>
+<p>sentences that confound warmth with positive sentiment. Competence is untested. All of these limitations are carried forward to the main pipeline, which addresses them via API-generated topic-controlled stories (~4,800) and PCA-based tone denoising.</p>
+<h2>Phase 4 Readiness &amp; the Gallo–Hausladen Parallel</h2>
+<h3>What Phase 4 produces</h3>
+<p><code>src/extract_vectors.py</code> runs the full 4,800-story concept corpus (100 topics × 4 conditions × 12 stories, generated by <code>src/generate_stimuli.py</code>) through Gemma 3 12B-IT, captures the residual stream at layer 31, mean-pools each story's activations, and builds <strong>two mean-contrast vectors</strong> — warmth and competence — with global-mean centring and PCA-based denoising against a neutral corpus. Both vectors are saved to <code>data/processed/</code> for downstream probe validation (Phase 5), causal steering (Phase 6), and hiring benchmark (Phase 7).</p>
+<h3>Readiness checklist</h3>
+<table><thead><tr><th>Component</th><th>Status</th><th>Note</th></tr></thead><tbody><tr><td>Method recipe (<code>docs/METHOD_NOTES.md</code> Part 1)</td><td>✅ complete</td><td>Layer, hook, mean-pool, centring, PCA, logit-lens all specified</td></tr><tr><td>Model config (<code>config/config.yaml</code>)</td><td>✅ committed</td><td><code>google/gemma-3-12b-it</code>, layer frac 0.66, seed 20260527</td></tr><tr><td>Stimulus generator (<code>src/generate_stimuli.py</code>)</td><td>⚠️ written, not run</td><td><code>ANTHROPIC_API_KEY</code> needed; no <code>data/stimuli/concept_stories.jsonl</code> yet</td></tr><tr><td>Extractor (<code>src/extract_vectors.py</code>)</td><td>❌ stub</td><td>Raises <code>NotImplementedError</code> after model load</td></tr><tr><td><strong>Carina/Gallo benchmark data (<code>data/raw/</code>)</strong></td><td>❌ not acquired</td><td>Phase 0 incomplete; repo must be cloned before Phase 5 correlation can be computed</td></tr><tr><td>Neutral corpus for PCA denoising</td><td>❌ not chosen</td><td>METHOD_NOTES proposes Wikipedia leads; decision pending</td></tr><tr><td><code>Yes</code>/<code>No</code> single-token check (Gemma 3 tokenizer)</td><td>⚠️ open</td><td>Required before Phase 7 callback scoring</td></tr><tr><td>Layer formula reconciliation</td><td>⚠️ open</td><td><code>hooks.py</code> uses <code>round((n_layers-1)×frac)</code> → 31; METHOD_NOTES documents <code>round(frac×n_layers)</code> → 32; must be consistent</td></tr><tr><td><code>start_token</code> decision</td><td>⚠️ open</td><td>Config = 50 (preamble-skip for prompted text); smoke test used 1 (standalone sentences); 150-word concept stories are standalone — deliberate decision needed</td></tr></tbody></table>
+<h3>Blocking steps (ordered)</h3>
+<ol><li><strong>Clone Carina's data</strong> — <code>git clone https://github.com/carinahausladen/SocialPerceptions-Predict-Callback data/raw/SocialPerceptions-Predict-Callback-main</code> (both locally and on SCCKN).</li><li><strong>Inspect Carina's analyses</strong> — read <code>book/names.qmd</code> and <code>book/categories.qmd</code> and the callback-on-warmth-plus-competence regression tables <strong>before</strong> finalising Phase 5/7 design. We must replicate her test structure on the model, not invent our own.</li><li><strong>Run <code>generate_stimuli.py</code></strong> — needs <code>ANTHROPIC_API_KEY</code>; produces <code>data/stimuli/concept_stories.jsonl</code> (~4,800 stories). Safe to re-run; resumes if interrupted.</li><li><strong>Implement <code>extract_vectors.py</code></strong> — per METHOD_NOTES §1.2–1.4: batched extraction, centring, mean-contrast for <strong>both</strong> warmth and competence, PCA denoise, save to <code>data/processed/</code>. Check that the two vectors are reasonably orthogonal (Stereotype Content Model treats them as independent dimensions; high cosine similarity would indicate a confound).</li><li><strong>Resolve design decisions</strong> — pick neutral corpus; fix layer-formula discrepancy; decide <code>start_token</code> for 150-word standalone stories.</li></ol>
+<h3>The Gallo–Hausladen parallel</h3>
+<p>Carina and colleagues tested whether <strong>human-perceived warmth and competence</strong> (rated 0–100 on Prolific/MTurk for social signals such as names, race, disability, religion, gender) predict <strong>real-world callback rates</strong> from meta-analyzed North American correspondence studies.</p>
+<p>This project tests the same question at the level of <strong>model-internal representations</strong>. The construct mapping is direct:</p>
+<table><thead><tr><th>Gallo–Hausladen</th><th>This project</th><th>Phase</th></tr></thead><tbody><tr><td>Human warmth/competence ratings for social signals</td><td>Probe projection scores (signal → activation → project onto warmth/competence vector)</td><td>Phase 5</td></tr><tr><td>Callback rates from correspondence studies</td><td>Model callback probabilities from hiring prompts</td><td>Phase 7</td></tr><tr><td>— (not applicable)</td><td>Activation steering → causal shift in callback probability</td><td>Phase 6</td></tr></tbody></table>
+<p>The three <a href="https://github.com/JorgeLastraCerda/social-intuition-vectors/blob/main/AGENTS.md">headline outputs</a> follow the same structure: (1) probe score vs human rating, (2) steering strength vs callback shift, (3) model callback disparity vs human callback disparity.</p>
+<p><strong>Are we parallel yet? No.</strong> The Gemma 3 12B smoke test established that a warmth direction exists as a linear signal at layer 31 (RQ1, probe CV 0.86). It never touched Carina's social signals or human ratings. True parallelism begins at <strong>Phase 5</strong>, once the warmth <em>and competence</em> vectors are built from the full concept corpus and projected onto Carina's exact signals for correlation. Additional gaps before a clean parallel is possible:</p>
+<ul><li><strong>Competence vector is missing.</strong> The SCM treats warmth and competence as two orthogonal</li></ul>
+<p>dimensions. Only warmth has been tested so far. Phase 4 must produce a competence vector and verify warmth ⊥ competence before Phase 5 can reproduce Carina's two-factor structure.</p>
+<ul><li><strong>Valence confound is unresolved.</strong> SAE CV = 0.61 (barely above chance). The warmth vector</li></ul>
+<p>may be tracking general positive sentiment rather than warmth specifically. Until Neuronpedia inspection and/or a within-topic control confirms otherwise, the warmth-vs-valence distinction — central to the SCM — is not confirmed in our representation.</p>
+<ul><li><strong>Carina's data is not downloaded.</strong> No correlation can be computed.</li></ul>
+<h2>Requirements</h2>
+<ul><li>An open-weights model with residual-stream access.</li><li>A GPU capable of running the selected model.</li><li>Python dependencies from <code>requirements.txt</code>.</li><li>For SCCKN: Grid Engine / <code>qsub</code> access and cluster-specific values filled into <code>jobs/sge/*.sh</code>.</li></ul>
+<h2>Repository Layout</h2>
+<pre><code class="language-text">config/          Project configuration. Model selection lives in config/config.yaml.
+data/raw/        Downloaded source datasets. Ignored by git except .gitkeep.
+data/stimuli/    Generated concept stories and hiring prompts.
+data/processed/  Activations, vectors, and derived arrays. Ignored by git.
+docs/            Method and compute notes.
+jobs/sge/        SCCKN Grid Engine job wrappers.
+papers/          Downloaded source PDFs. Ignored by git except .gitkeep.
+results/         Figures, tables, and logs.
+src/             Python package and experiment entrypoints.
+tests/           Lightweight structural tests for future development.
+archive/         Previous projects and SCCKN notes.</code></pre>
+<h2>Setup</h2>
+<p>Create an environment and install dependencies:</p>
+<pre><code class="language-bash">python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt</code></pre>
+<p>Choose a model only after compute is confirmed:</p>
+<pre><code class="language-yaml">model:
+  name: &quot;REPLACE_ME&quot;</code></pre>
+<p>The model name must be set in <code>config/config.yaml</code>; scripts should not hardcode it.</p>
+<h2>Data and Secrets</h2>
+<p>Local <code>.env</code> files, credentials, downloaded papers, raw datasets, model caches, activations, and cluster logs are ignored by git. Do not commit secrets or local SCCKN paths.</p>
+<p>The active repo tracks structure and source code. Downloaded papers and benchmark data should be fetched locally or on SCCKN when needed.</p>
+<h2>SCCKN</h2>
+<p>This project targets SCCKN Grid Engine by default:</p>
+<pre><code class="language-bash">qsub jobs/sge/&lt;job&gt;.sh
+qstat -u emrecan.ulu
+qdel &lt;job_id&gt;
+qacct -j &lt;job_id&gt;</code></pre>
+<p>The job scripts contain <code># ADJUST</code> placeholders for queue names, module versions, GPU resources, and scratch paths. Fill those in on the cluster before submitting heavy jobs.</p>
+<h2>Status</h2>
+<p><strong>Smoke tests complete. Committed model: Gemma 3 12B-IT.</strong></p>
+<p>The Qwen pilot (local GPU) confirmed the machinery works. The SCCKN smoke test on <code>google/gemma-3-12b-it</code> confirmed the signal scales to a research-grade model: probe CV accuracy 0.86 (chance 0.50), Cohen's d 2.90, warmth_random_ratio 1.93× (equal-magnitude control). Gemma 4 was attempted via nnsight but produced zero results (see Smoke Test Results below); it is dropped for now. The committed model for the core result is <strong>Gemma 3 12B-IT</strong> with GemmaScope 2 SAE decomposition. Scale-up to Gemma 3 27B-IT on scc214 (96 GB) remains open pending 12B result replication.</p>
+<p><strong>Next step:</strong> (1) Inspect top SAE features on Neuronpedia to close the valence-confound question. (2) Phase 4 — implement <code>src/extract_vectors.py</code> to run the extraction loop over the full API-generated stimulus corpus (~4,800 stories), build per-concept mean-contrast vectors, and save activations to <code>data/processed/</code>.</p>
+<h2>Caveats</h2>
+<ul><li>Functional warmth/competence representations do not imply model subjective experience. This project studies representations and behavior.</li><li>Results are model-specific. Cross-model generalization is a stretch goal.</li></ul>
+<h2>References</h2>
+<ul><li>Sofroniew, Kauvar, Saunders, Chen, et al. (2026). _Emotion Concepts and their Function in a Large Language Model._ arXiv:2604.07729.</li><li>Gallo, Hausladen, Hsu, Jenkins, Ona, Camerer (2024). _Perceived warmth and competence predict callback rates in meta-analyzed North American labor market experiments._ PLOS ONE 19(7): e0304723. doi:10.1371/journal.pone.0304723.</li></ul>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>

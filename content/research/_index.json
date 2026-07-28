@@ -1,5 +1,18 @@
 [
   {
+    "slug": "social-intuition-vectors",
+    "title": "Warmth & Competence in LLM Hiring",
+    "date": "2026",
+    "excerpt": "A mechanistic-interpretability study testing whether warmth and competence form linearly probeable directions in open-weight LLMs, and whether activation steering along those directions shifts hiring callback decisions.",
+    "tags": ["Mechanistic Interpretability", "LLM", "Hiring Bias", "Concept Vectors", "Activation Steering", "Python"],
+    "repo": "https://github.com/JorgeLastraCerda/social-intuition-vectors",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
+  },
+  {
     "slug": "subjectivity-bias-pipeline",
     "title": "Media Bias Pipeline",
     "date": "2026",
