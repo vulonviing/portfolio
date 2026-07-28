@@ -4,7 +4,7 @@
     "title": "CCU Terminal Client",
     "date": "2026",
     "excerpt": "A native macOS CLI for direct, authenticated access to a personal JupyterHub terminal over HTTPS/WSS — reattachable shells, one-off commands, and checksum-verified file transfers, with tokens kept only in Keychain.",
-    "tags": ["macOS", "CLI", "JupyterHub", "Python", "Security"],
+    "tags": ["Python", "macOS", "CLI", "JupyterHub", "WebSocket", "Security"],
     "repo": "https://github.com/vulonviing/ccu-jupyter-client",
     "content_source": {
       "type": "github_readme",
@@ -17,21 +17,8 @@
     "title": "Agents Deck",
     "date": "2026",
     "excerpt": "A local-only macOS menu bar app that monitors verified Claude Code and Codex subscription usage — real reset windows, session cost, and freshness, with no account, backend, or telemetry.",
-    "tags": ["macOS", "Menu Bar App", "Claude Code", "Codex"],
+    "tags": ["Swift", "SwiftUI", "macOS", "Menu Bar", "Claude Code", "Codex"],
     "repo": "https://github.com/vulonviing/agents-deck",
-    "content_source": {
-      "type": "github_readme",
-      "branch": "main",
-      "path": "README.md"
-    }
-  },
-  {
-    "slug": "subjectivity-bias-pipeline",
-    "title": "Media Bias Pipeline",
-    "date": "2026",
-    "excerpt": "An end-to-end pipeline that turns English news articles into a fine-tuning-ready dataset for sentence-level media bias detection — RSS crawl, cleaning, a proxy classifier, and LLM+VLM annotation.",
-    "tags": ["NLP", "Media Bias", "LLM", "VLM", "Python"],
-    "repo": "https://github.com/vulonviing/subjectivity-bias-pipeline",
     "content_source": {
       "type": "github_readme",
       "branch": "main",
@@ -43,7 +30,7 @@
     "title": "Mini Finance Dashboard",
     "date": "2026",
     "excerpt": "A production-oriented macro and market dashboard built with Dash, extended with a 20-agent AI workflow for daily news, signals, and sector summaries.",
-    "tags": ["Dash", "Finance", "Agents", "OpenAI"],
+    "tags": ["Python", "Dash", "Plotly", "Finance", "Agents", "OpenAI"],
     "repo": "https://github.com/vulonviing/mini-finance-dashboard",
     "content_source": {
       "type": "github_readme",
@@ -56,7 +43,7 @@
     "title": "Manager Squad",
     "date": "2026",
     "excerpt": "A football analytics package combining StatsBomb event data, typed domain models, tactical features, and a department-style agent architecture for team analysis.",
-    "tags": ["Football Analytics", "StatsBomb", "Agents", "Python"],
+    "tags": ["Python", "Football Analytics", "StatsBomb", "Agents", "Ollama"],
     "repo": "https://github.com/vulonviing/TeamSquadpy",
     "content_source": {
       "type": "github_readme",
@@ -69,7 +56,7 @@
     "title": "BuildRAG",
     "date": "2025",
     "excerpt": "A local, production-ready RAG workspace built with Streamlit, Ollama, and Chroma for document-grounded chat with source citations.",
-    "tags": ["RAG", "Streamlit", "Ollama", "Chroma"],
+    "tags": ["Python", "RAG", "Streamlit", "Ollama", "Chroma"],
     "repo": "https://github.com/vulonviing/ragchat",
     "content_source": {
       "type": "github_readme",

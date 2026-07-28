@@ -31,11 +31,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://emrecanulu.com/projects/subjectivity-bias-pipeline.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://emrecanulu.com/projects/mini-finance-dashboard.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -47,6 +42,11 @@
   </url>
   <url>
     <loc>https://emrecanulu.com/projects/buildrag.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://emrecanulu.com/research/subjectivity-bias-pipeline.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

@@ -1,5 +1,18 @@
 [
   {
+    "slug": "subjectivity-bias-pipeline",
+    "title": "Media Bias Pipeline",
+    "date": "2026",
+    "excerpt": "An end-to-end pipeline that turns English news articles into a fine-tuning-ready dataset for sentence-level media bias detection — RSS crawl, cleaning, a proxy classifier, and LLM+VLM annotation.",
+    "tags": ["Python", "NLP", "Media Bias", "LLM", "VLM", "spaCy"],
+    "repo": "https://github.com/vulonviing/subjectivity-bias-pipeline",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
+  },
+  {
     "slug": "babe-baseline",
     "title": "BABE Baseline — RoBERTa Fine-tune Reproduction",
     "date": "2026",
