@@ -108,6 +108,203 @@ function setupThemeToggle() {
   });
 }
 
+function setupResonanceCards() {
+  const cards = Array.from(document.querySelectorAll("[data-resonance-card]"));
+  const soundButton = document.querySelector("[data-resonance-sound]");
+  if (!cards.length || !soundButton) return;
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  let audioContext = null;
+  let soundEnabled = false;
+  let activeCard = null;
+  let stopActivePreview = null;
+
+  function setSoundButton(label, { blocked = false, pressed = soundEnabled } = {}) {
+    const icon = document.createElement("span");
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = pressed ? "●" : "◌";
+    soundButton.replaceChildren(icon, document.createTextNode(` ${label}`));
+    soundButton.setAttribute("aria-pressed", String(pressed));
+    soundButton.classList.toggle("is-blocked", blocked);
+  }
+
+  function midiToFrequency(midi) {
+    return 440 * (2 ** ((midi - 69) / 12));
+  }
+
+  function schedulePianoNote(context, destination, midi, start, duration) {
+    const fundamental = context.createOscillator();
+    const overtone = context.createOscillator();
+    const gain = context.createGain();
+    const tone = context.createBiquadFilter();
+
+    fundamental.type = "triangle";
+    overtone.type = "sine";
+    fundamental.frequency.value = midiToFrequency(midi);
+    overtone.frequency.value = midiToFrequency(midi + 12);
+    tone.type = "lowpass";
+    tone.frequency.value = 2350;
+    tone.Q.value = .7;
+
+    gain.gain.setValueAtTime(.0001, start);
+    gain.gain.exponentialRampToValueAtTime(.13, start + .012);
+    gain.gain.exponentialRampToValueAtTime(.035, start + Math.min(.34, duration * .42));
+    gain.gain.exponentialRampToValueAtTime(.0001, start + duration + .48);
+
+    fundamental.connect(gain);
+    overtone.connect(gain);
+    gain.connect(tone);
+    tone.connect(destination);
+    fundamental.start(start);
+    overtone.start(start);
+    fundamental.stop(start + duration + .52);
+    overtone.stop(start + duration + .52);
+    return [fundamental, overtone];
+  }
+
+  function scheduleViolinPad(context, destination, start, duration) {
+    const nodes = [];
+    [47, 54, 62].forEach((midi, index) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      const filter = context.createBiquadFilter();
+      oscillator.type = "sawtooth";
+      oscillator.frequency.value = midiToFrequency(midi);
+      oscillator.detune.value = index === 1 ? -5 : index * 3;
+      filter.type = "lowpass";
+      filter.frequency.value = 920;
+      filter.Q.value = 1.4;
+      gain.gain.setValueAtTime(.0001, start);
+      gain.gain.exponentialRampToValueAtTime(.018, start + .72);
+      gain.gain.setValueAtTime(.018, start + Math.max(.74, duration - .8));
+      gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
+      oscillator.connect(filter);
+      filter.connect(gain);
+      gain.connect(destination);
+      oscillator.start(start);
+      oscillator.stop(start + duration + .04);
+      nodes.push(oscillator);
+    });
+    return nodes;
+  }
+
+  function playAnlamazdinPreview() {
+    if (!audioContext || audioContext.state !== "running") return;
+    stopActivePreview?.();
+
+    const master = audioContext.createGain();
+    master.gain.value = .82;
+    master.connect(audioContext.destination);
+    const scheduledNodes = new Set();
+    let loopTimer = 0;
+    let stopped = false;
+
+    const phrase = [
+      [59, 0, .375], [61, .375, .375], [62, .75, .375], [59, 1.125, .375],
+      [61, 1.5, .375], [59, 1.875, .375], [66, 2.25, .75], [64, 3, 2.25],
+    ];
+
+    function schedulePhrase() {
+      if (stopped) return;
+      const start = audioContext.currentTime + .04;
+      phrase.forEach(([midi, offset, duration]) => {
+        schedulePianoNote(audioContext, master, midi, start + offset, duration)
+          .forEach((node) => scheduledNodes.add(node));
+      });
+      scheduleViolinPad(audioContext, master, start, 5.25)
+        .forEach((node) => scheduledNodes.add(node));
+      loopTimer = window.setTimeout(schedulePhrase, 5700);
+    }
+
+    schedulePhrase();
+    stopActivePreview = () => {
+      if (stopped) return;
+      stopped = true;
+      window.clearTimeout(loopTimer);
+      const now = audioContext.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(Math.max(.0001, master.gain.value), now);
+      master.gain.exponentialRampToValueAtTime(.0001, now + .2);
+      scheduledNodes.forEach((node) => {
+        try { node.stop(now + .22); } catch (_error) { /* already stopped */ }
+      });
+      window.setTimeout(() => master.disconnect(), 260);
+      stopActivePreview = null;
+    };
+  }
+
+  function stopPreview() {
+    stopActivePreview?.();
+  }
+
+  function playCardPreview(card) {
+    if (!soundEnabled || card?.dataset.audioPreview !== "anlamazdin") return;
+    playAnlamazdinPreview();
+  }
+
+  async function enableSound() {
+    if (!AudioContextClass) {
+      soundButton.disabled = true;
+      setSoundButton("Sound unavailable");
+      return false;
+    }
+    audioContext ||= new AudioContextClass();
+    await audioContext.resume();
+    if (audioContext.state !== "running") throw new Error("Audio context is still suspended");
+    soundEnabled = true;
+    setSoundButton("Hover sound on", { pressed: true });
+    playCardPreview(activeCard);
+    return true;
+  }
+
+  function disableSound() {
+    soundEnabled = false;
+    stopPreview();
+    setSoundButton("Hover sound off", { pressed: false });
+  }
+
+  function activateCard(card) {
+    if (activeCard === card) return;
+    stopPreview();
+    activeCard = card;
+    if (soundEnabled) {
+      playCardPreview(card);
+      return;
+    }
+    if (card.dataset.audioPreview) {
+      enableSound().catch(() => setSoundButton("Click to enable hover sound", { blocked: true }));
+    }
+  }
+
+  function deactivateCard(card) {
+    if (activeCard !== card) return;
+    activeCard = null;
+    stopPreview();
+  }
+
+  soundButton.addEventListener("click", () => {
+    if (soundEnabled) {
+      disableSound();
+    } else {
+      enableSound().catch(() => setSoundButton("Sound blocked by browser", { blocked: true }));
+    }
+  });
+
+  cards.forEach((card) => {
+    card.addEventListener("pointerenter", () => activateCard(card));
+    card.addEventListener("pointerleave", () => deactivateCard(card));
+    card.addEventListener("focusin", () => activateCard(card));
+    card.addEventListener("focusout", (event) => {
+      if (!card.contains(event.relatedTarget)) deactivateCard(card);
+    });
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopPreview();
+  });
+  window.addEventListener("pagehide", stopPreview);
+}
+
 function handleSystemThemeChange() {
   if (!getStoredTheme()) {
     syncThemeWithPreference();
@@ -126,4 +323,5 @@ document.addEventListener("DOMContentLoaded", () => {
   setYear();
   setupThemeToggle();
   injectSneakPeekTeaser();
+  setupResonanceCards();
 });

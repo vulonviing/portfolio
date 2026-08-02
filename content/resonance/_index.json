@@ -1,0 +1,21 @@
+[
+  {
+    "slug": "anlamazdin",
+    "title": "anlamazdın.",
+    "date": "2026 · Interactive Music",
+    "excerpt": "A browser-born piano and violin ritual: enter ten notes, then let the song remember itself.",
+    "tags": ["Web Audio", "Music", "Interactive"],
+    "href": "/anlamazdin/",
+    "visualTheme": "anlamazdin",
+    "audioPreview": "anlamazdin"
+  },
+  {
+    "slug": "sneak-peek",
+    "title": "Sneak Peek",
+    "date": "2026 · Interactive Essay",
+    "excerpt": "An interactive study of momentum, surrender, and the psychology of refusing defeat.",
+    "tags": ["Canvas", "Web Audio", "Interactive"],
+    "href": "/sneak-peek/",
+    "visualTheme": "sneak-peek"
+  }
+]

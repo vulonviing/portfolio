@@ -26,6 +26,7 @@ HEADER_HTML = """
             <li><a href="/about.html" data-nav="about">About</a></li>
             <li><a href="/projects.html" data-nav="projects">Projects</a></li>
             <li><a href="/research.html" data-nav="research">Research</a></li>
+            <li><a href="/resonance.html" data-nav="resonance">Resonance</a></li>
           </ul>
         </nav>
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
@@ -109,6 +110,21 @@ LIST_PAGE_CONFIG = {
         "eyebrow": "Research",
         "heading": "Studies, audits, and reproductions.",
         "og_description": "Language model fine-tuning, benchmark audits, network analysis, and reproducibility studies.",
+    },
+    "resonance": {
+        "title": "Resonance — Interactive Art & Cultural Experiences by Emrecan Ulu",
+        "description": "Interactive studies in music, image, movement, and feeling by Emrecan Ulu.",
+        "keywords": [
+            "Emrecan Ulu creative coding",
+            "interactive art",
+            "Web Audio",
+            "digital experiences",
+            "Anlamazdın",
+            "creative technology",
+        ],
+        "eyebrow": "Resonance",
+        "heading": "Things meant to be felt.",
+        "og_description": "Interactive studies in music, image, movement, and whatever stays after the screen goes quiet.",
     },
 }
 
@@ -533,7 +549,68 @@ def render_card(section: str, item: dict) -> str:
 """
 
 
+def render_resonance_card(item: dict) -> str:
+    theme = item.get("visualTheme", "default")
+    audio_preview = item.get("audioPreview")
+    audio_attr = f' data-audio-preview="{escape_attr(audio_preview)}"' if audio_preview else ""
+    tags_html = "".join(f'<span class="tag">{html.escape(tag)}</span>' for tag in item.get("tags", []))
+
+    if theme == "anlamazdin":
+        reveal_html = """<div class="resonance-card__reveal resonance-card__reveal--anlamazdin" aria-hidden="true">
+                <div class="resonance-vinyl"><span>anlamazdın.</span></div>
+                <strong class="resonance-card__display-title">anlamazdın.</strong>
+                <small>piano · violin · memory</small>
+              </div>"""
+    else:
+        reveal_html = """<div class="resonance-card__reveal resonance-card__reveal--sneak-peek" aria-hidden="true">
+                <div class="resonance-stadium" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <strong class="resonance-card__display-title">SNEAK<br />PEEK</strong>
+                <small>momentum · choice · spirit</small>
+              </div>"""
+
+    return f"""          <article class="resonance-card resonance-card--{escape_attr(theme)}" data-resonance-card{audio_attr}>
+            <a class="resonance-card__link" href="{escape_attr(item['href'])}" aria-label="Enter {escape_attr(item['title'])}">
+              <div class="resonance-card__normal">
+                <div class="card__meta">{html.escape(item.get('date', ''))}</div>
+                <h2 class="card__title">{html.escape(item['title'])}</h2>
+                <p class="card__excerpt">{html.escape(item.get('excerpt', ''))}</p>
+                <div class="tag-row">{tags_html}</div>
+                <span class="card__cta">Enter experience</span>
+              </div>
+              {reveal_html}
+            </a>
+          </article>
+"""
+
+
+def render_resonance_main(items: list[dict]) -> str:
+    cards_html = "\n".join(render_resonance_card(item).rstrip() for item in items)
+    return f"""    <section class="list-page__header resonance-header">
+      <div class="container">
+        <div class="section__eyebrow">Resonance</div>
+        <h1 class="section__title">Things meant to be felt.</h1>
+        <p class="section__lead">Interactive studies in music, image, movement, and whatever stays after the screen goes quiet.</p>
+        <button class="resonance-sound" type="button" data-resonance-sound aria-pressed="false">
+          <span aria-hidden="true">◌</span> Enable hover sound
+        </button>
+      </div>
+    </section>
+
+    <section class="section--tight resonance-section">
+      <div class="container">
+        <div class="resonance-grid">
+{cards_html}
+        </div>
+        <p class="resonance-note">Unofficial, non-commercial browser experiments. Original recordings are not used.</p>
+      </div>
+    </section>
+"""
+
+
 def render_list_main(section: str, items: list[dict]) -> str:
+    if section == "resonance":
+        return render_resonance_main(items)
+
     config = LIST_PAGE_CONFIG[section]
     cards_html = "\n".join(render_card(section, item).rstrip() for item in items)
     return f"""    <section class="list-page__header">
@@ -645,6 +722,7 @@ def build_sitemap(entry_sources: list[tuple[str, Path]]) -> None:
         (f"{SITE_URL}/about.html", ROOT / "about.html", "0.9"),
         (f"{SITE_URL}/projects.html", ROOT / "projects.html", "0.8"),
         (f"{SITE_URL}/research.html", ROOT / "research.html", "0.8"),
+        (f"{SITE_URL}/resonance.html", ROOT / "resonance.html", "0.8"),
     ]
     pages.extend((url, source, "0.6") for url, source in entry_sources)
 

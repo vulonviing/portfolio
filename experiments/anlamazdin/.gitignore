@@ -1,0 +1,10 @@
+# Local reference recordings used for transcription and analysis.
+mp3/*
+!mp3/.gitkeep
+
+# Local analysis artifacts and generated stems.
+analysis-output/
+
+# Local dependencies and builds.
+node_modules/
+dist/

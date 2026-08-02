@@ -1,0 +1,29 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { activePianoMidis, orbitSectionId, ORBIT_SECTIONS } from '../src/music/playbackView.js';
+
+test('orbit exposes the three language-neutral section positions', () => {
+  assert.deepEqual(ORBIT_SECTIONS, [
+    { id: 'wish', position: 'lower-left' },
+    { id: 'verse', position: 'lower-right' },
+    { id: 'chorus', position: 'top' },
+  ]);
+  assert.equal(orbitSectionId('wish-1'), 'wish');
+  assert.equal(orbitSectionId('wish-2'), null);
+  assert.equal(orbitSectionId('verse-2'), 'verse');
+  assert.equal(orbitSectionId('chorus-2'), 'chorus');
+  assert.equal(orbitSectionId('breath'), null);
+  assert.equal(orbitSectionId('threshold'), null);
+});
+
+test('active piano notes include simultaneous playable events without violin or duplicates', () => {
+  const events = [
+    { time: 1, duration: 2, midi: 59, track: 'melody' },
+    { time: 1.5, duration: 1, midi: 59, track: 'harmony' },
+    { time: 1, duration: 2, midi: 62, track: 'harmony' },
+    { time: 1, duration: 2, midi: 66, track: 'violin' },
+    { time: 1, duration: 2, midi: 47, track: 'harmony' },
+  ];
+  assert.deepEqual(activePianoMidis(events, 2), [59, 62]);
+  assert.deepEqual(activePianoMidis(events, 3), []);
+});
