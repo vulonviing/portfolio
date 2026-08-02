@@ -231,6 +231,7 @@ function SoundHorizon({
   playback,
   section,
   t,
+  touchSeekFallback = false,
 }) {
   const canvasRef = useRef(null);
   const redrawRef = useRef(() => {});
@@ -246,6 +247,7 @@ function SoundHorizon({
   const [draftPosition, setDraftPosition] = useState(playback.position);
   const [mixerOpen, setMixerOpen] = useState(false);
   const isDragging = useRef(false);
+  const seekCommitTimer = useRef(null);
   playbackRef.current = playback;
   visualPositionRef.current = isDragging.current ? draftPosition : playback.position;
 
@@ -254,6 +256,7 @@ function SoundHorizon({
   }, [playback.position]);
 
   async function commitSeek(value = draftPosition) {
+    window.clearTimeout(seekCommitTimer.current);
     isDragging.current = false;
     const next = Number(value);
     visualPositionRef.current = next;
@@ -264,6 +267,8 @@ function SoundHorizon({
       onScrub(null);
     }
   }
+
+  useEffect(() => () => window.clearTimeout(seekCommitTimer.current), []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -417,12 +422,21 @@ function SoundHorizon({
         }}
         onChange={(event) => {
           const next = Number(event.target.value);
+          isDragging.current = true;
           setDraftPosition(next);
           onScrub(next);
+          if (touchSeekFallback) {
+            window.clearTimeout(seekCommitTimer.current);
+            seekCommitTimer.current = window.setTimeout(() => commitSeek(next), 140);
+          }
         }}
         onKeyDown={() => { isDragging.current = true; }}
         onKeyUp={(event) => commitSeek(event.currentTarget.value)}
         onPointerCancel={() => {
+          if (touchSeekFallback && isDragging.current) {
+            commitSeek(visualPositionRef.current);
+            return;
+          }
           isDragging.current = false;
           setDraftPosition(playback.position);
           onScrub(null);
@@ -432,6 +446,9 @@ function SoundHorizon({
           onScrub(Number(event.currentTarget.value));
         }}
         onPointerUp={(event) => commitSeek(event.currentTarget.value)}
+        onTouchEnd={(event) => {
+          if (touchSeekFallback && isDragging.current) commitSeek(event.currentTarget.value);
+        }}
         step="0.1"
         type="range"
         value={draftPosition}
@@ -902,6 +919,7 @@ export default function App() {
           playback={playback}
           section={displayedSection}
           t={t}
+          touchSeekFallback={handheld.isPhone}
         />
       )}
     </main>
