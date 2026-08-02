@@ -76,7 +76,7 @@ button { color: inherit; }
 .footer-disclaimer { justify-self: center; max-width: 580px; text-align: center; line-height: 1.55; letter-spacing: .08em; text-transform: none; }
 .license-links { display: flex; gap: 18px; }
 .wordmark, .back-link { color: var(--ivory); text-decoration: none; }
-.wordmark { justify-self: start; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: lowercase; }
+.wordmark { justify-self: start; font-family: 'Iowan Old Style', Baskerville, 'Times New Roman', serif; font-size: clamp(28px, 2.2vw, 36px); font-style: italic; font-weight: 400; line-height: .8; letter-spacing: -.055em; text-transform: lowercase; text-shadow: 0 7px 24px rgba(0,0,0,.32); }
 .back-link { color: #978f87; transition: color .2s ease; }
 .back-link:hover { color: var(--ivory); }
 .back-link span { color: var(--brass); margin-left: 7px; }

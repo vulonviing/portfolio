@@ -6,12 +6,23 @@ import {
   chooseSampleAnchor,
   clampPosition,
   firstPlayableEvent,
+  VIOLIN_MIX,
+  violinMixLevel,
 } from '../src/audio/ArrangementEngine.js';
 
 test('a preferred sample anchor keeps a short phrase on one piano recording', () => {
   const anchors = [57, 60, 63, 66];
   assert.equal(chooseSampleAnchor(62, anchors, 60), 60);
   assert.equal(chooseSampleAnchor(62, anchors, 61), 63);
+});
+
+test('violin rises smoothly into Demedim mi and remains lifted afterward', () => {
+  const liftAt = 24;
+  assert.equal(violinMixLevel(19, liftAt), VIOLIN_MIX.base);
+  assert.equal(violinMixLevel(20, liftAt), VIOLIN_MIX.base);
+  assert.equal(violinMixLevel(22, liftAt), (VIOLIN_MIX.base + VIOLIN_MIX.lifted) / 2);
+  assert.equal(violinMixLevel(24, liftAt), VIOLIN_MIX.lifted);
+  assert.equal(violinMixLevel(60, liftAt), VIOLIN_MIX.lifted);
 });
 
 test('seek positions are clamped to the arrangement', () => {

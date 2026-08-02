@@ -11,6 +11,12 @@ export const AUDIO_SAMPLE_BYTES = {
   total: 20_378_504,
 };
 
+export const VIOLIN_MIX = {
+  base: 0.864,
+  lifted: 1.008,
+  rampSeconds: 4,
+};
+
 const PIANO_SAMPLE_BYTES = new Map([
   [33, 1_495_610], [36, 1_432_516], [39, 1_418_874], [42, 1_312_810],
   [45, 1_023_946], [48, 1_028_040], [51, 1_033_156], [54, 1_036_224],
@@ -57,15 +63,24 @@ export function clampPosition(position, duration) {
   return Math.max(0, Math.min(Number(position) || 0, duration));
 }
 
+export function violinMixLevel(position, liftAt) {
+  const rampStart = Math.max(0, liftAt - VIOLIN_MIX.rampSeconds);
+  if (position <= rampStart) return VIOLIN_MIX.base;
+  if (position >= liftAt) return VIOLIN_MIX.lifted;
+  const progress = (position - rampStart) / Math.max(0.001, liftAt - rampStart);
+  return VIOLIN_MIX.base + (VIOLIN_MIX.lifted - VIOLIN_MIX.base) * progress;
+}
+
 export function firstPlayableEvent(events, position) {
   const index = events.findIndex((event) => event.time + event.duration > position - 0.02);
   return index === -1 ? events.length : index;
 }
 
 export class ArrangementEngine {
-  constructor(events, duration) {
+  constructor(events, duration, { violinLiftAt = Number.POSITIVE_INFINITY } = {}) {
     this.events = events;
     this.duration = duration;
+    this.violinLiftAt = violinLiftAt;
     this.context = null;
     this.master = null;
     this.analyser = null;
@@ -377,7 +392,16 @@ export class ArrangementEngine {
     this.nextIndex = firstPlayableEvent(this.events, this.position);
     this.pianoBus = this.createBus({ level: 0.88, send: 0.14, reverb: 0.42 });
     this.pedalBus = this.createBus({ level: 0.72, send: 0.32, reverb: 0.62 });
-    this.violinBus = this.createBus({ level: 0.86, send: 0.24, reverb: 0.5 });
+    this.violinBus = this.createBus({ level: VIOLIN_MIX.base, send: 0.24, reverb: 0.5 });
+    const violinGain = this.violinBus.output.gain;
+    const rampStart = Math.max(0, this.violinLiftAt - VIOLIN_MIX.rampSeconds);
+    violinGain.setValueAtTime(violinMixLevel(this.position, this.violinLiftAt), this.contextStart);
+    if (Number.isFinite(this.violinLiftAt) && this.position < this.violinLiftAt) {
+      const rampStartAt = this.contextStart + Math.max(0, rampStart - this.position);
+      const rampEndAt = this.contextStart + Math.max(0, this.violinLiftAt - this.position);
+      if (this.position < rampStart) violinGain.setValueAtTime(VIOLIN_MIX.base, rampStartAt);
+      violinGain.linearRampToValueAtTime(VIOLIN_MIX.lifted, rampEndAt);
+    }
     this.status = 'playing';
     this.schedule();
     this.startProgress();

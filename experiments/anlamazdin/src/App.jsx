@@ -14,6 +14,7 @@ import { experienceReducer, initialExperience } from './state/experience';
 
 const BLACK_KEYS = new Set([1, 3, 6, 8, 10]);
 const KEYBOARD_NOTES = Array.from({ length: 24 }, (_, index) => 48 + index);
+const VIOLIN_LIFT_AT = SECTIONS.find((section) => section.id === 'verse-2')?.start ?? 0;
 
 function isBlack(midi) {
   return BLACK_KEYS.has(midi % 12);
@@ -390,7 +391,11 @@ export default function App() {
     duration: SONG.duration,
   });
   const events = useMemo(() => buildSongEvents(), []);
-  const engine = useMemo(() => new ArrangementEngine(events, SONG.duration), [events]);
+  const engine = useMemo(() => new ArrangementEngine(
+    events,
+    SONG.duration,
+    { violinLiftAt: VIOLIN_LIFT_AT },
+  ), [events]);
   const mistakeTimer = useRef(null);
   const liveKeyTimer = useRef(null);
   const inputBusy = useRef(false);
