@@ -97,6 +97,8 @@ button { color: inherit; }
 .back-link:hover { color: var(--ivory); }
 .back-link span { color: var(--brass); margin-left: 7px; }
 .back-link .back-label { color: inherit; margin-left: 0; }
+.back-icon { position: relative; display: inline-block; width: 13px; height: 13px; border-top: 1.5px solid currentColor; border-right: 1.5px solid currentColor; }
+.back-icon::after { content: ''; position: absolute; top: -1px; right: -1px; width: 17px; height: 1.5px; background: currentColor; transform: rotate(-45deg); transform-origin: right center; }
 .record-meta { display: flex; gap: 14px; justify-self: center; color: #817972; }
 .header-actions { position: relative; display: flex; align-items: center; justify-self: end; gap: 14px; min-width: 0; }
 
@@ -177,6 +179,8 @@ button { color: inherit; }
 .run-button:disabled { opacity: .45; cursor: wait; transform: none; }
 .run-button strong { font-weight: 600; }
 .run-button i { width: 24px; height: 24px; display: grid; place-items: center; border: 1px solid rgba(228,190,137,.48); border-radius: 50%; color: #e3b878; font-style: normal; font-size: 8px; letter-spacing: 0; }
+.play-symbol { display: block; width: 0; height: 0; margin-left: 2px; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 7px solid currentColor; }
+.pause-symbol { display: block; width: 8px; height: 11px; border-right: 2px solid currentColor; border-left: 2px solid currentColor; }
 
 @keyframes keyCue {
   0%, 100% { box-shadow: 0 0 0 7px rgba(182,139,82,.11), 0 0 17px 3px rgba(182,139,82,.5); }
@@ -433,6 +437,7 @@ button { color: inherit; }
   .target-note { min-width: 0; text-align: right; }
   .reset-button { display: none; }
   .ritual .keyboard-scroll { margin-right: -12px; margin-left: -12px; padding-right: 12px; padding-left: 12px; scroll-padding-inline: 24%; }
+  .ritual .keyboard-scroll { position: relative; z-index: 2; overscroll-behavior-inline: contain; -webkit-overflow-scrolling: touch; touch-action: pan-x; }
   .ritual .piano { min-width: 640px; height: clamp(145px, 25svh, 190px); }
   .note-trail { gap: 3px; margin-top: 14px; }
   .note-trail span { height: 34px; gap: 3px; }
@@ -481,6 +486,7 @@ button { color: inherit; }
     opacity: .76;
   }
   .listening-piano .piano { height: var(--mobile-piano-height); min-width: 600px; }
+  .listening-piano .keyboard-scroll { pointer-events: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x; }
 
   .sound-horizon {
     position: relative;
@@ -558,25 +564,30 @@ button { color: inherit; }
 
 @media (max-width: 950px) and (max-height: 520px) and (orientation: landscape) {
   .experience {
-    --mobile-horizon-height: clamp(118px, 34vh, 140px);
-    --mobile-horizon-height: clamp(118px, 34dvh, 140px);
-    --mobile-piano-height: clamp(66px, 18vh, 76px);
-    --mobile-piano-height: clamp(66px, 18dvh, 76px);
+    --mobile-horizon-height: clamp(96px, 27vh, 112px);
+    --mobile-horizon-height: clamp(96px, 27dvh, 112px);
+    --mobile-piano-height: clamp(48px, 13vh, 58px);
+    --mobile-piano-height: clamp(48px, 13dvh, 58px);
   }
   .site-header { min-height: 50px; padding-top: max(4px, env(safe-area-inset-top)); padding-bottom: 4px; }
   .wordmark { font-size: 26px; }
   .hero { padding-top: 18px; padding-bottom: 10px; }
   .hero h1 { font-size: min(10vw, 64px); }
   .ritual .piano { height: 132px; }
+  .listening-field { row-gap: 8px; }
   .record-orbit { width: min(30vw, 30vh, 148px); width: min(30vw, 30dvh, 148px); }
+  .listening-piano .piano-key--black { top: 6px; }
   .center-vinyl > span { width: 45px; height: 45px; }
   .center-vinyl { box-shadow: inset 0 0 0 20px rgba(0,0,0,.14), inset 0 0 0 21px rgba(182,139,82,.13), 0 16px 40px rgba(0,0,0,.44); }
   .orbit-label { font-size: 6px; }
-  .horizon-seek { height: 40px; }
-  .horizon-mix { bottom: calc(54px + env(safe-area-inset-bottom)); padding: 9px 12px; }
-  .horizon-transport { bottom: calc(5px + env(safe-area-inset-bottom)); }
-  .horizon-mix-toggle, .horizon-restart, .horizon-play { height: 40px; }
-  .horizon-restart, .horizon-play { width: 40px; }
+  .horizon-seek { top: 5px; height: 32px; }
+  .horizon-mix { bottom: calc(43px + env(safe-area-inset-bottom)); padding: 7px 10px; }
+  .horizon-transport { bottom: calc(3px + env(safe-area-inset-bottom)); gap: 5px; }
+  .horizon-meta--left { gap: 3px; }
+  .horizon-meta span, .horizon-meta strong { font-size: 6px; }
+  .horizon-mix-toggle { min-width: 52px; font-size: 6px; }
+  .horizon-mix-toggle, .horizon-restart, .horizon-play { height: 34px; }
+  .horizon-restart, .horizon-play { width: 34px; }
 }
 
 @media (max-height: 760px) and (min-width: 951px) {

@@ -94,10 +94,11 @@ function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPr
         : key.offsetLeft + key.offsetWidth / 2;
       const visibleStart = scroller.scrollLeft + scroller.clientWidth * 0.24;
       const visibleEnd = scroller.scrollLeft + scroller.clientWidth * 0.76;
-      if (keyCenter < visibleStart || keyCenter > visibleEnd) {
+      const centerEveryStep = window.matchMedia('(max-width: 700px) and (orientation: portrait)').matches;
+      if (centerEveryStep || keyCenter < visibleStart || keyCenter > visibleEnd) {
         scroller.scrollTo({
           behavior,
-          left: Math.max(0, keyCenter - scroller.clientWidth * 0.42),
+          left: Math.max(0, keyCenter - scroller.clientWidth * (centerEveryStep ? 0.5 : 0.42)),
         });
       }
     }
@@ -442,7 +443,7 @@ function SoundHorizon({
         <div className="horizon-meta horizon-meta--right">
           <button aria-label={t.restart} className="horizon-restart" onClick={onRestart} type="button">↺</button>
           <button aria-label={isPlaying ? t.pause : t.resume} className="horizon-play" onClick={onToggle} type="button">
-            {isPlaying ? 'Ⅱ' : '▶'}
+            <span className={isPlaying ? 'pause-symbol' : 'play-symbol'} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -602,6 +603,13 @@ export default function App() {
         block: 'center',
         inline: 'nearest',
       });
+      const mobileScroller = playButtonRef.current?.closest('.experience');
+      if (window.matchMedia('(max-width: 700px)').matches && mobileScroller) {
+        mobileScroller.scrollTo({
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          top: mobileScroller.scrollHeight,
+        });
+      }
       playButtonRef.current?.focus({ preventScroll: true });
     }, 120);
     return () => window.clearTimeout(scrollTimer);
@@ -697,8 +705,8 @@ export default function App() {
         <div className="header-actions">
           <RightsDisclosure t={t} />
           <LanguageSwitch language={language} onChange={changeLanguage} t={t} />
-          <a className="back-link" href="/">
-            <span className="back-label">{t.backToPortfolio}</span><span>↗</span>
+          <a aria-label={t.backToPortfolio} className="back-link" href="/">
+            <span className="back-label">{t.backToPortfolio}</span><span className="back-icon" aria-hidden="true" />
           </a>
         </div>
       </header>
@@ -763,7 +771,7 @@ export default function App() {
                 <div className="play-ready">
                   <span>{t.pressPlay}</span>
                   <button className="run-button" disabled={!audioReady} onClick={startSong} ref={playButtonRef} type="button">
-                    <strong>{t.play}</strong><i>▶</i>
+                    <strong>{t.play}</strong><i><span className="play-symbol" aria-hidden="true" /></i>
                   </button>
                 </div>
               )}
