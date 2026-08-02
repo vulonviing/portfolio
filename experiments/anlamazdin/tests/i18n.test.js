@@ -38,6 +38,8 @@ test('interface copy, note names and song sections switch together', () => {
   assert.match(copyFor('tr').loadingPatience, /bütün enstrümanlar/i);
   assert.match(copyFor('en').pressPlay, /press play/i);
   assert.match(copyFor('tr').pressPlay, /çal tuşuna bas/i);
+  assert.match(copyFor('en').noticeTitle, /computer and headphones/i);
+  assert.match(copyFor('tr').noticeBody, /arka planda/i);
   assert.equal(copyFor('en').pianoMix, 'Piano');
   assert.equal(copyFor('tr').violinMix, 'Keman');
   assert.equal(noteName(61, 'en'), 'C♯');

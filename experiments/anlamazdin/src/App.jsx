@@ -56,6 +56,28 @@ function AudioLoading({ progress, t }) {
   );
 }
 
+function ExperienceNotice({ onAccept, progress, t }) {
+  const totalBytes = Math.max(1, progress?.totalBytes || 1);
+  const loadedBytes = Math.min(totalBytes, progress?.loadedBytes || 0);
+  const percent = Math.max(4, Math.round((loadedBytes / totalBytes) * 100));
+
+  return (
+    <div className="experience-notice" role="dialog" aria-modal="true" aria-labelledby="experience-notice-title">
+      <div className="experience-notice__backdrop" aria-hidden="true" />
+      <div className="experience-notice__card">
+        <span className="experience-notice__eyebrow">{t.noticeEyebrow}</span>
+        <h2 id="experience-notice-title">{t.noticeTitle}</h2>
+        <p>{t.noticeBody}</p>
+        <div className="experience-notice__loading" role="status" aria-live="polite">
+          <span><b>{t.noticeLoading}</b><i>{formatMegabytes(loadedBytes)} / {formatMegabytes(totalBytes)}</i></span>
+          <span className="experience-notice__track" aria-hidden="true"><i style={{ width: `${percent}%` }} /></span>
+        </div>
+        <button autoFocus onClick={onAccept} type="button">{t.noticeAccept}</button>
+      </div>
+    </div>
+  );
+}
+
 function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPress, targetMidi, t }) {
   const scrollerRef = useRef(null);
   const whiteNotes = KEYBOARD_NOTES.filter((midi) => !isBlack(midi));
@@ -63,8 +85,20 @@ function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPr
 
   useEffect(() => {
     if (!targetMidi || !scrollerRef.current) return;
-    const key = scrollerRef.current.querySelector(`[data-midi="${targetMidi}"]`);
-    key?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    const scroller = scrollerRef.current;
+    const key = scroller.querySelector(`[data-midi="${targetMidi}"]`);
+    if (!key) return;
+    const keyCenter = key.classList.contains('piano-key--black')
+      ? key.offsetLeft
+      : key.offsetLeft + key.offsetWidth / 2;
+    const visibleStart = scroller.scrollLeft + scroller.clientWidth * 0.24;
+    const visibleEnd = scroller.scrollLeft + scroller.clientWidth * 0.76;
+    if (keyCenter < visibleStart || keyCenter > visibleEnd) {
+      scroller.scrollTo({
+        behavior: 'smooth',
+        left: Math.max(0, keyCenter - scroller.clientWidth * 0.42),
+      });
+    }
   }, [targetMidi]);
 
   const keyClass = (midi, kind) => [
@@ -482,6 +516,7 @@ export default function App() {
   const [livePressedMidis, setLivePressedMidis] = useState([]);
   const [mixLevels, setMixLevels] = useState({ piano: 1, violin: 1 });
   const [scrubPosition, setScrubPosition] = useState(null);
+  const [noticeAccepted, setNoticeAccepted] = useState(false);
   const t = copyFor(language);
 
   useEffect(() => {
@@ -616,6 +651,13 @@ export default function App() {
   return (
     <main className={`experience ${hasStarted ? 'is-listening' : ''} ${lowPowerMode ? 'is-low-power' : ''}`}>
       <div className="grain" aria-hidden="true" />
+      {!noticeAccepted && (
+        <ExperienceNotice
+          onAccept={() => setNoticeAccepted(true)}
+          progress={playback.loadProgress}
+          t={t}
+        />
+      )}
       <header className="site-header">
         <a className="wordmark" href={import.meta.env.BASE_URL}>anlamazdın.</a>
         <div className="record-meta"><span>AYLA DİKMEN</span><span>1976</span></div>
