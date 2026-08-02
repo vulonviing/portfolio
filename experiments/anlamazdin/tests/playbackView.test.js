@@ -53,4 +53,6 @@ test('visuals fall back to the light renderer on constrained devices', () => {
   assert.equal(shouldUseLowPowerMode({ hardwareConcurrency: 8, deviceMemory: 4 }), true);
   assert.equal(shouldUseLowPowerMode({ hardwareConcurrency: 8, deviceMemory: 8 }), false);
   assert.equal(shouldUseLowPowerMode({ reduceMotion: true }), true);
+  assert.equal(shouldUseLowPowerMode({ coarsePointer: true, viewportWidth: 390 }), true);
+  assert.equal(shouldUseLowPowerMode({ coarsePointer: true, viewportWidth: 1024 }), false);
 });

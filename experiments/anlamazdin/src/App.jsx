@@ -86,19 +86,26 @@ function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPr
   useEffect(() => {
     if (!targetMidi || !scrollerRef.current) return;
     const scroller = scrollerRef.current;
-    const key = scroller.querySelector(`[data-midi="${targetMidi}"]`);
-    if (!key) return;
-    const keyCenter = key.classList.contains('piano-key--black')
-      ? key.offsetLeft
-      : key.offsetLeft + key.offsetWidth / 2;
-    const visibleStart = scroller.scrollLeft + scroller.clientWidth * 0.24;
-    const visibleEnd = scroller.scrollLeft + scroller.clientWidth * 0.76;
-    if (keyCenter < visibleStart || keyCenter > visibleEnd) {
-      scroller.scrollTo({
-        behavior: 'smooth',
-        left: Math.max(0, keyCenter - scroller.clientWidth * 0.42),
-      });
+    function keepTargetVisible(behavior = 'smooth') {
+      const key = scroller.querySelector(`[data-midi="${targetMidi}"]`);
+      if (!key) return;
+      const keyCenter = key.classList.contains('piano-key--black')
+        ? key.offsetLeft
+        : key.offsetLeft + key.offsetWidth / 2;
+      const visibleStart = scroller.scrollLeft + scroller.clientWidth * 0.24;
+      const visibleEnd = scroller.scrollLeft + scroller.clientWidth * 0.76;
+      if (keyCenter < visibleStart || keyCenter > visibleEnd) {
+        scroller.scrollTo({
+          behavior,
+          left: Math.max(0, keyCenter - scroller.clientWidth * 0.42),
+        });
+      }
     }
+
+    keepTargetVisible();
+    const resizeObserver = new ResizeObserver(() => keepTargetVisible('auto'));
+    resizeObserver.observe(scroller);
+    return () => resizeObserver.disconnect();
   }, [targetMidi]);
 
   const keyClass = (midi, kind) => [
@@ -204,6 +211,7 @@ function SoundHorizon({
   );
   const isPlaying = playback.status === 'playing';
   const [draftPosition, setDraftPosition] = useState(playback.position);
+  const [mixerOpen, setMixerOpen] = useState(false);
   const isDragging = useRef(false);
   playbackRef.current = playback;
   visualPositionRef.current = isDragging.current ? draftPosition : playback.position;
@@ -395,7 +403,7 @@ function SoundHorizon({
         type="range"
         value={draftPosition}
       />
-      <div className="horizon-mix" role="group" aria-label={t.mixControls}>
+      <div className={`horizon-mix ${mixerOpen ? 'is-open' : ''}`} role="group" aria-label={t.mixControls}>
         {['piano', 'violin'].map((track) => {
           const percent = Math.round(mixLevels[track] * 100);
           const label = track === 'piano' ? t.pianoMix : t.violinMix;
@@ -417,15 +425,26 @@ function SoundHorizon({
           );
         })}
       </div>
-      <div className="horizon-meta horizon-meta--left">
-        <span>{formatTime(isDragging.current ? draftPosition : playback.position)} / {formatTime(playback.duration)}</span>
-        <strong>{section.label}</strong>
-      </div>
-      <div className="horizon-meta horizon-meta--right">
-        <button aria-label={t.restart} className="horizon-restart" onClick={onRestart} type="button">↺</button>
-        <button aria-label={isPlaying ? t.pause : t.resume} className="horizon-play" onClick={onToggle} type="button">
-          {isPlaying ? 'Ⅱ' : '▶'}
+      <div className="horizon-transport">
+        <div className="horizon-meta horizon-meta--left">
+          <span>{formatTime(isDragging.current ? draftPosition : playback.position)} / {formatTime(playback.duration)}</span>
+          <strong title={section.label}>{section.label}</strong>
+        </div>
+        <button
+          aria-expanded={mixerOpen}
+          aria-label={mixerOpen ? t.closeMixer : t.openMixer}
+          className={`horizon-mix-toggle ${mixerOpen ? 'is-open' : ''}`}
+          onClick={() => setMixerOpen((current) => !current)}
+          type="button"
+        >
+          {t.mixer}
         </button>
+        <div className="horizon-meta horizon-meta--right">
+          <button aria-label={t.restart} className="horizon-restart" onClick={onRestart} type="button">↺</button>
+          <button aria-label={isPlaying ? t.pause : t.resume} className="horizon-play" onClick={onToggle} type="button">
+            {isPlaying ? 'Ⅱ' : '▶'}
+          </button>
+        </div>
       </div>
     </aside>
   );
@@ -452,7 +471,10 @@ function LanguageSwitch({ language, onChange, t }) {
 function RightsDisclosure({ t }) {
   return (
     <details className="rights-disclosure">
-      <summary>{t.rightsSummary}</summary>
+      <summary>
+        <span className="rights-summary-label">{t.rightsSummary}</span>
+        <span className="rights-summary-icon" aria-hidden="true">©</span>
+      </summary>
       <div className="rights-panel">
         <div lang="en">
           <strong>Rights & credits</strong>
@@ -508,6 +530,8 @@ export default function App() {
     hardwareConcurrency: navigator.hardwareConcurrency || 8,
     deviceMemory: navigator.deviceMemory || 8,
     reduceMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    coarsePointer: window.matchMedia('(pointer: coarse)').matches,
+    viewportWidth: window.innerWidth,
   }), []);
   const mistakeTimer = useRef(null);
   const liveKeyTimer = useRef(null);
@@ -524,6 +548,15 @@ export default function App() {
     document.title = t.pageTitle;
     document.querySelector('meta[name="description"]')?.setAttribute('content', t.pageDescription);
   }, [language, t.pageDescription, t.pageTitle]);
+
+  useEffect(() => {
+    if (noticeAccepted) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [noticeAccepted]);
 
   useEffect(() => {
     const enterTimer = window.setTimeout(() => dispatch({ type: 'ENTER' }), 380);

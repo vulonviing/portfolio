@@ -26,8 +26,13 @@ export function shouldUseLowPowerMode({
   hardwareConcurrency = 8,
   deviceMemory = 8,
   reduceMotion = false,
+  coarsePointer = false,
+  viewportWidth = Number.POSITIVE_INFINITY,
 } = {}) {
-  return reduceMotion || hardwareConcurrency <= 4 || deviceMemory <= 4;
+  return reduceMotion
+    || hardwareConcurrency <= 4
+    || deviceMemory <= 4
+    || (coarsePointer && viewportWidth <= 950);
 }
 
 export function activePianoMidis(events, position, minMidi = 48, maxMidi = 71) {
