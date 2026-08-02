@@ -285,7 +285,10 @@ function setupResonanceCards() {
       try {
         await playSneakPeekPreview(request);
       } catch {
-        setSoundButton("Preview unavailable", { blocked: true, pressed: false });
+        sneakPeekEnginePromise = null;
+        if (request === previewRequest && soundEnabled) {
+          setSoundButton("Hover sound on", { pressed: true });
+        }
       }
     }
   }

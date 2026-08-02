@@ -534,10 +534,10 @@ export function createEngine({ context: sharedContext = null } = {}) {
     if (!PROGRESSIONS[next]) return;
     if (next === scenario) return;
     scenario = next;
-    if (ctx) {
+    if (initialized) {
       moodStartTime = ctx.currentTime;
+      updateBuses(1.0);
     }
-    updateBuses(1.0);
   }
 
   return { start, stop, setScenario };
