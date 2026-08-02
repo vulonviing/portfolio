@@ -88,8 +88,6 @@ function setupResonanceCards() {
   let soundEnabled = true;
   let activeCard = null;
   let stopActivePreview = null;
-  let previewRequest = 0;
-  let sneakPeekEnginePromise = null;
 
   function setSoundButton(label, { blocked = false, pressed = soundEnabled } = {}) {
     const icon = document.createElement("span");
@@ -217,48 +215,121 @@ function setupResonanceCards() {
     };
   }
 
-  function loadSneakPeekEngine() {
-    sneakPeekEnginePromise ||= import("/experiments/sneak-peek/src/audio/engine.js?v=medium-hover-20260802")
-      .then(({ createEngine }) => createEngine({ context: audioContext }));
-    return sneakPeekEnginePromise;
-  }
+  function playSneakPeekPreview() {
+    if (!audioContext || audioContext.state !== "running") return;
+    stopActivePreview?.();
 
-  async function playSneakPeekPreview(request) {
-    const engine = await loadSneakPeekEngine();
-    if (request !== previewRequest || activeCard?.dataset.audioPreview !== "sneak-peek" || !soundEnabled) return;
-    engine.setScenario("halftime");
-    await engine.start();
-    if (request !== previewRequest || activeCard?.dataset.audioPreview !== "sneak-peek" || !soundEnabled) {
-      engine.stop();
-      return;
+    const master = audioContext.createGain();
+    master.gain.value = .52;
+    master.connect(audioContext.destination);
+    const scheduledNodes = new Set();
+    const chords = [
+      [57, 60, 64, 69],
+      [55, 59, 62, 67],
+      [53, 57, 60, 65],
+      [55, 59, 62, 67],
+    ];
+    const pattern = [0, 2, 1, 2, 3, 2, 1, 2, 0, 2, 1, 2, 3, 2, 1, 2];
+    const sixteenth = 60 / 100 / 4;
+    let nextNoteTime = audioContext.currentTime + .04;
+    let noteIndex = 0;
+    let schedulerTimer = 0;
+    let stopped = false;
+
+    function remember(nodes) {
+      nodes.forEach((node) => {
+        scheduledNodes.add(node);
+        node.addEventListener("ended", () => scheduledNodes.delete(node), { once: true });
+      });
     }
+
+    function scheduleKick(time) {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(118, time);
+      oscillator.frequency.exponentialRampToValueAtTime(43, time + .16);
+      gain.gain.setValueAtTime(.0001, time);
+      gain.gain.exponentialRampToValueAtTime(.22, time + .008);
+      gain.gain.exponentialRampToValueAtTime(.0001, time + .28);
+      oscillator.connect(gain);
+      gain.connect(master);
+      oscillator.start(time);
+      oscillator.stop(time + .3);
+      remember([oscillator]);
+    }
+
+    function schedulePad(time, chord) {
+      const nodes = chord.slice(0, 3).map((midi, index) => {
+        const oscillator = audioContext.createOscillator();
+        const filter = audioContext.createBiquadFilter();
+        const gain = audioContext.createGain();
+        oscillator.type = "sawtooth";
+        oscillator.frequency.value = midiToFrequency(midi - 12);
+        oscillator.detune.value = (index - 1) * 4;
+        filter.type = "lowpass";
+        filter.frequency.value = 780;
+        gain.gain.setValueAtTime(.0001, time);
+        gain.gain.exponentialRampToValueAtTime(.018, time + .38);
+        gain.gain.exponentialRampToValueAtTime(.0001, time + 2.38);
+        oscillator.connect(filter);
+        filter.connect(gain);
+        gain.connect(master);
+        oscillator.start(time);
+        oscillator.stop(time + 2.42);
+        return oscillator;
+      });
+      remember(nodes);
+    }
+
+    function scheduleAhead() {
+      if (stopped) return;
+      const horizon = audioContext.currentTime + 1.25;
+      while (nextNoteTime < horizon) {
+        const step = noteIndex % 16;
+        const chord = chords[Math.floor(noteIndex / 16) % chords.length];
+        const midi = chord[pattern[step]];
+        remember(schedulePianoNote(audioContext, master, midi, nextNoteTime, sixteenth * 1.55));
+        if (step % 4 === 0) {
+          remember(schedulePianoNote(audioContext, master, chord[0] - 12, nextNoteTime, sixteenth * 3.2));
+          scheduleKick(nextNoteTime);
+        }
+        if (step === 0) schedulePad(nextNoteTime, chord);
+        nextNoteTime += sixteenth;
+        noteIndex += 1;
+      }
+    }
+
+    scheduleAhead();
+    schedulerTimer = window.setInterval(scheduleAhead, 250);
     stopActivePreview = () => {
-      engine.stop();
+      if (stopped) return;
+      stopped = true;
+      window.clearInterval(schedulerTimer);
+      const now = audioContext.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(Math.max(.0001, master.gain.value), now);
+      master.gain.exponentialRampToValueAtTime(.0001, now + .18);
+      scheduledNodes.forEach((node) => {
+        try { node.stop(now + .2); } catch (_error) { /* already stopped */ }
+      });
+      window.setTimeout(() => master.disconnect(), 230);
       stopActivePreview = null;
     };
   }
 
   function stopPreview() {
-    previewRequest += 1;
     stopActivePreview?.();
   }
 
-  async function playCardPreview(card) {
+  function playCardPreview(card) {
     if (!soundEnabled || !card?.dataset.audioPreview) return;
-    const request = ++previewRequest;
     if (card.dataset.audioPreview === "anlamazdin") {
       playAnlamazdinPreview();
       return;
     }
     if (card.dataset.audioPreview === "sneak-peek") {
-      try {
-        await playSneakPeekPreview(request);
-      } catch {
-        sneakPeekEnginePromise = null;
-        if (request === previewRequest && soundEnabled) {
-          setSoundButton("Hover sound on", { pressed: true });
-        }
-      }
+      playSneakPeekPreview();
     }
   }
 
