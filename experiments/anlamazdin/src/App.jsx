@@ -12,6 +12,7 @@ import {
   vinylRotationDegrees,
 } from './music/playbackView';
 import { buildTimelineBins, timelinePercent } from './music/timeline';
+import { isHandheldPhone, isPortraitViewport } from './platform/handheld';
 import { experienceReducer, initialExperience } from './state/experience';
 
 const BLACK_KEYS = new Set([1, 3, 6, 8, 10]);
@@ -29,6 +30,37 @@ function formatTime(seconds) {
 
 function formatMegabytes(bytes) {
   return `${((bytes || 0) / 1_000_000).toFixed(1)} MB`;
+}
+
+function readHandheldState() {
+  const pointerCoarse = window.matchMedia('(pointer: coarse)').matches;
+  const noHover = window.matchMedia('(hover: none)').matches;
+  const isPhone = isHandheldPhone({
+    coarsePointer: pointerCoarse,
+    maxTouchPoints: navigator.maxTouchPoints,
+    noHover,
+    screenHeight: window.screen.height,
+    screenWidth: window.screen.width,
+    userAgentDataMobile: navigator.userAgentData?.mobile,
+  });
+  return {
+    isPhone,
+    isPortrait: isPortraitViewport({ height: window.innerHeight, width: window.innerWidth }),
+  };
+}
+
+function OrientationGate({ t }) {
+  return (
+    <div className="orientation-gate" role="dialog" aria-modal="true" aria-labelledby="orientation-gate-title">
+      <div className="orientation-gate__backdrop" aria-hidden="true" />
+      <div className="orientation-gate__card">
+        <span className="orientation-gate__eyebrow">{t.rotateEyebrow}</span>
+        <span className="orientation-gate__device" aria-hidden="true"><i /></span>
+        <h2 id="orientation-gate-title">{t.rotateTitle}</h2>
+        <p>{t.rotateBody}</p>
+      </div>
+    </div>
+  );
 }
 
 function AudioLoading({ progress, t }) {
@@ -78,7 +110,7 @@ function ExperienceNotice({ onAccept, progress, t }) {
   );
 }
 
-function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPress, targetMidi, t }) {
+function PianoKeyboard({ activeMidis = [], centerTarget = false, disabled, language, mistakeMidi, onPress, targetMidi, t }) {
   const scrollerRef = useRef(null);
   const whiteNotes = KEYBOARD_NOTES.filter((midi) => !isBlack(midi));
   const blackNotes = KEYBOARD_NOTES.filter(isBlack);
@@ -94,7 +126,7 @@ function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPr
         : key.offsetLeft + key.offsetWidth / 2;
       const visibleStart = scroller.scrollLeft + scroller.clientWidth * 0.24;
       const visibleEnd = scroller.scrollLeft + scroller.clientWidth * 0.76;
-      const centerEveryStep = window.matchMedia('(max-width: 700px) and (orientation: portrait)').matches;
+      const centerEveryStep = centerTarget;
       if (centerEveryStep || keyCenter < visibleStart || keyCenter > visibleEnd) {
         scroller.scrollTo({
           behavior,
@@ -107,7 +139,7 @@ function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPr
     const resizeObserver = new ResizeObserver(() => keepTargetVisible('auto'));
     resizeObserver.observe(scroller);
     return () => resizeObserver.disconnect();
-  }, [targetMidi]);
+  }, [centerTarget, targetMidi]);
 
   const keyClass = (midi, kind) => [
     'piano-key',
@@ -542,7 +574,9 @@ export default function App() {
   const [mixLevels, setMixLevels] = useState({ piano: 1, violin: 1 });
   const [scrubPosition, setScrubPosition] = useState(null);
   const [noticeAccepted, setNoticeAccepted] = useState(false);
+  const [handheld, setHandheld] = useState(readHandheldState);
   const t = copyFor(language);
+  const phonePortrait = handheld.isPhone && handheld.isPortrait;
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -551,13 +585,30 @@ export default function App() {
   }, [language, t.pageDescription, t.pageTitle]);
 
   useEffect(() => {
-    if (noticeAccepted) return undefined;
+    if (noticeAccepted && !phonePortrait) return undefined;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [noticeAccepted]);
+  }, [noticeAccepted, phonePortrait]);
+
+  useEffect(() => {
+    const portraitQuery = window.matchMedia('(orientation: portrait)');
+    const updateOrientation = () => {
+      setHandheld((current) => ({
+        ...current,
+        isPortrait: portraitQuery.matches
+          || isPortraitViewport({ height: window.innerHeight, width: window.innerWidth }),
+      }));
+    };
+    portraitQuery.addEventListener?.('change', updateOrientation);
+    window.addEventListener('resize', updateOrientation);
+    return () => {
+      portraitQuery.removeEventListener?.('change', updateOrientation);
+      window.removeEventListener('resize', updateOrientation);
+    };
+  }, []);
 
   useEffect(() => {
     const enterTimer = window.setTimeout(() => dispatch({ type: 'ENTER' }), 380);
@@ -596,6 +647,12 @@ export default function App() {
   );
 
   useEffect(() => {
+    if (!phonePortrait || playback.status !== 'playing') return;
+    engine.pause();
+    dispatch({ type: 'PAUSE' });
+  }, [engine, phonePortrait, playback.status]);
+
+  useEffect(() => {
     if (!complete || hasStarted || !playButtonRef.current) return;
     const scrollTimer = window.setTimeout(() => {
       playButtonRef.current?.scrollIntoView({
@@ -604,7 +661,7 @@ export default function App() {
         inline: 'nearest',
       });
       const mobileScroller = playButtonRef.current?.closest('.experience');
-      if (window.matchMedia('(max-width: 700px)').matches && mobileScroller) {
+      if (handheld.isPhone && mobileScroller) {
         mobileScroller.scrollTo({
           behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
           top: mobileScroller.scrollHeight,
@@ -613,7 +670,22 @@ export default function App() {
       playButtonRef.current?.focus({ preventScroll: true });
     }, 120);
     return () => window.clearTimeout(scrollTimer);
-  }, [complete, hasStarted]);
+  }, [complete, handheld.isPhone, hasStarted]);
+
+  async function acceptNotice() {
+    try {
+      if (handheld.isPhone && !handheld.isPortrait && window.screen.orientation?.lock) {
+        if (!document.fullscreenElement && document.fullscreenEnabled && document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+        }
+        await window.screen.orientation.lock('landscape');
+      }
+    } catch {
+      // iOS and some Android browsers do not expose orientation locking. The rotate gate remains authoritative.
+    } finally {
+      setNoticeAccepted(true);
+    }
+  }
 
   async function handleKeyPress(midi) {
     if (hasStarted || !audioReady || inputBusy.current) return;
@@ -690,11 +762,12 @@ export default function App() {
   }
 
   return (
-    <main className={`experience ${hasStarted ? 'is-listening' : ''} ${lowPowerMode ? 'is-low-power' : ''}`}>
+    <main className={`experience ${hasStarted ? 'is-listening' : ''} ${lowPowerMode ? 'is-low-power' : ''} ${handheld.isPhone ? 'is-handheld-phone' : ''} ${handheld.isPhone && !handheld.isPortrait ? 'is-phone-landscape' : ''}`}>
       <div className="grain" aria-hidden="true" />
-      {!noticeAccepted && (
+      {phonePortrait && <OrientationGate t={t} />}
+      {!phonePortrait && !noticeAccepted && (
         <ExperienceNotice
-          onAccept={() => setNoticeAccepted(true)}
+          onAccept={acceptNotice}
           progress={playback.loadProgress}
           t={t}
         />
@@ -738,6 +811,7 @@ export default function App() {
 
             <PianoKeyboard
               activeMidis={[]}
+              centerTarget={handheld.isPhone}
               disabled={state.phase === 'entering' || !audioReady || complete}
               language={language}
               mistakeMidi={state.mistakeMidi}

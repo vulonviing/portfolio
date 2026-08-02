@@ -34,6 +34,17 @@ button { color: inherit; }
 .experience-notice button { min-width: 158px; height: 48px; border: 1px solid #c99d64; background: rgba(94,30,43,.54); color: #eee7dc; font: 600 9px/1 var(--font-sans); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; transition: background .2s ease, transform .2s ease, box-shadow .2s ease; }
 .experience-notice button:hover, .experience-notice button:focus-visible { outline: none; background: rgba(116,39,54,.82); box-shadow: 0 0 28px rgba(182,139,82,.22); transform: translateY(-1px); }
 
+.orientation-gate { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: max(22px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) max(22px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left)); }
+.orientation-gate__backdrop { position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%, rgba(94,30,43,.38), transparent 44%), rgba(10,8,8,.94); backdrop-filter: blur(18px); }
+.orientation-gate__card { position: relative; width: min(390px, 100%); text-align: center; }
+.orientation-gate__eyebrow { display: block; margin-bottom: 26px; color: var(--brass); font: 600 8px/1 var(--font-sans); letter-spacing: .22em; text-transform: uppercase; }
+.orientation-gate__device { position: relative; display: block; width: 54px; height: 92px; margin: 0 auto 34px; border: 1px solid rgba(238,231,220,.58); border-radius: 11px; box-shadow: 0 0 34px rgba(182,139,82,.16); animation: rotateDevice 2.4s ease-in-out infinite; }
+.orientation-gate__device::before { content: ''; position: absolute; top: 6px; left: 50%; width: 16px; height: 2px; border-radius: 2px; background: rgba(238,231,220,.35); transform: translateX(-50%); }
+.orientation-gate__device::after { content: ''; position: absolute; right: -26px; bottom: -13px; width: 32px; height: 32px; border-top: 1px solid rgba(182,139,82,.72); border-right: 1px solid rgba(182,139,82,.72); border-radius: 50%; transform: rotate(23deg); }
+.orientation-gate__device i { position: absolute; right: -29px; bottom: 12px; width: 8px; height: 8px; border-top: 1px solid var(--brass); border-right: 1px solid var(--brass); transform: rotate(54deg); }
+.orientation-gate h2 { margin: 0; color: #f2e9dd; font: italic 400 clamp(30px, 9vw, 44px)/1 'Iowan Old Style', Baskerville, 'Times New Roman', serif; letter-spacing: -.04em; }
+.orientation-gate p { max-width: 34ch; margin: 17px auto 0; color: #978d84; font: 400 11px/1.6 var(--font-sans); }
+
 .experience {
   min-height: 100vh;
   min-height: 100svh;
@@ -355,6 +366,7 @@ button { color: inherit; }
 
 @keyframes grain { 0% { transform: translate(0,0); } 25% { transform: translate(2%,-3%); } 50% { transform: translate(-3%,2%); } 75% { transform: translate(3%,3%); } }
 @keyframes mistake { 50% { transform: translateX(2px); } }
+@keyframes rotateDevice { 0%, 22%, 100% { transform: rotate(0deg); } 48%, 78% { transform: rotate(90deg); } }
 
 .experience.is-low-power .grain { animation: none; opacity: .025; transform: none; }
 .experience.is-low-power .sound-horizon { background: rgba(15,12,11,.96); backdrop-filter: none; }
@@ -588,6 +600,78 @@ button { color: inherit; }
   .horizon-mix-toggle { min-width: 52px; font-size: 6px; }
   .horizon-mix-toggle, .horizon-restart, .horizon-play { height: 34px; }
   .horizon-restart, .horizon-play { width: 34px; }
+}
+
+@media (max-height: 600px) and (orientation: landscape) {
+  .experience.is-handheld-phone.is-phone-landscape {
+    --phone-stage-min-width: 880px;
+    --mobile-horizon-height: clamp(76px, 21dvh, 88px);
+    --mobile-piano-height: clamp(38px, 10dvh, 44px);
+    grid-template-columns: minmax(var(--phone-stage-min-width), 1fr);
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .experience.is-handheld-phone.is-phone-landscape:not(.is-listening) {
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+
+  .experience.is-handheld-phone.is-phone-landscape.is-listening {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .experience.is-handheld-phone.is-phone-landscape > *:not(.grain):not(.experience-notice):not(.orientation-gate) {
+    min-width: var(--phone-stage-min-width);
+  }
+
+  .experience.is-handheld-phone .site-header {
+    min-height: 44px;
+    padding-top: max(3px, env(safe-area-inset-top));
+    padding-bottom: 3px;
+  }
+  .experience.is-handheld-phone .wordmark { font-size: 24px; }
+  .experience.is-handheld-phone .hero { padding-top: 12px; padding-bottom: 7px; }
+  .experience.is-handheld-phone .ritual .piano { height: 108px; }
+  .experience.is-handheld-phone .note-trail { margin-top: 7px; }
+  .experience.is-handheld-phone .note-trail span { height: 27px; }
+  .experience.is-handheld-phone .action-zone { min-height: 60px; padding-top: 7px; }
+  .experience.is-handheld-phone .site-footer { padding-top: 4px; padding-bottom: max(5px, env(safe-area-inset-bottom)); }
+
+  .experience.is-handheld-phone .listening-field { row-gap: 12px; }
+  .experience.is-handheld-phone .record-orbit {
+    width: clamp(148px, 40dvh, 170px);
+  }
+  .experience.is-handheld-phone .center-vinyl {
+    box-shadow: inset 0 0 0 22px rgba(0,0,0,.14), inset 0 0 0 23px rgba(182,139,82,.13), 0 16px 42px rgba(0,0,0,.44);
+  }
+  .experience.is-handheld-phone .center-vinyl > span { width: 50px; height: 50px; }
+  .experience.is-handheld-phone .center-vinyl b { font-size: 12px; }
+  .experience.is-handheld-phone .orbit-label { max-width: 150px; font-size: 6px; }
+  .experience.is-handheld-phone .orbit-label--lower-left { left: 2%; transform: translate(-9%, 42%) rotate(-18deg); }
+  .experience.is-handheld-phone .orbit-label--lower-right { right: 2%; transform: translate(9%, 42%) rotate(18deg); }
+
+  .experience.is-handheld-phone .listening-piano .piano { min-width: var(--phone-stage-min-width); }
+  .experience.is-handheld-phone .listening-piano .piano-key--black { top: 4px; }
+  .experience.is-handheld-phone .sound-horizon { min-height: 0; }
+  .experience.is-handheld-phone .horizon-seek { top: 3px; height: 24px; }
+  .experience.is-handheld-phone .horizon-markers { height: 28px; }
+  .experience.is-handheld-phone .marker { top: 4px; }
+  .experience.is-handheld-phone .horizon-transport { bottom: calc(2px + env(safe-area-inset-bottom)); gap: 4px; }
+  .experience.is-handheld-phone .horizon-meta--left { gap: 2px; }
+  .experience.is-handheld-phone .horizon-meta span,
+  .experience.is-handheld-phone .horizon-meta strong { font-size: 5.5px; }
+  .experience.is-handheld-phone .horizon-mix-toggle { min-width: 48px; font-size: 5.5px; }
+  .experience.is-handheld-phone .horizon-mix-toggle,
+  .experience.is-handheld-phone .horizon-restart,
+  .experience.is-handheld-phone .horizon-play { height: 30px; }
+  .experience.is-handheld-phone .horizon-restart,
+  .experience.is-handheld-phone .horizon-play { width: 30px; }
+  .experience.is-handheld-phone .horizon-mix {
+    bottom: calc(37px + env(safe-area-inset-bottom));
+    padding: 6px 9px;
+  }
 }
 
 @media (max-height: 760px) and (min-width: 951px) {
