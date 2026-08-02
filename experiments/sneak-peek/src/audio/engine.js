@@ -194,8 +194,9 @@ function makeNoiseBuffer(ctx, seconds = 0.3) {
   return buffer;
 }
 
-export function createEngine() {
-  let ctx = null;
+export function createEngine({ context: sharedContext = null } = {}) {
+  let ctx = sharedContext;
+  let initialized = false;
   let master = null;
   let filter = null;
   let reverbSend = null;
@@ -211,9 +212,12 @@ export function createEngine() {
   let scenario = 'comeback';
 
   async function ensureContext() {
-    if (ctx) return;
-    const AC = window.AudioContext || window.webkitAudioContext;
-    ctx = new AC();
+    if (initialized) return;
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      ctx = new AC();
+    }
+    initialized = true;
 
     master = ctx.createGain();
     master.gain.value = 0;

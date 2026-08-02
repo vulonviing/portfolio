@@ -33,12 +33,13 @@ test('audio scheduling keeps a wide buffer against a busy main thread', () => {
   assert.ok(AUDIO_TIMING.progressIntervalMs >= AUDIO_TIMING.schedulerIntervalMs);
 });
 
-test('track mix controls support mute and a two-times boost', () => {
+test('track mix controls support mute and the violin four-times ceiling', () => {
   assert.equal(clampTrackLevel(-1), 0);
   assert.equal(clampTrackLevel(0.65), 0.65);
   assert.equal(clampTrackLevel(1.25), 1.25);
   assert.equal(clampTrackLevel(2), 2);
-  assert.equal(clampTrackLevel(3), 2);
+  assert.equal(clampTrackLevel(4), 4);
+  assert.equal(clampTrackLevel(5), 4);
 });
 
 test('seek positions are clamped to the arrangement', () => {

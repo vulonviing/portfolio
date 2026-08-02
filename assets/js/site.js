@@ -119,6 +119,8 @@ function setupResonanceCards() {
   let soundEnabled = true;
   let activeCard = null;
   let stopActivePreview = null;
+  let previewRequest = 0;
+  let sneakPeekEnginePromise = null;
 
   function setSoundButton(label, { blocked = false, pressed = soundEnabled } = {}) {
     const icon = document.createElement("span");
@@ -246,13 +248,46 @@ function setupResonanceCards() {
     };
   }
 
+  function loadSneakPeekEngine() {
+    sneakPeekEnginePromise ||= import("/experiments/sneak-peek/src/audio/engine.js?v=medium-hover-20260802")
+      .then(({ createEngine }) => createEngine({ context: audioContext }));
+    return sneakPeekEnginePromise;
+  }
+
+  async function playSneakPeekPreview(request) {
+    const engine = await loadSneakPeekEngine();
+    if (request !== previewRequest || activeCard?.dataset.audioPreview !== "sneak-peek" || !soundEnabled) return;
+    engine.setScenario("halftime");
+    await engine.start();
+    if (request !== previewRequest || activeCard?.dataset.audioPreview !== "sneak-peek" || !soundEnabled) {
+      engine.stop();
+      return;
+    }
+    stopActivePreview = () => {
+      engine.stop();
+      stopActivePreview = null;
+    };
+  }
+
   function stopPreview() {
+    previewRequest += 1;
     stopActivePreview?.();
   }
 
-  function playCardPreview(card) {
-    if (!soundEnabled || card?.dataset.audioPreview !== "anlamazdin") return;
-    playAnlamazdinPreview();
+  async function playCardPreview(card) {
+    if (!soundEnabled || !card?.dataset.audioPreview) return;
+    const request = ++previewRequest;
+    if (card.dataset.audioPreview === "anlamazdin") {
+      playAnlamazdinPreview();
+      return;
+    }
+    if (card.dataset.audioPreview === "sneak-peek") {
+      try {
+        await playSneakPeekPreview(request);
+      } catch {
+        setSoundButton("Preview unavailable", { blocked: true, pressed: false });
+      }
+    }
   }
 
   async function enableSound() {

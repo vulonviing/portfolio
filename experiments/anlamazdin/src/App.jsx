@@ -606,7 +606,7 @@ export default function App() {
 
   function changeMix(track, level) {
     setMixLevels((current) => ({ ...current, [track]: level }));
-    engine.setTrackLevel(track, level);
+    engine.setTrackLevel(track, track === 'violin' ? level * 2 : level);
   }
 
   function changeLanguage(nextLanguage) {

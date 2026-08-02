@@ -70,7 +70,7 @@ export function clampPosition(position, duration) {
 }
 
 export function clampTrackLevel(level) {
-  return Math.max(0, Math.min(2, Number(level) || 0));
+  return Math.max(0, Math.min(4, Number(level) || 0));
 }
 
 export function violinMixLevel(position, liftAt) {
@@ -104,7 +104,7 @@ export class ArrangementEngine {
     this.pianoTrim = null;
     this.pedalTrim = null;
     this.violinTrim = null;
-    this.trackLevels = { piano: 1, violin: 1 };
+    this.trackLevels = { piano: 1, violin: 2 };
     this.pianoSamples = new Map();
     this.violinSamples = new Map();
     this.pianoSamplePromises = new Map();

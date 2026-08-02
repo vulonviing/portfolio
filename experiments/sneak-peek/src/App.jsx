@@ -10,7 +10,6 @@ import BrainMap from './components/BrainMap';
 import Voices from './components/Voices';
 import AudioToggle from './components/AudioToggle';
 import IntroOverlay from './components/IntroOverlay';
-import LanguageSwitcher from './components/LanguageSwitcher';
 import SiteFooter from './components/SiteFooter';
 
 export default function App() {
@@ -39,7 +38,6 @@ export default function App() {
           <SiteFooter />
 
           <AudioToggle />
-          <LanguageSwitcher />
           <IntroOverlay />
         </div>
       </AudioProvider>
