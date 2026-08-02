@@ -196,7 +196,8 @@ function setupResonanceCards() {
     master.gain.value = .82;
     master.connect(audioContext.destination);
     const scheduledNodes = new Set();
-    let loopTimer = 0;
+    let schedulerTimer = 0;
+    let nextPhraseStart = audioContext.currentTime + .04;
     let stopped = false;
 
     const phrase = [
@@ -204,23 +205,39 @@ function setupResonanceCards() {
       [61, 1.5, .375], [59, 1.875, .375], [66, 2.25, .75], [64, 3, 2.25],
     ];
 
-    function schedulePhrase() {
+    function schedulePhrase(start) {
       if (stopped) return;
-      const start = audioContext.currentTime + .04;
       phrase.forEach(([midi, offset, duration]) => {
         schedulePianoNote(audioContext, master, midi, start + offset, duration)
-          .forEach((node) => scheduledNodes.add(node));
+          .forEach((node) => {
+            scheduledNodes.add(node);
+            node.addEventListener("ended", () => scheduledNodes.delete(node), { once: true });
+          });
       });
-      scheduleViolinPad(audioContext, master, start, 5.25)
-        .forEach((node) => scheduledNodes.add(node));
-      loopTimer = window.setTimeout(schedulePhrase, 5700);
+      scheduleViolinPad(audioContext, master, start, 5.38)
+        .forEach((node) => {
+          scheduledNodes.add(node);
+          node.addEventListener("ended", () => scheduledNodes.delete(node), { once: true });
+        });
     }
 
-    schedulePhrase();
+    function scheduleAhead() {
+      if (stopped) return;
+      const horizon = audioContext.currentTime + 1.25;
+      while (nextPhraseStart < horizon) {
+        schedulePhrase(nextPhraseStart);
+        // Begin the next phrase beneath the previous piano release and violin
+        // tail so the hover bed has no timer-sized silence between repeats.
+        nextPhraseStart += 5.08;
+      }
+    }
+
+    scheduleAhead();
+    schedulerTimer = window.setInterval(scheduleAhead, 250);
     stopActivePreview = () => {
       if (stopped) return;
       stopped = true;
-      window.clearTimeout(loopTimer);
+      window.clearInterval(schedulerTimer);
       const now = audioContext.currentTime;
       master.gain.cancelScheduledValues(now);
       master.gain.setValueAtTime(Math.max(.0001, master.gain.value), now);
@@ -300,7 +317,11 @@ function setupResonanceCards() {
   });
 
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden) stopPreview();
+    if (document.hidden) {
+      stopPreview();
+    } else if (soundEnabled && activeCard) {
+      playCardPreview(activeCard);
+    }
   });
   window.addEventListener("pagehide", stopPreview);
 }
