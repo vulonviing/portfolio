@@ -220,7 +220,7 @@ function setupResonanceCards() {
     stopActivePreview?.();
 
     const master = audioContext.createGain();
-    master.gain.value = .52;
+    master.gain.value = .72;
     master.connect(audioContext.destination);
     const scheduledNodes = new Set();
     const chords = [
@@ -361,14 +361,11 @@ function setupResonanceCards() {
     activeCard = card;
     if (soundEnabled) {
       if (!audioContext || audioContext.state !== "running") {
-        enableSound().catch(() => setSoundButton("Click to enable hover sound", { blocked: true }));
+        enableSound().catch(() => setSoundButton("Enable hover sound", { blocked: true, pressed: false }));
       } else {
         playCardPreview(card);
       }
       return;
-    }
-    if (card.dataset.audioPreview) {
-      enableSound().catch(() => setSoundButton("Click to enable hover sound", { blocked: true }));
     }
   }
 
@@ -379,12 +376,25 @@ function setupResonanceCards() {
   }
 
   soundButton.addEventListener("click", () => {
-    if (soundEnabled) {
+    if (soundEnabled && audioContext?.state === "running") {
       disableSound();
     } else {
-      enableSound().catch(() => setSoundButton("Sound blocked by browser", { blocked: true }));
+      enableSound().catch(() => setSoundButton("Enable hover sound", { blocked: true, pressed: false }));
     }
   });
+
+  async function unlockFromGesture(event) {
+    if (!soundEnabled || audioContext?.state === "running") return;
+    if (event.target.closest?.("[data-resonance-sound]")) return;
+    try {
+      await enableSound();
+    } catch {
+      setSoundButton("Enable hover sound", { blocked: true, pressed: false });
+    }
+  }
+
+  document.addEventListener("pointerdown", unlockFromGesture, { passive: true });
+  document.addEventListener("keydown", unlockFromGesture);
 
   cards.forEach((card) => {
     card.addEventListener("pointerenter", () => activateCard(card));
@@ -399,10 +409,18 @@ function setupResonanceCards() {
     if (document.hidden) {
       stopPreview();
     } else if (soundEnabled && activeCard) {
-      playCardPreview(activeCard);
+      if (audioContext?.state === "running") {
+        playCardPreview(activeCard);
+      } else {
+        setSoundButton("Enable hover sound", { blocked: true, pressed: false });
+      }
     }
   });
-  window.addEventListener("pagehide", stopPreview);
+  window.addEventListener("pagehide", () => {
+    stopPreview();
+    document.removeEventListener("pointerdown", unlockFromGesture);
+    document.removeEventListener("keydown", unlockFromGesture);
+  });
 }
 
 function handleSystemThemeChange() {
