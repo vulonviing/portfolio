@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   AUDIO_SAMPLE_BYTES,
+  AUDIO_TIMING,
   ArrangementEngine,
   chooseSampleAnchor,
   clampPosition,
@@ -23,6 +24,12 @@ test('violin rises smoothly into Demedim mi and remains lifted afterward', () =>
   assert.equal(violinMixLevel(22, liftAt), (VIOLIN_MIX.base + VIOLIN_MIX.lifted) / 2);
   assert.equal(violinMixLevel(24, liftAt), VIOLIN_MIX.lifted);
   assert.equal(violinMixLevel(60, liftAt), VIOLIN_MIX.lifted);
+});
+
+test('audio scheduling keeps a wide buffer against a busy main thread', () => {
+  assert.ok(AUDIO_TIMING.scheduleAheadSeconds >= 1);
+  assert.ok(AUDIO_TIMING.schedulerIntervalMs / 1000 < AUDIO_TIMING.scheduleAheadSeconds / 5);
+  assert.ok(AUDIO_TIMING.progressIntervalMs >= AUDIO_TIMING.schedulerIntervalMs);
 });
 
 test('seek positions are clamped to the arrangement', () => {

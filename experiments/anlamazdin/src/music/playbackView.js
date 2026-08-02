@@ -16,6 +16,14 @@ export function musicalProgressPercent(position, duration, tailSeconds = 0) {
   return Math.min(100, Math.max(0, Math.floor((position / musicalDuration) * 100)));
 }
 
+export function shouldUseLowPowerMode({
+  hardwareConcurrency = 8,
+  deviceMemory = 8,
+  reduceMotion = false,
+} = {}) {
+  return reduceMotion || hardwareConcurrency <= 4 || deviceMemory <= 4;
+}
+
 export function activePianoMidis(events, position, minMidi = 48, maxMidi = 71) {
   return [...new Set(events
     .filter((event) => (

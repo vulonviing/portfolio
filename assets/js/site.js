@@ -27,6 +27,7 @@ function injectSneakPeekTeaser() {
 
   const teaser = document.createElement("a");
   teaser.href = "/sneak-peek/";
+  teaser.rel = "nofollow";
   teaser.className = "site-footer__sneak-peek";
   teaser.dataset.sneakPeekTeaser = "true";
   teaser.setAttribute("aria-label", "Open the Sneak Peek experience");

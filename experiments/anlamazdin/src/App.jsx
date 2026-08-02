@@ -8,6 +8,7 @@ import {
   musicalProgressPercent,
   orbitSectionId,
   ORBIT_SECTIONS,
+  shouldUseLowPowerMode,
 } from './music/playbackView';
 import { buildTimelineBins, timelinePercent } from './music/timeline';
 import { experienceReducer, initialExperience } from './state/experience';
@@ -130,7 +131,7 @@ function RecordOrbit({ isPlaying, language, playback, section, t }) {
           {sectionLabel(item.id, language)}
         </span>
       ))}
-      <div className={`center-vinyl ${isPlaying ? 'is-spinning' : ''}`} aria-hidden="true">
+      <div className={`center-vinyl has-motion ${isPlaying ? 'is-spinning' : 'is-paused'}`} aria-hidden="true">
         <span>
           <b>{String(progress).padStart(2, '0')}</b>
           <small>Anlamazdın</small>
@@ -140,14 +141,17 @@ function RecordOrbit({ isPlaying, language, playback, section, t }) {
   );
 }
 
-function SoundHorizon({ engine, events, language, onRestart, onSeek, onToggle, playback, section, t }) {
+function SoundHorizon({ engine, events, language, lowPowerMode, onRestart, onSeek, onToggle, playback, section, t }) {
   const canvasRef = useRef(null);
   const redrawRef = useRef(() => {});
   const playbackRef = useRef(playback);
   const visualPositionRef = useRef(playback.position);
-  const timeDomain = useRef(new Uint8Array(512));
-  const frequency = useRef(new Uint8Array(256));
-  const bins = useMemo(() => buildTimelineBins(events, playback.duration), [events, playback.duration]);
+  const timeDomain = useRef(new Uint8Array(lowPowerMode ? 128 : 256));
+  const frequency = useRef(new Uint8Array(lowPowerMode ? 64 : 128));
+  const bins = useMemo(
+    () => buildTimelineBins(events, playback.duration, lowPowerMode ? 180 : 280),
+    [events, lowPowerMode, playback.duration],
+  );
   const isPlaying = playback.status === 'playing';
   const [draftPosition, setDraftPosition] = useState(playback.position);
   const isDragging = useRef(false);
@@ -171,11 +175,23 @@ function SoundHorizon({ engine, events, language, onRestart, onSeek, onToggle, p
     if (!canvas) return undefined;
     const context = canvas.getContext('2d');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const frameInterval = 1000 / (lowPowerMode ? 24 : 45);
     let animationFrame = 0;
+    let lastDrawAt = 0;
 
-    function draw() {
+    function scheduleNextFrame() {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(draw);
+    }
+
+    function draw(frameTime = performance.now(), force = false) {
+      if (isPlaying && !reduceMotion && !force && frameTime - lastDrawAt < frameInterval) {
+        scheduleNextFrame();
+        return;
+      }
+      lastDrawAt = frameTime;
       const rect = canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, lowPowerMode ? 1 : 1.5);
       const width = Math.max(1, rect.width);
       const height = Math.max(1, rect.height);
       if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
@@ -187,7 +203,10 @@ function SoundHorizon({ engine, events, language, onRestart, onSeek, onToggle, p
 
       const horizonY = height * 0.57;
       const binWidth = width / bins.length;
-      const progress = Math.min(1, visualPositionRef.current / playbackRef.current.duration);
+      const livePosition = isDragging.current
+        ? visualPositionRef.current
+        : isPlaying ? engine.getPosition() : playbackRef.current.position;
+      const progress = Math.min(1, livePosition / playbackRef.current.duration);
       const lightX = progress * width;
       const wash = context.createLinearGradient(0, 0, 0, height);
       wash.addColorStop(0, 'rgba(19, 15, 14, .18)');
@@ -225,8 +244,9 @@ function SoundHorizon({ engine, events, language, onRestart, onSeek, onToggle, p
         const startX = Math.max(0, lightX - liveWidth / 2);
         const endX = Math.min(width, lightX + liveWidth / 2);
         let frequencySum = 0;
-        for (let index = 0; index < 80; index += 1) frequencySum += frequency.current[index];
-        const energy = frequencySum / (80 * 255);
+        const frequencySampleCount = Math.min(64, frequency.current.length);
+        for (let index = 0; index < frequencySampleCount; index += 1) frequencySum += frequency.current[index];
+        const energy = frequencySum / (frequencySampleCount * 255);
         const glow = context.createRadialGradient(lightX, horizonY, 0, lightX, horizonY, liveWidth * .58);
         glow.addColorStop(0, `rgba(182, 139, 82, ${.08 + energy * .22})`);
         glow.addColorStop(1, 'rgba(182, 139, 82, 0)');
@@ -259,23 +279,27 @@ function SoundHorizon({ engine, events, language, onRestart, onSeek, onToggle, p
       aperture.addColorStop(1, 'rgba(182, 139, 82, 0)');
       context.fillStyle = aperture;
       context.fillRect(lightX - slitWidth, horizonY - slitWidth, slitWidth * 2, slitWidth * 2);
-      if (isPlaying && !reduceMotion) animationFrame = window.requestAnimationFrame(draw);
+      if (isPlaying && !reduceMotion) scheduleNextFrame();
     }
 
-    const resizeObserver = new ResizeObserver(draw);
-    redrawRef.current = draw;
+    const redraw = () => {
+      window.cancelAnimationFrame(animationFrame);
+      draw(performance.now(), true);
+    };
+    const resizeObserver = new ResizeObserver(redraw);
+    redrawRef.current = redraw;
     resizeObserver.observe(canvas);
-    draw();
+    redraw();
     return () => {
       resizeObserver.disconnect();
       window.cancelAnimationFrame(animationFrame);
       redrawRef.current = () => {};
     };
-  }, [bins, engine, isPlaying]);
+  }, [bins, engine, isPlaying, lowPowerMode]);
 
   useEffect(() => {
-    redrawRef.current();
-  }, [draftPosition, playback.position]);
+    if (!isPlaying || isDragging.current) redrawRef.current();
+  }, [draftPosition, isPlaying, playback.position]);
 
   return (
     <aside className="sound-horizon" aria-label={t.soundPlayerLabel}>
@@ -396,6 +420,11 @@ export default function App() {
     SONG.duration,
     { violinLiftAt: VIOLIN_LIFT_AT },
   ), [events]);
+  const lowPowerMode = useMemo(() => shouldUseLowPowerMode({
+    hardwareConcurrency: navigator.hardwareConcurrency || 8,
+    deviceMemory: navigator.deviceMemory || 8,
+    reduceMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  }), []);
   const mistakeTimer = useRef(null);
   const liveKeyTimer = useRef(null);
   const inputBusy = useRef(false);
@@ -514,7 +543,7 @@ export default function App() {
   }
 
   return (
-    <main className={`experience ${hasStarted ? 'is-listening' : ''}`}>
+    <main className={`experience ${hasStarted ? 'is-listening' : ''} ${lowPowerMode ? 'is-low-power' : ''}`}>
       <div className="grain" aria-hidden="true" />
       <header className="site-header">
         <a className="wordmark" href={import.meta.env.BASE_URL}>anlamazdın.</a>
@@ -635,6 +664,7 @@ export default function App() {
           engine={engine}
           events={events}
           language={language}
+          lowPowerMode={lowPowerMode}
           onRestart={restartSong}
           onSeek={seekSong}
           onToggle={togglePlayback}

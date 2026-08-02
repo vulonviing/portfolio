@@ -17,6 +17,12 @@ export const VIOLIN_MIX = {
   rampSeconds: 4,
 };
 
+export const AUDIO_TIMING = {
+  scheduleAheadSeconds: 1.5,
+  schedulerIntervalMs: 120,
+  progressIntervalMs: 160,
+};
+
 const PIANO_SAMPLE_BYTES = new Map([
   [33, 1_495_610], [36, 1_432_516], [39, 1_418_874], [42, 1_312_810],
   [45, 1_023_946], [48, 1_028_040], [51, 1_033_156], [54, 1_036_224],
@@ -85,6 +91,8 @@ export class ArrangementEngine {
     this.master = null;
     this.analyser = null;
     this.reverbBuffer = null;
+    this.reverbInput = null;
+    this.reverbConvolver = null;
     this.previewBus = null;
     this.pianoBus = null;
     this.pedalBus = null;
@@ -124,13 +132,15 @@ export class ArrangementEngine {
       this.master = this.context.createGain();
       this.master.gain.value = 0.84;
       this.analyser = this.context.createAnalyser();
-      this.analyser.fftSize = 512;
+      this.analyser.fftSize = 256;
       this.analyser.smoothingTimeConstant = 0.78;
       this.master.connect(compressor);
       compressor.connect(this.analyser);
       this.analyser.connect(this.context.destination);
 
       this.reverbBuffer = impulseResponse(this.context);
+      this.reverbInput = this.context.createGain();
+      this.resetReverb();
       this.previewBus = this.createBus({ level: 0.82, send: 0.13, reverb: 0.4 });
     }
     if (resume && this.context.state === 'suspended') await this.context.resume();
@@ -286,20 +296,24 @@ export class ArrangementEngine {
   createBus({ level = 1, send = 0.14, reverb = 0.42 } = {}) {
     const dry = this.context.createGain();
     const sendNode = this.context.createGain();
-    const convolver = this.context.createConvolver();
-    const reverbGain = this.context.createGain();
     const output = this.context.createGain();
     output.gain.value = level;
-    sendNode.gain.value = send;
-    convolver.buffer = this.reverbBuffer;
-    reverbGain.gain.value = reverb;
+    sendNode.gain.value = send * reverb * level;
     dry.connect(output);
     dry.connect(sendNode);
-    sendNode.connect(convolver);
-    convolver.connect(reverbGain);
-    reverbGain.connect(output);
+    sendNode.connect(this.reverbInput);
     output.connect(this.master);
-    return { input: dry, output };
+    return { input: dry, output, send: sendNode, wetScale: send * reverb };
+  }
+
+  resetReverb() {
+    if (!this.context || !this.reverbInput || !this.reverbBuffer) return;
+    this.reverbInput.disconnect();
+    this.reverbConvolver?.disconnect();
+    this.reverbConvolver = this.context.createConvolver();
+    this.reverbConvolver.buffer = this.reverbBuffer;
+    this.reverbInput.connect(this.reverbConvolver);
+    this.reverbConvolver.connect(this.master);
   }
 
   playNote({
@@ -393,15 +407,20 @@ export class ArrangementEngine {
     this.pianoBus = this.createBus({ level: 0.88, send: 0.14, reverb: 0.42 });
     this.pedalBus = this.createBus({ level: 0.72, send: 0.32, reverb: 0.62 });
     this.violinBus = this.createBus({ level: VIOLIN_MIX.base, send: 0.24, reverb: 0.5 });
-    const violinGain = this.violinBus.output.gain;
     const rampStart = Math.max(0, this.violinLiftAt - VIOLIN_MIX.rampSeconds);
-    violinGain.setValueAtTime(violinMixLevel(this.position, this.violinLiftAt), this.contextStart);
-    if (Number.isFinite(this.violinLiftAt) && this.position < this.violinLiftAt) {
-      const rampStartAt = this.contextStart + Math.max(0, rampStart - this.position);
-      const rampEndAt = this.contextStart + Math.max(0, this.violinLiftAt - this.position);
-      if (this.position < rampStart) violinGain.setValueAtTime(VIOLIN_MIX.base, rampStartAt);
-      violinGain.linearRampToValueAtTime(VIOLIN_MIX.lifted, rampEndAt);
-    }
+    const violinGainParams = [
+      { parameter: this.violinBus.output.gain, scale: 1 },
+      { parameter: this.violinBus.send.gain, scale: this.violinBus.wetScale },
+    ];
+    violinGainParams.forEach(({ parameter, scale }) => {
+      parameter.setValueAtTime(violinMixLevel(this.position, this.violinLiftAt) * scale, this.contextStart);
+      if (Number.isFinite(this.violinLiftAt) && this.position < this.violinLiftAt) {
+        const rampStartAt = this.contextStart + Math.max(0, rampStart - this.position);
+        const rampEndAt = this.contextStart + Math.max(0, this.violinLiftAt - this.position);
+        if (this.position < rampStart) parameter.setValueAtTime(VIOLIN_MIX.base * scale, rampStartAt);
+        parameter.linearRampToValueAtTime(VIOLIN_MIX.lifted * scale, rampEndAt);
+      }
+    });
     this.status = 'playing';
     this.schedule();
     this.startProgress();
@@ -410,7 +429,7 @@ export class ArrangementEngine {
 
   schedule() {
     if (this.status !== 'playing') return;
-    const horizon = this.getPosition() + 0.3;
+    const horizon = this.getPosition() + AUDIO_TIMING.scheduleAheadSeconds;
     while (this.nextIndex < this.events.length && this.events[this.nextIndex].time <= horizon) {
       const event = this.events[this.nextIndex];
       const elapsed = Math.max(0, this.positionAtStart - event.time);
@@ -434,7 +453,7 @@ export class ArrangementEngine {
       }
       this.nextIndex += 1;
     }
-    this.schedulerTimer = window.setTimeout(() => this.schedule(), 30);
+    this.schedulerTimer = window.setTimeout(() => this.schedule(), AUDIO_TIMING.schedulerIntervalMs);
   }
 
   startProgress() {
@@ -446,7 +465,7 @@ export class ArrangementEngine {
         this.stopSession(false);
       }
       this.emit();
-    }, 80);
+    }, AUDIO_TIMING.progressIntervalMs);
   }
 
   pause() {
@@ -484,7 +503,12 @@ export class ArrangementEngine {
       try { source.stop(); } catch { /* source already ended */ }
     });
     this.trackSources.clear();
-    [this.pianoBus, this.pedalBus, this.violinBus].forEach((bus) => bus?.output.disconnect());
+    [this.pianoBus, this.pedalBus, this.violinBus].forEach((bus) => {
+      bus?.input.disconnect();
+      bus?.send.disconnect();
+      bus?.output.disconnect();
+    });
+    this.resetReverb();
     this.pianoBus = null;
     this.pedalBus = null;
     this.violinBus = null;
@@ -521,6 +545,11 @@ export class ArrangementEngine {
 
   destroy() {
     this.stopSession(true);
+    this.previewBus?.input.disconnect();
+    this.previewBus?.send.disconnect();
+    this.previewBus?.output.disconnect();
+    this.reverbInput?.disconnect();
+    this.reverbConvolver?.disconnect();
     this.listeners.clear();
     this.context?.close();
   }

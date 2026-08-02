@@ -5,6 +5,7 @@ import {
   musicalProgressPercent,
   orbitSectionId,
   ORBIT_SECTIONS,
+  shouldUseLowPowerMode,
 } from '../src/music/playbackView.js';
 
 test('orbit exposes the three language-neutral section positions', () => {
@@ -37,4 +38,11 @@ test('record progress reaches 100 at the musical ending before the transition ta
   assert.equal(musicalProgressPercent(70.99, 73.5, 2.5), 99);
   assert.equal(musicalProgressPercent(71, 73.5, 2.5), 100);
   assert.equal(musicalProgressPercent(73.5, 73.5, 2.5), 100);
+});
+
+test('visuals fall back to the light renderer on constrained devices', () => {
+  assert.equal(shouldUseLowPowerMode({ hardwareConcurrency: 4, deviceMemory: 8 }), true);
+  assert.equal(shouldUseLowPowerMode({ hardwareConcurrency: 8, deviceMemory: 4 }), true);
+  assert.equal(shouldUseLowPowerMode({ hardwareConcurrency: 8, deviceMemory: 8 }), false);
+  assert.equal(shouldUseLowPowerMode({ reduceMotion: true }), true);
 });
