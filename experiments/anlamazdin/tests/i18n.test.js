@@ -34,6 +34,8 @@ test('English is the default and an explicit language choice is remembered', () 
 test('interface copy, note names and song sections switch together', () => {
   assert.equal(copyFor('en').step, 'STEP');
   assert.equal(copyFor('tr').step, 'ADIM');
+  assert.match(copyFor('en').loadingPatience, /every instrument/i);
+  assert.match(copyFor('tr').loadingPatience, /bütün enstrümanlar/i);
   assert.equal(noteName(61, 'en'), 'C♯');
   assert.equal(noteName(61, 'tr'), 'Do♯');
   assert.equal(sectionLabel('wish', 'en'), 'I wish');

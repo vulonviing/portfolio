@@ -19,21 +19,31 @@ function formatTime(seconds) {
   return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, '0')}`;
 }
 
+function formatMegabytes(bytes) {
+  return `${((bytes || 0) / 1_000_000).toFixed(1)} MB`;
+}
+
 function AudioLoading({ progress, t }) {
   const total = Math.max(1, progress?.total || 1);
   const loaded = Math.min(total, progress?.loaded || 0);
-  const percent = Math.max(6, Math.round((loaded / total) * 100));
+  const totalBytes = Math.max(1, progress?.totalBytes || 1);
+  const loadedBytes = Math.min(totalBytes, progress?.loadedBytes || 0);
+  const percent = Math.max(6, Math.round((loadedBytes / totalBytes) * 100));
   const label = progress?.stage === 'arrangement' ? t.arrangementPreparing : t.pianoPreparing;
+  const loadedMegabytes = formatMegabytes(loadedBytes);
+  const totalMegabytes = formatMegabytes(totalBytes);
 
   return (
     <div className="audio-loading" role="status" aria-live="polite">
+      <p>{t.loadingPatience}</p>
       <div className="audio-loading__label">
         <span>{label}</span>
-        <strong>{loaded} / {total}</strong>
+        <strong>{loadedMegabytes} / {totalMegabytes}</strong>
       </div>
       <span className="audio-loading__track" aria-hidden="true">
         <i style={{ width: `${percent}%` }} />
       </span>
+      <small>{t.loadingFiles(loaded, total)}</small>
     </div>
   );
 }
@@ -370,7 +380,7 @@ export default function App() {
   const [playback, setPlayback] = useState({
     status: 'idle',
     loadStatus: 'idle',
-    loadProgress: { stage: 'idle', loaded: 0, total: 0 },
+    loadProgress: { stage: 'idle', loaded: 0, total: 21, loadedBytes: 0, totalBytes: 20_378_504 },
     position: 0,
     duration: SONG.duration,
   });
@@ -394,6 +404,9 @@ export default function App() {
       setPlayback(snapshot);
       if (snapshot.status === 'ended') dispatch({ type: 'END' });
     });
+    engine.prepare({ resume: false }).catch(() => {
+      // The loader exposes a retry state if preloading fails.
+    });
     return () => {
       window.clearTimeout(enterTimer);
       window.clearTimeout(mistakeTimer.current);
@@ -404,6 +417,7 @@ export default function App() {
   }, [engine]);
 
   const complete = state.step >= MOTIF.length;
+  const audioReady = playback.loadStatus === 'ready';
   const target = complete ? null : MOTIF[state.step];
   const hasStarted = ['playing', 'paused', 'ended'].includes(state.phase);
   const currentSection = sectionAt(playback.position);
@@ -421,7 +435,7 @@ export default function App() {
   );
 
   async function handleKeyPress(midi) {
-    if (hasStarted || inputBusy.current) return;
+    if (hasStarted || !audioReady || inputBusy.current) return;
     inputBusy.current = true;
     try {
       const correct = !complete && midi === target.midi;
@@ -531,7 +545,7 @@ export default function App() {
 
             <PianoKeyboard
               activeMidis={[]}
-              disabled={state.phase === 'entering' || complete}
+              disabled={state.phase === 'entering' || !audioReady || complete}
               language={language}
               mistakeMidi={state.mistakeMidi}
               onPress={handleKeyPress}
@@ -549,7 +563,7 @@ export default function App() {
             </div>
 
             <div className="action-zone">
-              {playback.loadStatus === 'loading' ? (
+              {playback.loadStatus === 'loading' || playback.loadStatus === 'idle' ? (
                 <AudioLoading progress={playback.loadProgress} t={t} />
               ) : (!complete || playback.loadStatus === 'error') && (
                 <p aria-live="polite">
@@ -561,7 +575,7 @@ export default function App() {
                 </p>
               )}
               {complete && (
-                <button className="run-button" disabled={playback.loadStatus === 'loading'} onClick={startSong} type="button">
+                <button className="run-button" disabled={!audioReady} onClick={startSong} type="button">
                   <span>{t.play}</span><i>▶</i>
                 </button>
               )}

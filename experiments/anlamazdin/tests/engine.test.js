@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ArrangementEngine, chooseSampleAnchor, clampPosition, firstPlayableEvent } from '../src/audio/ArrangementEngine.js';
+import {
+  AUDIO_SAMPLE_BYTES,
+  ArrangementEngine,
+  chooseSampleAnchor,
+  clampPosition,
+  firstPlayableEvent,
+} from '../src/audio/ArrangementEngine.js';
 
 test('a preferred sample anchor keeps a short phrase on one piano recording', () => {
   const anchors = [57, 60, 63, 66];
@@ -35,5 +41,12 @@ test('seeking into an overlapping pedal chord keeps the earlier resonance playab
 
 test('audio loading exposes determinate progress from the idle state', () => {
   const engine = new ArrangementEngine([], 10);
-  assert.deepEqual(engine.snapshot().loadProgress, { stage: 'idle', loaded: 0, total: 0 });
+  assert.deepEqual(engine.snapshot().loadProgress, {
+    stage: 'idle',
+    loaded: 0,
+    total: 21,
+    loadedBytes: 0,
+    totalBytes: AUDIO_SAMPLE_BYTES.total,
+  });
+  assert.equal(AUDIO_SAMPLE_BYTES.total, AUDIO_SAMPLE_BYTES.piano + AUDIO_SAMPLE_BYTES.violin);
 });

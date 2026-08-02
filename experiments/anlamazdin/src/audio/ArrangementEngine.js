@@ -5,6 +5,24 @@ const PIANO_BASE = `${BASE_URL}audio/piano`;
 const VIOLIN_BASE = `${BASE_URL}audio/violin`;
 const SAMPLE_VERSION = 'wav-20260801-2';
 
+export const AUDIO_SAMPLE_BYTES = {
+  piano: 15_642_402,
+  violin: 4_736_102,
+  total: 20_378_504,
+};
+
+const PIANO_SAMPLE_BYTES = new Map([
+  [33, 1_495_610], [36, 1_432_516], [39, 1_418_874], [42, 1_312_810],
+  [45, 1_023_946], [48, 1_028_040], [51, 1_033_156], [54, 1_036_224],
+  [57, 1_003_484], [60, 1_039_976], [63, 1_016_444], [66, 944_142],
+  [69, 856_766], [72, 1_000_414],
+]);
+
+const VIOLIN_SAMPLE_BYTES = new Map([
+  [57, 731_868], [60, 778_248], [64, 654_128], [67, 652_602],
+  [69, 657_116], [72, 628_782], [76, 633_358],
+]);
+
 const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
 function midiName(midi) {
@@ -61,7 +79,9 @@ export class ArrangementEngine {
     this.pianoSamplePromises = new Map();
     this.violinSamplePromises = new Map();
     this.loadStatus = 'idle';
-    this.loadProgress = { stage: 'idle', loaded: 0, total: 0 };
+    this.loadProgress = {
+      stage: 'idle', loaded: 0, total: 21, loadedBytes: 0, totalBytes: AUDIO_SAMPLE_BYTES.total,
+    };
     this.errorMessage = null;
     this.trackSources = new Set();
     this.schedulerTimer = null;
@@ -74,7 +94,7 @@ export class ArrangementEngine {
     this.nextIndex = 0;
   }
 
-  async ensureContext() {
+  async ensureContext({ resume = true } = {}) {
     if (!this.context) {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       this.context = new AudioContextClass();
@@ -98,7 +118,7 @@ export class ArrangementEngine {
       this.reverbBuffer = impulseResponse(this.context);
       this.previewBus = this.createBus({ level: 0.82, send: 0.13, reverb: 0.4 });
     }
-    if (this.context.state === 'suspended') await this.context.resume();
+    if (resume && this.context.state === 'suspended') await this.context.resume();
   }
 
   loadSample(midi, base, extension, target, promises, suffix = '') {
@@ -125,14 +145,14 @@ export class ArrangementEngine {
     return promise;
   }
 
-  async loadSamples(anchors, base, extension, target, promises, suffix = '', onLoaded) {
+  async loadSamples(anchors, base, extension, target, promises, suffix = '', onLoaded, sampleBytes) {
     const queue = anchors.filter((midi) => !target.has(midi));
     const workerCount = Math.min(3, queue.length);
     const workers = Array.from({ length: workerCount }, async () => {
       while (queue.length) {
         const midi = queue.shift();
         await this.loadSample(midi, base, extension, target, promises, suffix);
-        onLoaded?.();
+        onLoaded?.(sampleBytes.get(midi) || 0);
       }
     });
     await Promise.all(workers);
@@ -146,12 +166,14 @@ export class ArrangementEngine {
   loadPianoSamples(onLoaded) {
     return this.loadSamples(
       PIANO_ANCHORS, PIANO_BASE, 'wav', this.pianoSamples, this.pianoSamplePromises, 'v8', onLoaded,
+      PIANO_SAMPLE_BYTES,
     );
   }
 
   loadViolinSamples(onLoaded) {
     return this.loadSamples(
       VIOLIN_ANCHORS, VIOLIN_BASE, 'wav', this.violinSamples, this.violinSamplePromises, '', onLoaded,
+      VIOLIN_SAMPLE_BYTES,
     );
   }
 
@@ -163,12 +185,17 @@ export class ArrangementEngine {
       return;
     }
     this.loadStatus = 'loading';
-    this.loadProgress = { stage: 'piano', loaded: 0, total: 1 };
+    this.loadProgress = {
+      stage: 'piano', loaded: 0, total: 1, loadedBytes: 0,
+      totalBytes: PIANO_SAMPLE_BYTES.get(anchor) || 0,
+    };
     this.errorMessage = null;
     this.emit();
     try {
       await this.loadPianoSample(midi);
-      this.loadProgress = { stage: 'piano', loaded: 1, total: 1 };
+      this.loadProgress = {
+        ...this.loadProgress, loaded: 1, loadedBytes: this.loadProgress.totalBytes,
+      };
       this.loadStatus = 'ready';
       this.emit();
     } catch (error) {
@@ -180,28 +207,57 @@ export class ArrangementEngine {
     }
   }
 
-  async prepare() {
-    await this.ensureContext();
+  async prepare({ resume = true } = {}) {
+    try {
+      await this.ensureContext({ resume });
+    } catch (error) {
+      this.loadStatus = 'error';
+      this.errorMessage = error instanceof Error ? error.message : String(error);
+      this.emit();
+      throw error;
+    }
     if (this.pianoSamples.size === PIANO_ANCHORS.length && this.violinSamples.size === VIOLIN_ANCHORS.length) {
       this.loadStatus = 'ready';
-      this.loadProgress = { stage: 'arrangement', loaded: 21, total: 21 };
+      this.loadProgress = {
+        stage: 'arrangement', loaded: 21, total: 21,
+        loadedBytes: AUDIO_SAMPLE_BYTES.total, totalBytes: AUDIO_SAMPLE_BYTES.total,
+      };
+      this.emit();
       return;
     }
+    const loadedPianoBytes = [...this.pianoSamples.keys()]
+      .reduce((sum, midi) => sum + (PIANO_SAMPLE_BYTES.get(midi) || 0), 0);
+    const loadedViolinBytes = [...this.violinSamples.keys()]
+      .reduce((sum, midi) => sum + (VIOLIN_SAMPLE_BYTES.get(midi) || 0), 0);
     this.loadStatus = 'loading';
     this.loadProgress = {
       stage: 'arrangement',
       loaded: this.pianoSamples.size + this.violinSamples.size,
       total: PIANO_ANCHORS.length + VIOLIN_ANCHORS.length,
+      loadedBytes: loadedPianoBytes + loadedViolinBytes,
+      totalBytes: AUDIO_SAMPLE_BYTES.total,
     };
     this.errorMessage = null;
     this.emit();
     try {
-      const markLoaded = () => {
-        this.loadProgress = { ...this.loadProgress, loaded: this.loadProgress.loaded + 1 };
+      const markLoaded = (bytes) => {
+        this.loadProgress = {
+          ...this.loadProgress,
+          loaded: this.loadProgress.loaded + 1,
+          loadedBytes: Math.min(
+            this.loadProgress.totalBytes,
+            this.loadProgress.loadedBytes + bytes,
+          ),
+        };
         this.emit();
       };
       await Promise.all([this.loadPianoSamples(markLoaded), this.loadViolinSamples(markLoaded)]);
       this.loadStatus = 'ready';
+      this.loadProgress = {
+        ...this.loadProgress,
+        loaded: this.loadProgress.total,
+        loadedBytes: this.loadProgress.totalBytes,
+      };
       this.emit();
     } catch (error) {
       this.loadStatus = 'error';
@@ -321,7 +377,7 @@ export class ArrangementEngine {
     this.nextIndex = firstPlayableEvent(this.events, this.position);
     this.pianoBus = this.createBus({ level: 0.88, send: 0.14, reverb: 0.42 });
     this.pedalBus = this.createBus({ level: 0.72, send: 0.32, reverb: 0.62 });
-    this.violinBus = this.createBus({ level: 0.72, send: 0.28, reverb: 0.54 });
+    this.violinBus = this.createBus({ level: 0.86, send: 0.24, reverb: 0.5 });
     this.status = 'playing';
     this.schedule();
     this.startProgress();
