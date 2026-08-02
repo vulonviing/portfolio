@@ -98,6 +98,10 @@
   .nav__back-label { display: none; }
 }
 
+@media (max-width: 640px) {
+  .nav__language .lang-switcher__flag { display: inline-block; }
+}
+
 @media (max-width: 420px) {
   .nav__inner { padding: 15px 14px; gap: 8px; }
   .nav__logo { font-size: 1.42rem; }
