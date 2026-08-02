@@ -4,8 +4,6 @@ import { useLang } from '../i18n/LanguageProvider';
 import LanguageSwitcher from './LanguageSwitcher';
 import './IntroOverlay.css';
 
-const STORAGE_KEY = 'ft-intro-seen';
-
 export default function IntroOverlay() {
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -15,26 +13,13 @@ export default function IntroOverlay() {
   const ti = t.intro;
 
   useEffect(() => {
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem(STORAGE_KEY) === '1';
-    } catch {
-      seen = false;
-    }
-    if (!seen) {
-      const t = setTimeout(() => setVisible(true), 280);
-      return () => clearTimeout(t);
-    }
+    const timer = setTimeout(() => setVisible(true), 280);
+    return () => clearTimeout(timer);
   }, []);
 
   const dismiss = async (withSound) => {
     if (busy) return;
     try {
-      try {
-        sessionStorage.setItem(STORAGE_KEY, '1');
-      } catch {
-        /* ignore */
-      }
       if (withSound && !enabled) {
         setBusy(true);
         await toggle();
@@ -70,6 +55,7 @@ export default function IntroOverlay() {
 
         <div className="intro__actions">
           <button
+            autoFocus
             className="intro__btn intro__btn--primary"
             onClick={() => dismiss(true)}
             disabled={busy}

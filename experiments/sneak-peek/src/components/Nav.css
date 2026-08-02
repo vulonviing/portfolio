@@ -18,7 +18,7 @@
 .nav__inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 14px 24px;
+  padding: 19px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -31,7 +31,7 @@
   align-items: flex-start;
   color: var(--text-primary);
   font-family: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
-  font-size: 1.22rem;
+  font-size: 1.82rem;
   font-stretch: condensed;
   font-weight: 800;
   letter-spacing: -0.055em;
@@ -48,8 +48,10 @@
 
 .nav__language .lang-switcher {
   padding: 2px;
-  border-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
   background: rgba(255, 255, 255, 0.025);
+  flex-wrap: nowrap;
 }
 
 .nav__language .lang-switcher__btn {
@@ -97,8 +99,8 @@
 }
 
 @media (max-width: 420px) {
-  .nav__inner { padding: 12px 14px; gap: 8px; }
-  .nav__logo { font-size: 1.05rem; }
+  .nav__inner { padding: 15px 14px; gap: 8px; }
+  .nav__logo { font-size: 1.42rem; }
   .nav__aux { gap: 7px; }
   .nav__language .lang-switcher__btn { padding: 5px 5px; }
 }
