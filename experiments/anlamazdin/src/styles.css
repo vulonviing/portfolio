@@ -605,8 +605,8 @@ button { color: inherit; }
 @media (max-height: 600px) and (orientation: landscape) {
   .experience.is-handheld-phone.is-phone-landscape {
     --phone-stage-min-width: 880px;
-    --mobile-horizon-height: clamp(76px, 21dvh, 88px);
-    --mobile-piano-height: clamp(38px, 10dvh, 44px);
+    --mobile-horizon-height: clamp(60px, 17dvh, 70px);
+    --mobile-piano-height: clamp(30px, 8dvh, 34px);
     grid-template-columns: minmax(var(--phone-stage-min-width), 1fr);
     overscroll-behavior-inline: contain;
     -webkit-overflow-scrolling: touch;
@@ -633,15 +633,24 @@ button { color: inherit; }
   }
   .experience.is-handheld-phone .wordmark { font-size: 24px; }
   .experience.is-handheld-phone .hero { padding-top: 12px; padding-bottom: 7px; }
-  .experience.is-handheld-phone .ritual .piano { height: 108px; }
+  .experience.is-handheld-phone .ritual .piano { height: 92px; }
+  .experience.is-handheld-phone .step-row {
+    width: min(430px, calc(100% - 32px));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 64px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+  .experience.is-handheld-phone .step-counter { justify-self: end; }
+  .experience.is-handheld-phone .target-note { justify-self: start; text-align: left; }
   .experience.is-handheld-phone .note-trail { margin-top: 7px; }
   .experience.is-handheld-phone .note-trail span { height: 27px; }
   .experience.is-handheld-phone .action-zone { min-height: 60px; padding-top: 7px; }
   .experience.is-handheld-phone .site-footer { padding-top: 4px; padding-bottom: max(5px, env(safe-area-inset-bottom)); }
 
-  .experience.is-handheld-phone .listening-field { row-gap: 12px; }
+  .experience.is-handheld-phone .listening-field { row-gap: 8px; }
   .experience.is-handheld-phone .record-orbit {
-    width: clamp(148px, 40dvh, 170px);
+    width: clamp(170px, 44dvh, 188px);
   }
   .experience.is-handheld-phone .center-vinyl {
     box-shadow: inset 0 0 0 22px rgba(0,0,0,.14), inset 0 0 0 23px rgba(182,139,82,.13), 0 16px 42px rgba(0,0,0,.44);
@@ -649,14 +658,16 @@ button { color: inherit; }
   .experience.is-handheld-phone .center-vinyl > span { width: 50px; height: 50px; }
   .experience.is-handheld-phone .center-vinyl b { font-size: 12px; }
   .experience.is-handheld-phone .orbit-label { max-width: 150px; font-size: 6px; }
+  .experience.is-handheld-phone .orbit-label--top { top: 8px; transform: translate(-50%, 0); }
+  .experience.is-handheld-phone .orbit-label--top.is-active { transform: translate(-50%, 2px) scale(1.05); }
   .experience.is-handheld-phone .orbit-label--lower-left { left: 2%; transform: translate(-9%, 42%) rotate(-18deg); }
   .experience.is-handheld-phone .orbit-label--lower-right { right: 2%; transform: translate(9%, 42%) rotate(18deg); }
 
   .experience.is-handheld-phone .listening-piano .piano { min-width: var(--phone-stage-min-width); }
   .experience.is-handheld-phone .listening-piano .piano-key--black { top: 4px; }
   .experience.is-handheld-phone .sound-horizon { min-height: 0; }
-  .experience.is-handheld-phone .horizon-seek { top: 3px; height: 24px; }
-  .experience.is-handheld-phone .horizon-markers { height: 28px; }
+  .experience.is-handheld-phone .horizon-seek { top: 2px; height: 20px; }
+  .experience.is-handheld-phone .horizon-markers { height: 24px; }
   .experience.is-handheld-phone .marker { top: 4px; }
   .experience.is-handheld-phone .horizon-transport { bottom: calc(2px + env(safe-area-inset-bottom)); gap: 4px; }
   .experience.is-handheld-phone .horizon-meta--left { gap: 2px; }
@@ -665,11 +676,11 @@ button { color: inherit; }
   .experience.is-handheld-phone .horizon-mix-toggle { min-width: 48px; font-size: 5.5px; }
   .experience.is-handheld-phone .horizon-mix-toggle,
   .experience.is-handheld-phone .horizon-restart,
-  .experience.is-handheld-phone .horizon-play { height: 30px; }
+  .experience.is-handheld-phone .horizon-play { height: 28px; }
   .experience.is-handheld-phone .horizon-restart,
-  .experience.is-handheld-phone .horizon-play { width: 30px; }
+  .experience.is-handheld-phone .horizon-play { width: 28px; }
   .experience.is-handheld-phone .horizon-mix {
-    bottom: calc(37px + env(safe-area-inset-bottom));
+    bottom: calc(34px + env(safe-area-inset-bottom));
     padding: 6px 9px;
   }
 }
