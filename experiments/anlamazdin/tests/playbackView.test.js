@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { activePianoMidis, orbitSectionId, ORBIT_SECTIONS } from '../src/music/playbackView.js';
+import {
+  activePianoMidis,
+  musicalProgressPercent,
+  orbitSectionId,
+  ORBIT_SECTIONS,
+} from '../src/music/playbackView.js';
 
 test('orbit exposes the three language-neutral section positions', () => {
   assert.deepEqual(ORBIT_SECTIONS, [
@@ -26,4 +31,10 @@ test('active piano notes include simultaneous playable events without violin or 
   ];
   assert.deepEqual(activePianoMidis(events, 2), [59, 62]);
   assert.deepEqual(activePianoMidis(events, 3), []);
+});
+
+test('record progress reaches 100 at the musical ending before the transition tail', () => {
+  assert.equal(musicalProgressPercent(70.99, 73.5, 2.5), 99);
+  assert.equal(musicalProgressPercent(71, 73.5, 2.5), 100);
+  assert.equal(musicalProgressPercent(73.5, 73.5, 2.5), 100);
 });

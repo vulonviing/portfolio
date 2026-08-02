@@ -11,6 +11,11 @@ export function orbitSectionId(sectionId) {
   return null;
 }
 
+export function musicalProgressPercent(position, duration, tailSeconds = 0) {
+  const musicalDuration = Math.max(0.001, duration - tailSeconds);
+  return Math.min(100, Math.max(0, Math.floor((position / musicalDuration) * 100)));
+}
+
 export function activePianoMidis(events, position, minMidi = 48, maxMidi = 71) {
   return [...new Set(events
     .filter((event) => (

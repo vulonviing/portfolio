@@ -2,8 +2,13 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { ArrangementEngine } from './audio/ArrangementEngine';
 import { copyFor, noteName, readStoredLanguage, sectionLabel, storeLanguage } from './i18n';
-import { buildSongEvents, MOTIF, sectionAt, SECTIONS, SONG } from './music/score';
-import { activePianoMidis, orbitSectionId, ORBIT_SECTIONS } from './music/playbackView';
+import { buildSongEvents, MOTIF, sectionAt, SECTIONS, SONG, TAIL_SECONDS } from './music/score';
+import {
+  activePianoMidis,
+  musicalProgressPercent,
+  orbitSectionId,
+  ORBIT_SECTIONS,
+} from './music/playbackView';
 import { buildTimelineBins, timelinePercent } from './music/timeline';
 import { experienceReducer, initialExperience } from './state/experience';
 
@@ -109,7 +114,7 @@ function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPr
 
 function RecordOrbit({ isPlaying, language, playback, section, t }) {
   const activeSection = orbitSectionId(section.id);
-  const progress = Math.round((playback.position / playback.duration) * 100);
+  const progress = musicalProgressPercent(playback.position, playback.duration, TAIL_SECONDS);
 
   return (
     <div className="record-orbit" aria-label={t.playingSection(section.label)}>
@@ -575,9 +580,12 @@ export default function App() {
                 </p>
               )}
               {complete && (
-                <button className="run-button" disabled={!audioReady} onClick={startSong} type="button">
-                  <span>{t.play}</span><i>▶</i>
-                </button>
+                <div className="play-ready">
+                  <span>{t.pressPlay}</span>
+                  <button className="run-button" disabled={!audioReady} onClick={startSong} type="button">
+                    <strong>{t.play}</strong><i>▶</i>
+                  </button>
+                </div>
               )}
             </div>
           </>
