@@ -115,7 +115,7 @@ function setupResonanceCards() {
 
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   let audioContext = null;
-  let soundEnabled = false;
+  let soundEnabled = true;
   let activeCard = null;
   let stopActivePreview = null;
 
@@ -261,6 +261,7 @@ function setupResonanceCards() {
 
   async function enableSound() {
     if (!AudioContextClass) {
+      soundEnabled = false;
       soundButton.disabled = true;
       setSoundButton("Sound unavailable");
       return false;
@@ -285,7 +286,11 @@ function setupResonanceCards() {
     stopPreview();
     activeCard = card;
     if (soundEnabled) {
-      playCardPreview(card);
+      if (!audioContext || audioContext.state !== "running") {
+        enableSound().catch(() => setSoundButton("Click to enable hover sound", { blocked: true }));
+      } else {
+        playCardPreview(card);
+      }
       return;
     }
     if (card.dataset.audioPreview) {

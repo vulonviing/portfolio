@@ -19,6 +19,25 @@ function formatTime(seconds) {
   return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, '0')}`;
 }
 
+function AudioLoading({ progress, t }) {
+  const total = Math.max(1, progress?.total || 1);
+  const loaded = Math.min(total, progress?.loaded || 0);
+  const percent = Math.max(6, Math.round((loaded / total) * 100));
+  const label = progress?.stage === 'arrangement' ? t.arrangementPreparing : t.pianoPreparing;
+
+  return (
+    <div className="audio-loading" role="status" aria-live="polite">
+      <div className="audio-loading__label">
+        <span>{label}</span>
+        <strong>{loaded} / {total}</strong>
+      </div>
+      <span className="audio-loading__track" aria-hidden="true">
+        <i style={{ width: `${percent}%` }} />
+      </span>
+    </div>
+  );
+}
+
 function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPress, targetMidi, t }) {
   const scrollerRef = useRef(null);
   const whiteNotes = KEYBOARD_NOTES.filter((midi) => !isBlack(midi));
@@ -348,7 +367,13 @@ function RightsDisclosure({ t }) {
 export default function App() {
   const [language, setLanguage] = useState(readStoredLanguage);
   const [state, dispatch] = useReducer(experienceReducer, initialExperience);
-  const [playback, setPlayback] = useState({ status: 'idle', loadStatus: 'idle', position: 0, duration: SONG.duration });
+  const [playback, setPlayback] = useState({
+    status: 'idle',
+    loadStatus: 'idle',
+    loadProgress: { stage: 'idle', loaded: 0, total: 0 },
+    position: 0,
+    duration: SONG.duration,
+  });
   const events = useMemo(() => buildSongEvents(), []);
   const engine = useMemo(() => new ArrangementEngine(events, SONG.duration), [events]);
   const mistakeTimer = useRef(null);
@@ -524,11 +549,11 @@ export default function App() {
             </div>
 
             <div className="action-zone">
-              {(!complete || playback.loadStatus === 'loading' || playback.loadStatus === 'error') && (
+              {playback.loadStatus === 'loading' ? (
+                <AudioLoading progress={playback.loadProgress} t={t} />
+              ) : (!complete || playback.loadStatus === 'error') && (
                 <p aria-live="polite">
-                  {playback.loadStatus === 'loading'
-                    ? t.pianoPreparing
-                    : playback.loadStatus === 'error'
+                  {playback.loadStatus === 'error'
                       ? t.audioUnavailable
                       : state.mistakeMidi
                         ? t.wrongNote

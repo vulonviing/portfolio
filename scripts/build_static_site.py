@@ -558,8 +558,10 @@ def render_resonance_card(item: dict) -> str:
     if theme == "anlamazdin":
         reveal_html = """<div class="resonance-card__reveal resonance-card__reveal--anlamazdin" aria-hidden="true">
                 <div class="resonance-vinyl"><span>anlamazdın.</span></div>
-                <strong class="resonance-card__display-title">anlamazdın.</strong>
-                <small>piano · violin · memory</small>
+                <div class="resonance-card__title-lockup">
+                  <strong class="resonance-card__display-title">anlamazdın.</strong>
+                  <small>I wish · Didn’t I say? · You wouldn’t understand</small>
+                </div>
               </div>"""
     else:
         reveal_html = """<div class="resonance-card__reveal resonance-card__reveal--sneak-peek" aria-hidden="true">
@@ -590,8 +592,8 @@ def render_resonance_main(items: list[dict]) -> str:
         <div class="section__eyebrow">Resonance</div>
         <h1 class="section__title">Things meant to be felt.</h1>
         <p class="section__lead">Interactive studies in music, image, movement, and whatever stays after the screen goes quiet.</p>
-        <button class="resonance-sound" type="button" data-resonance-sound aria-pressed="false">
-          <span aria-hidden="true">◌</span> Enable hover sound
+        <button class="resonance-sound" type="button" data-resonance-sound aria-pressed="true">
+          <span aria-hidden="true">●</span> Hover sound on
         </button>
       </div>
     </section>

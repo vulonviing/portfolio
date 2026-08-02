@@ -180,6 +180,7 @@
 /* Resonance — a quiet index that lets each experiment reveal its own world. */
 .resonance-header .section__lead {
   max-width: 720px;
+  margin: clamp(20px, 2vw, 28px) 0 0;
 }
 
 .resonance-sound {
@@ -187,7 +188,7 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  margin-top: 24px;
+  margin-top: 12px;
   padding: 9px 14px;
   border: 1px solid var(--color-line-soft);
   border-radius: 999px;
@@ -341,12 +342,28 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.82'/%3E%3C/svg%3E");
 }
 
-.resonance-card__reveal--anlamazdin .resonance-card__display-title {
+.resonance-card__title-lockup {
+  position: relative;
+  z-index: 3;
   max-width: 72%;
+  text-align: right;
+}
+
+.resonance-card__reveal--anlamazdin .resonance-card__display-title {
   color: #f2e9dd;
   font: italic 400 clamp(48px, 5vw, 74px)/.9 "Iowan Old Style", Baskerville, "Times New Roman", serif;
   letter-spacing: -.058em;
   text-shadow: 0 12px 42px rgba(0, 0, 0, .28);
+}
+
+.resonance-card__reveal--anlamazdin .resonance-card__title-lockup small {
+  position: static;
+  display: block;
+  margin-top: 18px;
+  color: #bfa47e;
+  font-size: 8px;
+  line-height: 1.5;
+  letter-spacing: .13em;
 }
 
 .resonance-vinyl {

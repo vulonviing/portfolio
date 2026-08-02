@@ -58,9 +58,10 @@ export class ArrangementEngine {
     this.violinBus = null;
     this.pianoSamples = new Map();
     this.violinSamples = new Map();
-    this.pianoLoadPromise = null;
-    this.violinLoadPromise = null;
+    this.pianoSamplePromises = new Map();
+    this.violinSamplePromises = new Map();
     this.loadStatus = 'idle';
+    this.loadProgress = { stage: 'idle', loaded: 0, total: 0 };
     this.errorMessage = null;
     this.trackSources = new Set();
     this.schedulerTimer = null;
@@ -100,54 +101,76 @@ export class ArrangementEngine {
     if (this.context.state === 'suspended') await this.context.resume();
   }
 
-  async loadSamples(anchors, base, extension, target, suffix = '') {
-    await Promise.all(anchors.map(async (midi) => {
+  loadSample(midi, base, extension, target, promises, suffix = '') {
+    if (target.has(midi)) return Promise.resolve();
+    if (promises.has(midi)) return promises.get(midi);
+
+    const promise = (async () => {
       const filename = `${midiName(midi).replace('#', 's')}${suffix}.${extension}`;
-      const response = await fetch(`${base}/${filename}?v=${SAMPLE_VERSION}`);
-      if (!response.ok) throw new Error(`Sample could not load: ${filename}`);
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.startsWith('audio/')) throw new Error(`Wrong audio asset path: ${filename}`);
-      const decoded = await this.context.decodeAudioData(await response.arrayBuffer());
-      target.set(midi, decoded);
-    }));
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 20_000);
+      try {
+        const response = await fetch(`${base}/${filename}?v=${SAMPLE_VERSION}`, { signal: controller.signal });
+        if (!response.ok) throw new Error(`Sample could not load: ${filename}`);
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.startsWith('audio/')) throw new Error(`Wrong audio asset path: ${filename}`);
+        const decoded = await this.context.decodeAudioData(await response.arrayBuffer());
+        target.set(midi, decoded);
+      } finally {
+        window.clearTimeout(timeout);
+        promises.delete(midi);
+      }
+    })();
+    promises.set(midi, promise);
+    return promise;
   }
 
-  loadPianoSamples() {
-    if (this.pianoSamples.size === PIANO_ANCHORS.length) return Promise.resolve();
-    if (!this.pianoLoadPromise) {
-      this.pianoLoadPromise = this.loadSamples(PIANO_ANCHORS, PIANO_BASE, 'wav', this.pianoSamples, 'v8')
-        .catch((error) => {
-          this.pianoLoadPromise = null;
-          throw error;
-        });
-    }
-    return this.pianoLoadPromise;
+  async loadSamples(anchors, base, extension, target, promises, suffix = '', onLoaded) {
+    const queue = anchors.filter((midi) => !target.has(midi));
+    const workerCount = Math.min(3, queue.length);
+    const workers = Array.from({ length: workerCount }, async () => {
+      while (queue.length) {
+        const midi = queue.shift();
+        await this.loadSample(midi, base, extension, target, promises, suffix);
+        onLoaded?.();
+      }
+    });
+    await Promise.all(workers);
   }
 
-  loadViolinSamples() {
-    if (this.violinSamples.size === VIOLIN_ANCHORS.length) return Promise.resolve();
-    if (!this.violinLoadPromise) {
-      this.violinLoadPromise = this.loadSamples(VIOLIN_ANCHORS, VIOLIN_BASE, 'wav', this.violinSamples)
-        .catch((error) => {
-          this.violinLoadPromise = null;
-          throw error;
-        });
-    }
-    return this.violinLoadPromise;
+  loadPianoSample(midi) {
+    const anchor = nearestAnchor(midi, PIANO_ANCHORS);
+    return this.loadSample(anchor, PIANO_BASE, 'wav', this.pianoSamples, this.pianoSamplePromises, 'v8');
   }
 
-  async preparePreview() {
+  loadPianoSamples(onLoaded) {
+    return this.loadSamples(
+      PIANO_ANCHORS, PIANO_BASE, 'wav', this.pianoSamples, this.pianoSamplePromises, 'v8', onLoaded,
+    );
+  }
+
+  loadViolinSamples(onLoaded) {
+    return this.loadSamples(
+      VIOLIN_ANCHORS, VIOLIN_BASE, 'wav', this.violinSamples, this.violinSamplePromises, '', onLoaded,
+    );
+  }
+
+  async preparePreview(midi) {
     await this.ensureContext();
+    const anchor = nearestAnchor(midi, PIANO_ANCHORS);
+    if (this.pianoSamples.has(anchor)) {
+      this.loadStatus = 'ready';
+      return;
+    }
     this.loadStatus = 'loading';
+    this.loadProgress = { stage: 'piano', loaded: 0, total: 1 };
     this.errorMessage = null;
     this.emit();
     try {
-      await this.loadPianoSamples();
+      await this.loadPianoSample(midi);
+      this.loadProgress = { stage: 'piano', loaded: 1, total: 1 };
       this.loadStatus = 'ready';
       this.emit();
-      void this.loadViolinSamples().catch(() => {
-        // ÇAL retries violin loading; a preview note must never fail because of it.
-      });
     } catch (error) {
       this.loadStatus = 'error';
       this.errorMessage = error instanceof Error ? error.message : String(error);
@@ -161,13 +184,23 @@ export class ArrangementEngine {
     await this.ensureContext();
     if (this.pianoSamples.size === PIANO_ANCHORS.length && this.violinSamples.size === VIOLIN_ANCHORS.length) {
       this.loadStatus = 'ready';
+      this.loadProgress = { stage: 'arrangement', loaded: 21, total: 21 };
       return;
     }
     this.loadStatus = 'loading';
+    this.loadProgress = {
+      stage: 'arrangement',
+      loaded: this.pianoSamples.size + this.violinSamples.size,
+      total: PIANO_ANCHORS.length + VIOLIN_ANCHORS.length,
+    };
     this.errorMessage = null;
     this.emit();
     try {
-      await Promise.all([this.loadPianoSamples(), this.loadViolinSamples()]);
+      const markLoaded = () => {
+        this.loadProgress = { ...this.loadProgress, loaded: this.loadProgress.loaded + 1 };
+        this.emit();
+      };
+      await Promise.all([this.loadPianoSamples(markLoaded), this.loadViolinSamples(markLoaded)]);
       this.loadStatus = 'ready';
       this.emit();
     } catch (error) {
@@ -256,7 +289,7 @@ export class ArrangementEngine {
   }
 
   async preview(midi, duration = 0.4, velocity = 0.62) {
-    await this.preparePreview();
+    await this.preparePreview(midi);
     this.playNote({
       instrument: 'piano',
       midi,
@@ -394,6 +427,7 @@ export class ArrangementEngine {
     return {
       status: this.status,
       loadStatus: this.loadStatus,
+      loadProgress: this.loadProgress,
       position: this.getPosition(),
       duration: this.duration,
       errorMessage: this.errorMessage,
