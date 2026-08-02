@@ -70,7 +70,7 @@ export function clampPosition(position, duration) {
 }
 
 export function clampTrackLevel(level) {
-  return Math.max(0, Math.min(1.25, Number(level) || 0));
+  return Math.max(0, Math.min(2, Number(level) || 0));
 }
 
 export function violinMixLevel(position, liftAt) {

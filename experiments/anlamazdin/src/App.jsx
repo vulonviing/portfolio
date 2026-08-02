@@ -371,7 +371,7 @@ function SoundHorizon({
               <input
                 aria-label={label}
                 aria-valuetext={`${percent}%`}
-                max="125"
+                max="200"
                 min="0"
                 onChange={(event) => onMixChange(track, Number(event.target.value) / 100)}
                 step="1"
@@ -478,6 +478,7 @@ export default function App() {
   const mistakeTimer = useRef(null);
   const liveKeyTimer = useRef(null);
   const inputBusy = useRef(false);
+  const playButtonRef = useRef(null);
   const [livePressedMidis, setLivePressedMidis] = useState([]);
   const [mixLevels, setMixLevels] = useState({ piano: 1, violin: 1 });
   const [scrubPosition, setScrubPosition] = useState(null);
@@ -524,6 +525,19 @@ export default function App() {
     () => [...new Set([...arrangedMidis, ...livePressedMidis])],
     [arrangedMidis, livePressedMidis],
   );
+
+  useEffect(() => {
+    if (!complete || hasStarted || !playButtonRef.current) return;
+    const scrollTimer = window.setTimeout(() => {
+      playButtonRef.current?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        block: 'center',
+        inline: 'nearest',
+      });
+      playButtonRef.current?.focus({ preventScroll: true });
+    }, 120);
+    return () => window.clearTimeout(scrollTimer);
+  }, [complete, hasStarted]);
 
   async function handleKeyPress(midi) {
     if (hasStarted || !audioReady || inputBusy.current) return;
@@ -673,7 +687,7 @@ export default function App() {
               {complete && (
                 <div className="play-ready">
                   <span>{t.pressPlay}</span>
-                  <button className="run-button" disabled={!audioReady} onClick={startSong} type="button">
+                  <button className="run-button" disabled={!audioReady} onClick={startSong} ref={playButtonRef} type="button">
                     <strong>{t.play}</strong><i>▶</i>
                   </button>
                 </div>

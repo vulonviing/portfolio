@@ -336,6 +336,8 @@ button { color: inherit; }
 .experience.is-low-power .record-orbit { filter: none; }
 
 @media (max-width: 700px) {
+  .experience { --mobile-horizon-height: clamp(190px, 27svh, 235px); }
+  .experience:not(.is-listening) { overflow-x: hidden; overflow-y: auto; }
   .site-header { grid-template-columns: auto 1fr; padding: 18px; }
   .site-footer { grid-template-columns: 1fr; padding: 8px 18px 16px; text-align: center; }
   .record-meta, .license-links { display: none; }
@@ -354,20 +356,20 @@ button { color: inherit; }
   .note-trail { gap: 3px; }
   .note-trail b { font-size: 7px; }
   .note-trail small { font-size: 6px; }
-  .experience.is-listening { padding-bottom: clamp(210px, 32vh, 270px); }
-  .sound-horizon { height: clamp(210px, 32vh, 270px); }
-  .record-orbit { top: 27%; width: min(68vw, 40vh, 270px); }
+  .experience.is-listening { padding-bottom: var(--mobile-horizon-height); }
+  .sound-horizon { height: var(--mobile-horizon-height); }
+  .record-orbit { top: clamp(178px, 29svh, 232px); width: min(60vw, 32svh, 224px); }
   .center-vinyl { inset: 22%; box-shadow: inset 0 0 0 27px rgba(0,0,0,.14), inset 0 0 0 28px rgba(182,139,82,.13), 0 20px 56px rgba(0,0,0,.46); }
   .center-vinyl > span { width: 57px; height: 57px; }
   .center-vinyl b { font-size: 13px; }
   .orbit-label { font-size: 7px; letter-spacing: .12em; }
   .orbit-label i { width: 10px; margin-right: 5px; }
-  .orbit-label--lower-left { left: 8%; transform: translate(-38%, 50%) rotate(-26deg); }
-  .orbit-label--lower-right { right: 8%; transform: translate(38%, 50%) rotate(26deg); }
-  .orbit-label--lower-left.is-active { transform: translate(-28%, 42%) rotate(-22deg) scale(1.06); }
-  .orbit-label--lower-right.is-active { transform: translate(28%, 42%) rotate(22deg) scale(1.06); }
-  .listening-piano { right: 0; bottom: calc(clamp(210px, 32vh, 270px) - 18px); left: 0; opacity: .65; }
-  .listening-piano .piano { height: 102px; min-width: 650px; }
+  .orbit-label--lower-left { left: 8%; transform: translate(-18%, 50%) rotate(-22deg); }
+  .orbit-label--lower-right { right: 8%; transform: translate(18%, 50%) rotate(22deg); }
+  .orbit-label--lower-left.is-active { transform: translate(-10%, 42%) rotate(-18deg) scale(1.06); }
+  .orbit-label--lower-right.is-active { transform: translate(10%, 42%) rotate(18deg) scale(1.06); }
+  .listening-piano { right: 0; bottom: calc(var(--mobile-horizon-height) - 14px); left: 0; opacity: .7; }
+  .listening-piano .piano { height: 96px; min-width: 600px; }
   .horizon-meta { bottom: 15px; }
   .horizon-meta--left { left: 16px; flex-direction: column; align-items: flex-start; gap: 5px; }
   .horizon-meta--right { right: 16px; }
