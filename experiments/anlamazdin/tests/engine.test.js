@@ -6,6 +6,7 @@ import {
   ArrangementEngine,
   chooseSampleAnchor,
   clampPosition,
+  clampTrackLevel,
   firstPlayableEvent,
   VIOLIN_MIX,
   violinMixLevel,
@@ -30,6 +31,13 @@ test('audio scheduling keeps a wide buffer against a busy main thread', () => {
   assert.ok(AUDIO_TIMING.scheduleAheadSeconds >= 1);
   assert.ok(AUDIO_TIMING.schedulerIntervalMs / 1000 < AUDIO_TIMING.scheduleAheadSeconds / 5);
   assert.ok(AUDIO_TIMING.progressIntervalMs >= AUDIO_TIMING.schedulerIntervalMs);
+});
+
+test('track mix controls support mute and a restrained boost', () => {
+  assert.equal(clampTrackLevel(-1), 0);
+  assert.equal(clampTrackLevel(0.65), 0.65);
+  assert.equal(clampTrackLevel(1.25), 1.25);
+  assert.equal(clampTrackLevel(2), 1.25);
 });
 
 test('seek positions are clamped to the arrangement', () => {

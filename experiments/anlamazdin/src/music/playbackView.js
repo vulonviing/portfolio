@@ -16,6 +16,12 @@ export function musicalProgressPercent(position, duration, tailSeconds = 0) {
   return Math.min(100, Math.max(0, Math.floor((position / musicalDuration) * 100)));
 }
 
+export function vinylRotationDegrees(position, secondsPerTurn = 10) {
+  const safePosition = Math.max(0, Number(position) || 0);
+  const safeTurnDuration = Math.max(0.001, Number(secondsPerTurn) || 10);
+  return (safePosition * 360) / safeTurnDuration;
+}
+
 export function shouldUseLowPowerMode({
   hardwareConcurrency = 8,
   deviceMemory = 8,

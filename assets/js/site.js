@@ -119,8 +119,6 @@ function setupResonanceCards() {
   let soundEnabled = true;
   let activeCard = null;
   let stopActivePreview = null;
-  let previewRequest = 0;
-  let arrangementPromise = null;
 
   function setSoundButton(label, { blocked = false, pressed = soundEnabled } = {}) {
     const icon = document.createElement("span");
@@ -135,30 +133,22 @@ function setupResonanceCards() {
     return 440 * (2 ** ((midi - 69) / 12));
   }
 
-  function loadAnlamazdinArrangement() {
-    arrangementPromise ||= import("/experiments/anlamazdin/src/music/score.js?v=full-hover-20260802")
-      .then(({ buildSongEvents, SONG }) => ({ events: buildSongEvents(), duration: SONG.duration }));
-    return arrangementPromise;
-  }
-
-  function schedulePianoNote(context, destination, midi, start, duration, velocity = .5, toneName = "natural") {
+  function schedulePianoNote(context, destination, midi, start, duration) {
     const fundamental = context.createOscillator();
     const overtone = context.createOscillator();
     const gain = context.createGain();
     const tone = context.createBiquadFilter();
-    const peak = Math.max(.012, velocity * .17);
-
     fundamental.type = "triangle";
     overtone.type = "sine";
     fundamental.frequency.value = midiToFrequency(midi);
     overtone.frequency.value = midiToFrequency(midi + 12);
     tone.type = "lowpass";
-    tone.frequency.value = toneName === "pedal" ? 1150 : toneName === "warm" ? 1750 : 2350;
+    tone.frequency.value = 2350;
     tone.Q.value = .7;
 
     gain.gain.setValueAtTime(.0001, start);
-    gain.gain.exponentialRampToValueAtTime(peak, start + .012);
-    gain.gain.exponentialRampToValueAtTime(Math.max(.003, peak * .24), start + Math.min(.34, duration * .42));
+    gain.gain.exponentialRampToValueAtTime(.13, start + .012);
+    gain.gain.exponentialRampToValueAtTime(.035, start + Math.min(.34, duration * .42));
     gain.gain.exponentialRampToValueAtTime(.0001, start + duration + .48);
 
     fundamental.connect(gain);
@@ -172,43 +162,48 @@ function setupResonanceCards() {
     return [fundamental, overtone];
   }
 
-  function scheduleViolinNote(context, destination, midi, start, duration, velocity = .2) {
-    const nodes = [-5, 4].map((detune) => {
+  function scheduleViolinPad(context, destination, start, duration) {
+    const nodes = [];
+    [47, 54, 62].forEach((midi, index) => {
       const oscillator = context.createOscillator();
       const gain = context.createGain();
       const filter = context.createBiquadFilter();
       oscillator.type = "sawtooth";
       oscillator.frequency.value = midiToFrequency(midi);
-      oscillator.detune.value = detune;
+      oscillator.detune.value = index === 1 ? -5 : index * 3;
       filter.type = "lowpass";
       filter.frequency.value = 920;
       filter.Q.value = 1.4;
       gain.gain.setValueAtTime(.0001, start);
-      gain.gain.exponentialRampToValueAtTime(Math.max(.006, velocity * .07), start + Math.min(.72, duration * .32));
-      gain.gain.setValueAtTime(Math.max(.006, velocity * .07), start + Math.max(.74, duration - .8));
+      gain.gain.exponentialRampToValueAtTime(.018, start + .72);
+      gain.gain.setValueAtTime(.018, start + Math.max(.74, duration - .8));
       gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
       oscillator.connect(filter);
       filter.connect(gain);
       gain.connect(destination);
       oscillator.start(start);
       oscillator.stop(start + duration + .04);
-      return oscillator;
+      nodes.push(oscillator);
     });
     return nodes;
   }
 
-  function playAnlamazdinPreview(arrangement) {
+  function playAnlamazdinPreview() {
     if (!audioContext || audioContext.state !== "running") return;
     stopActivePreview?.();
 
     const master = audioContext.createGain();
-    master.gain.value = .78;
+    master.gain.value = .82;
     master.connect(audioContext.destination);
     const scheduledNodes = new Set();
     let schedulerTimer = 0;
-    let nextEventIndex = 0;
+    let nextPhraseStart = audioContext.currentTime + .04;
     let stopped = false;
-    const playbackStart = audioContext.currentTime + .06;
+
+    const phrase = [
+      [59, 0, .375], [61, .375, .375], [62, .75, .375], [59, 1.125, .375],
+      [61, 1.5, .375], [59, 1.875, .375], [66, 2.25, .75], [64, 3, 2.25],
+    ];
 
     function remember(nodes) {
       nodes.forEach((node) => {
@@ -217,35 +212,19 @@ function setupResonanceCards() {
       });
     }
 
+    function schedulePhrase(start) {
+      phrase.forEach(([midi, offset, duration]) => {
+        remember(schedulePianoNote(audioContext, master, midi, start + offset, duration));
+      });
+      remember(scheduleViolinPad(audioContext, master, start, 5.38));
+    }
+
     function scheduleAhead() {
       if (stopped) return;
-      const elapsed = audioContext.currentTime - playbackStart;
-      const horizon = elapsed + 1.4;
-      while (
-        nextEventIndex < arrangement.events.length
-        && arrangement.events[nextEventIndex].time <= horizon
-      ) {
-        const event = arrangement.events[nextEventIndex];
-        const when = playbackStart + event.time;
-        const duration = Math.max(.08, event.duration);
-        if (event.track === "violin") {
-          remember(scheduleViolinNote(audioContext, master, event.midi, when, duration, event.velocity));
-        } else {
-          const tone = event.track === "pedal" ? "pedal" : event.tone;
-          remember(schedulePianoNote(
-            audioContext,
-            master,
-            event.midi,
-            when,
-            duration,
-            event.velocity,
-            tone,
-          ));
-        }
-        nextEventIndex += 1;
-      }
-      if (nextEventIndex >= arrangement.events.length && elapsed > arrangement.duration + .5) {
-        window.clearInterval(schedulerTimer);
+      const horizon = audioContext.currentTime + 1.25;
+      while (nextPhraseStart < horizon) {
+        schedulePhrase(nextPhraseStart);
+        nextPhraseStart += 5.08;
       }
     }
 
@@ -268,20 +247,12 @@ function setupResonanceCards() {
   }
 
   function stopPreview() {
-    previewRequest += 1;
     stopActivePreview?.();
   }
 
-  async function playCardPreview(card) {
+  function playCardPreview(card) {
     if (!soundEnabled || card?.dataset.audioPreview !== "anlamazdin") return;
-    const request = ++previewRequest;
-    try {
-      const arrangement = await loadAnlamazdinArrangement();
-      if (request !== previewRequest || activeCard !== card || !soundEnabled) return;
-      playAnlamazdinPreview(arrangement);
-    } catch {
-      setSoundButton("Preview unavailable", { blocked: true, pressed: false });
-    }
+    playAnlamazdinPreview();
   }
 
   async function enableSound() {

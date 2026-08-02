@@ -6,6 +6,7 @@ import {
   orbitSectionId,
   ORBIT_SECTIONS,
   shouldUseLowPowerMode,
+  vinylRotationDegrees,
 } from '../src/music/playbackView.js';
 
 test('orbit exposes the three language-neutral section positions', () => {
@@ -38,6 +39,13 @@ test('record progress reaches 100 at the musical ending before the transition ta
   assert.equal(musicalProgressPercent(70.99, 73.5, 2.5), 99);
   assert.equal(musicalProgressPercent(71, 73.5, 2.5), 100);
   assert.equal(musicalProgressPercent(73.5, 73.5, 2.5), 100);
+});
+
+test('vinyl rotation follows the absolute song position in both seek directions', () => {
+  assert.equal(vinylRotationDegrees(0), 0);
+  assert.equal(vinylRotationDegrees(10), 360);
+  assert.equal(vinylRotationDegrees(54), 1944);
+  assert.ok(vinylRotationDegrees(20) < vinylRotationDegrees(54));
 });
 
 test('visuals fall back to the light renderer on constrained devices', () => {

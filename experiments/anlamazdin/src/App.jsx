@@ -9,6 +9,7 @@ import {
   orbitSectionId,
   ORBIT_SECTIONS,
   shouldUseLowPowerMode,
+  vinylRotationDegrees,
 } from './music/playbackView';
 import { buildTimelineBins, timelinePercent } from './music/timeline';
 import { experienceReducer, initialExperience } from './state/experience';
@@ -114,9 +115,10 @@ function PianoKeyboard({ activeMidis = [], disabled, language, mistakeMidi, onPr
   );
 }
 
-function RecordOrbit({ isPlaying, language, playback, section, t }) {
+function RecordOrbit({ language, playback, position, section, t }) {
   const activeSection = orbitSectionId(section.id);
-  const progress = musicalProgressPercent(playback.position, playback.duration, TAIL_SECONDS);
+  const progress = musicalProgressPercent(position, playback.duration, TAIL_SECONDS);
+  const rotation = vinylRotationDegrees(position);
 
   return (
     <div className="record-orbit" aria-label={t.playingSection(section.label)}>
@@ -131,7 +133,7 @@ function RecordOrbit({ isPlaying, language, playback, section, t }) {
           {sectionLabel(item.id, language)}
         </span>
       ))}
-      <div className={`center-vinyl has-motion ${isPlaying ? 'is-spinning' : 'is-paused'}`} aria-hidden="true">
+      <div className="center-vinyl" style={{ transform: `rotate(${rotation}deg)` }} aria-hidden="true">
         <span>
           <b>{String(progress).padStart(2, '0')}</b>
           <small>Anlamazdın</small>
@@ -141,7 +143,21 @@ function RecordOrbit({ isPlaying, language, playback, section, t }) {
   );
 }
 
-function SoundHorizon({ engine, events, language, lowPowerMode, onRestart, onSeek, onToggle, playback, section, t }) {
+function SoundHorizon({
+  engine,
+  events,
+  language,
+  lowPowerMode,
+  mixLevels,
+  onMixChange,
+  onRestart,
+  onScrub,
+  onSeek,
+  onToggle,
+  playback,
+  section,
+  t,
+}) {
   const canvasRef = useRef(null);
   const redrawRef = useRef(() => {});
   const playbackRef = useRef(playback);
@@ -162,12 +178,16 @@ function SoundHorizon({ engine, events, language, lowPowerMode, onRestart, onSee
     if (!isDragging.current) setDraftPosition(playback.position);
   }, [playback.position]);
 
-  function commitSeek(value = draftPosition) {
+  async function commitSeek(value = draftPosition) {
     isDragging.current = false;
     const next = Number(value);
     visualPositionRef.current = next;
     setDraftPosition(next);
-    onSeek(next);
+    try {
+      await onSeek(next);
+    } finally {
+      onScrub(null);
+    }
   }
 
   useEffect(() => {
@@ -320,19 +340,49 @@ function SoundHorizon({ engine, events, language, lowPowerMode, onRestart, onSee
         onBlur={() => {
           if (isDragging.current) commitSeek();
         }}
-        onChange={(event) => setDraftPosition(Number(event.target.value))}
+        onChange={(event) => {
+          const next = Number(event.target.value);
+          setDraftPosition(next);
+          onScrub(next);
+        }}
         onKeyDown={() => { isDragging.current = true; }}
         onKeyUp={(event) => commitSeek(event.currentTarget.value)}
         onPointerCancel={() => {
           isDragging.current = false;
           setDraftPosition(playback.position);
+          onScrub(null);
         }}
-        onPointerDown={() => { isDragging.current = true; }}
+        onPointerDown={(event) => {
+          isDragging.current = true;
+          onScrub(Number(event.currentTarget.value));
+        }}
         onPointerUp={(event) => commitSeek(event.currentTarget.value)}
         step="0.1"
         type="range"
         value={draftPosition}
       />
+      <div className="horizon-mix" role="group" aria-label={t.mixControls}>
+        {['piano', 'violin'].map((track) => {
+          const percent = Math.round(mixLevels[track] * 100);
+          const label = track === 'piano' ? t.pianoMix : t.violinMix;
+          return (
+            <label key={track}>
+              <span>{label}</span>
+              <input
+                aria-label={label}
+                aria-valuetext={`${percent}%`}
+                max="125"
+                min="0"
+                onChange={(event) => onMixChange(track, Number(event.target.value) / 100)}
+                step="1"
+                type="range"
+                value={percent}
+              />
+              <output>{percent}</output>
+            </label>
+          );
+        })}
+      </div>
       <div className="horizon-meta horizon-meta--left">
         <span>{formatTime(isDragging.current ? draftPosition : playback.position)} / {formatTime(playback.duration)}</span>
         <strong>{section.label}</strong>
@@ -429,6 +479,8 @@ export default function App() {
   const liveKeyTimer = useRef(null);
   const inputBusy = useRef(false);
   const [livePressedMidis, setLivePressedMidis] = useState([]);
+  const [mixLevels, setMixLevels] = useState({ piano: 1, violin: 1 });
+  const [scrubPosition, setScrubPosition] = useState(null);
   const t = copyFor(language);
 
   useEffect(() => {
@@ -538,6 +590,11 @@ export default function App() {
     await engine.seek(position);
   }
 
+  function changeMix(track, level) {
+    setMixLevels((current) => ({ ...current, [track]: level }));
+    engine.setTrackLevel(track, level);
+  }
+
   function changeLanguage(nextLanguage) {
     setLanguage(storeLanguage(nextLanguage));
   }
@@ -630,9 +687,9 @@ export default function App() {
       {hasStarted && (
         <section className="listening-field" aria-live="polite">
           <RecordOrbit
-            isPlaying={playback.status === 'playing'}
             language={language}
             playback={playback}
+            position={scrubPosition ?? playback.position}
             section={displayedSection}
             t={t}
           />
@@ -665,7 +722,10 @@ export default function App() {
           events={events}
           language={language}
           lowPowerMode={lowPowerMode}
+          mixLevels={mixLevels}
+          onMixChange={changeMix}
           onRestart={restartSong}
+          onScrub={setScrubPosition}
           onSeek={seekSong}
           onToggle={togglePlayback}
           playback={playback}

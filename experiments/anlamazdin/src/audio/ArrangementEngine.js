@@ -69,6 +69,10 @@ export function clampPosition(position, duration) {
   return Math.max(0, Math.min(Number(position) || 0, duration));
 }
 
+export function clampTrackLevel(level) {
+  return Math.max(0, Math.min(1.25, Number(level) || 0));
+}
+
 export function violinMixLevel(position, liftAt) {
   const rampStart = Math.max(0, liftAt - VIOLIN_MIX.rampSeconds);
   if (position <= rampStart) return VIOLIN_MIX.base;
@@ -97,6 +101,10 @@ export class ArrangementEngine {
     this.pianoBus = null;
     this.pedalBus = null;
     this.violinBus = null;
+    this.pianoTrim = null;
+    this.pedalTrim = null;
+    this.violinTrim = null;
+    this.trackLevels = { piano: 1, violin: 1 };
     this.pianoSamples = new Map();
     this.violinSamples = new Map();
     this.pianoSamplePromises = new Map();
@@ -397,6 +405,21 @@ export class ArrangementEngine {
     return true;
   }
 
+  setTrackLevel(track, level) {
+    if (track !== 'piano' && track !== 'violin') return;
+    const nextLevel = clampTrackLevel(level);
+    this.trackLevels = { ...this.trackLevels, [track]: nextLevel };
+    if (!this.context) return;
+    const trims = track === 'piano'
+      ? [this.pianoTrim, this.pedalTrim]
+      : [this.violinTrim];
+    trims.filter(Boolean).forEach((trim) => {
+      const now = this.context.currentTime;
+      trim.gain.cancelScheduledValues(now);
+      trim.gain.setTargetAtTime(nextLevel, now, 0.025);
+    });
+  }
+
   async start(position = 0) {
     await this.prepare();
     this.stopSession();
@@ -407,6 +430,15 @@ export class ArrangementEngine {
     this.pianoBus = this.createBus({ level: 0.88, send: 0.14, reverb: 0.42 });
     this.pedalBus = this.createBus({ level: 0.72, send: 0.32, reverb: 0.62 });
     this.violinBus = this.createBus({ level: VIOLIN_MIX.base, send: 0.24, reverb: 0.5 });
+    this.pianoTrim = this.context.createGain();
+    this.pedalTrim = this.context.createGain();
+    this.violinTrim = this.context.createGain();
+    this.pianoTrim.gain.value = this.trackLevels.piano;
+    this.pedalTrim.gain.value = this.trackLevels.piano;
+    this.violinTrim.gain.value = this.trackLevels.violin;
+    this.pianoTrim.connect(this.pianoBus.input);
+    this.pedalTrim.connect(this.pedalBus.input);
+    this.violinTrim.connect(this.violinBus.input);
     const rampStart = Math.max(0, this.violinLiftAt - VIOLIN_MIX.rampSeconds);
     const violinGainParams = [
       { parameter: this.violinBus.output.gain, scale: 1 },
@@ -447,7 +479,7 @@ export class ArrangementEngine {
           tone: event.tone,
           articulation: event.articulation,
           sampleAnchor: event.sampleAnchor,
-          destination: isViolin ? this.violinBus.input : isPedal ? this.pedalBus.input : this.pianoBus.input,
+          destination: isViolin ? this.violinTrim : isPedal ? this.pedalTrim : this.pianoTrim,
           sourceSet: this.trackSources,
         });
       }
@@ -503,6 +535,7 @@ export class ArrangementEngine {
       try { source.stop(); } catch { /* source already ended */ }
     });
     this.trackSources.clear();
+    [this.pianoTrim, this.pedalTrim, this.violinTrim].forEach((trim) => trim?.disconnect());
     [this.pianoBus, this.pedalBus, this.violinBus].forEach((bus) => {
       bus?.input.disconnect();
       bus?.send.disconnect();
@@ -512,6 +545,9 @@ export class ArrangementEngine {
     this.pianoBus = null;
     this.pedalBus = null;
     this.violinBus = null;
+    this.pianoTrim = null;
+    this.pedalTrim = null;
+    this.violinTrim = null;
     if (reset) this.position = 0;
   }
 
