@@ -23,16 +23,16 @@ python3 -m http.server 8000
 
 Then open <http://localhost:8000>.
 
-To work on an experiment's source (Sneak Peek or Anlamazdın):
+To work on an experiment's source (Sneak Peek, Anlamazdın, or CUDA Stack):
 
 ```bash
-cd experiments/sneak-peek   # or experiments/anlamazdin
+cd experiments/sneak-peek   # or experiments/anlamazdin, experiments/cuda-stack
 npm install
 npm run dev
 ```
 
 Anlamazdın also has a test suite: `npm test` (plus `npm run lint`). Sneak Peek
-has `npm run lint` only.
+and CUDA Stack have `npm run lint` only.
 
 ## File map
 
@@ -55,9 +55,11 @@ has `npm run lint` only.
 │   └── sync_github_readmes.py   Pulls README content from GitHub
 ├── anlamazdin/             Built static output for the Anlamazdın experience
 ├── sneak-peek/             Built static output for the Sneak Peek experiment
+├── cuda-stack/             Built static output for the CUDA Stack explainer
 ├── experiments/
 │   ├── anlamazdin/         React/Vite source for the Anlamazdın experience
-│   └── sneak-peek/         React/Vite source for the Sneak Peek experiment
+│   ├── sneak-peek/         React/Vite source for the Sneak Peek experiment
+│   └── cuda-stack/         React/Vite source for the CUDA Stack explainer
 │
 ├── partials/               Empty — no HTML include mechanism; shared header
 │                           /footer markup is duplicated by hand across
@@ -196,14 +198,14 @@ Run `npm run build` inside the experiment folder, then commit the regenerated
 output is checked in; `node_modules/` and `experiments/*/dist/` are
 gitignored.
 
-Both `anlamazdin/` and `sneak-peek/`, and `resonance.html` itself, are
-intentionally `noindex, nofollow` — they're meant to be found by people, not
-search engines or AI crawlers (see `robots.txt`, which also blocks GPTBot,
-ClaudeBot, CCBot, PerplexityBot, and others from these paths specifically).
-`scripts/build_static_site.py` doesn't currently reproduce all of these
-`noindex`/`nofollow` details on a rebuild of `resonance.html` — see
-`AGENTS.md` for the exact drift and the checklist to re-apply it if you
-regenerate that page.
+`anlamazdin/`, `sneak-peek/`, `cuda-stack/`, and `resonance.html` itself, are
+all intentionally `noindex, nofollow` — they're meant to be found by people,
+not search engines or AI crawlers (see `robots.txt`, which also blocks
+GPTBot, ClaudeBot, CCBot, PerplexityBot, and others from these paths
+specifically). This is generated on purpose by
+`scripts/build_static_site.py`, not a hand-applied patch — see AGENTS.md's
+"Resonance is unindexed by design" section before changing Resonance's meta
+tags.
 
 ## SEO
 

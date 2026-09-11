@@ -16,6 +16,16 @@
     "excerpt": "An interactive study of momentum, surrender, and the psychology of refusing defeat.",
     "tags": ["Canvas", "Web Audio", "Interactive"],
     "href": "/sneak-peek/",
-    "visualTheme": "sneak-peek"
+    "visualTheme": "sneak-peek",
+    "audioPreview": "sneak-peek"
+  },
+  {
+    "slug": "cuda-stack",
+    "title": "CUDA Stack",
+    "date": "2026 · Interactive Explainer",
+    "excerpt": "From a CPU instruction to a GPU warp: how CUDA opens the silicon, and how a PyTorch-shaped framework is stacked on top of it.",
+    "tags": ["CUDA", "GPU", "Systems", "Interactive"],
+    "href": "/cuda-stack/",
+    "visualTheme": "cuda-stack"
   }
 ]

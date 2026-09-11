@@ -1,0 +1,21 @@
+.site-footer {
+  padding: 48px 0 64px;
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.site-footer__back {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--device);
+  text-decoration: none;
+  width: fit-content;
+}
+
+.site-footer__back:hover {
+  text-decoration: underline;
+}

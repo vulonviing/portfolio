@@ -26,7 +26,7 @@ HEADER_HTML = """
             <li><a href="/about.html" data-nav="about">About</a></li>
             <li><a href="/projects.html" data-nav="projects">Projects</a></li>
             <li><a href="/research.html" data-nav="research">Research</a></li>
-            <li><a href="/resonance.html" data-nav="resonance">Resonance</a></li>
+            <li><a href="/resonance.html" rel="nofollow" data-nav="resonance">Resonance</a></li>
           </ul>
         </nav>
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
@@ -125,6 +125,17 @@ LIST_PAGE_CONFIG = {
         "eyebrow": "Resonance",
         "heading": "Things meant to be felt.",
         "og_description": "Interactive studies in music, image, movement, and whatever stays after the screen goes quiet.",
+        # Resonance is private-by-discovery: found by people, not search engines
+        # or AI crawlers. See AGENTS.md's "Known generator drift" history — this
+        # used to be a set of hand-applied edits that a rebuild would silently
+        # undo; it's now generated on purpose. Keep robots.txt's AI-crawler
+        # blocks for /resonance.html and the experiment paths in sync with this.
+        "robots": "noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate",
+        "extra_robots": {
+            "googlebot": "noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate",
+            "bingbot": "noindex, nofollow, noarchive, nosnippet, noimageindex",
+        },
+        "sitemap_exclude": True,
     },
 }
 
@@ -457,6 +468,7 @@ def render_page(
     keywords: Iterable[str] = (),
     og_description: str | None = None,
     robots: str = "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1",
+    extra_robots: dict[str, str] | None = None,
 ) -> str:
     keywords_content = ", ".join(keywords)
     social_description = og_description or description
@@ -464,6 +476,10 @@ def render_page(
         f'\n  <script type="application/ld+json">\n{schema}\n  </script>'
         if schema
         else ""
+    )
+    extra_robots_html = "".join(
+        f'\n  <meta name="{escape_attr(bot)}" content="{escape_attr(directive)}" />'
+        for bot, directive in (extra_robots or {}).items()
     )
     return f"""<!doctype html>
 <html lang="en">
@@ -477,7 +493,7 @@ def render_page(
   <meta name="description" content="{escape_attr(description)}" />
   <meta name="author" content="{AUTHOR}" />
   <meta name="keywords" content="{escape_attr(keywords_content)}" />
-  <meta name="robots" content="{escape_attr(robots)}" />
+  <meta name="robots" content="{escape_attr(robots)}" />{extra_robots_html}
   <link rel="canonical" href="{escape_attr(canonical_url)}" />
 
   <meta property="og:type" content="{escape_attr(og_type)}" />
@@ -563,15 +579,29 @@ def render_resonance_card(item: dict) -> str:
                   <small>I wish · Didn’t I say? · You wouldn’t understand</small>
                 </div>
               </div>"""
-    else:
+    elif theme == "cuda-stack":
+        reveal_html = """<div class="resonance-card__reveal resonance-card__reveal--cuda-stack" aria-hidden="true">
+                <div class="resonance-grid-cells" aria-hidden="true">""" + "".join(
+            "<i></i>" for _ in range(32)
+        ) + """</div>
+                <strong class="resonance-card__display-title">CUDA<br />STACK</strong>
+                <small>host · device · kernel</small>
+              </div>"""
+    elif theme == "sneak-peek":
         reveal_html = """<div class="resonance-card__reveal resonance-card__reveal--sneak-peek" aria-hidden="true">
                 <div class="resonance-stadium" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
                 <strong class="resonance-card__display-title">SNEAK<br />PEEK</strong>
                 <small>momentum · choice · spirit</small>
               </div>"""
+    else:
+        raise ValueError(
+            f"render_resonance_card: unknown visualTheme {theme!r} — add a reveal_html "
+            "branch here and a matching .resonance-card__reveal--<theme> rule in "
+            "components.css before adding this card to content/resonance/_index.json"
+        )
 
     return f"""          <article class="resonance-card resonance-card--{escape_attr(theme)}" data-resonance-card{audio_attr}>
-            <a class="resonance-card__link" href="{escape_attr(item['href'])}" aria-label="Enter {escape_attr(item['title'])}">
+            <a class="resonance-card__link" href="{escape_attr(item['href'])}" rel="nofollow" aria-label="Enter {escape_attr(item['title'])}">
               <div class="resonance-card__normal">
                 <div class="card__meta">{html.escape(item.get('date', ''))}</div>
                 <h2 class="card__title">{html.escape(item['title'])}</h2>
@@ -636,6 +666,11 @@ def build_list_pages() -> None:
     for section, config in LIST_PAGE_CONFIG.items():
         items = load_index(section)
         canonical_url = f"{SITE_URL}/{section}.html"
+        page_kwargs = {}
+        if "robots" in config:
+            page_kwargs["robots"] = config["robots"]
+        if "extra_robots" in config:
+            page_kwargs["extra_robots"] = config["extra_robots"]
         page = render_page(
             title=config["title"],
             description=config["description"],
@@ -646,6 +681,7 @@ def build_list_pages() -> None:
             schema=None,
             keywords=config["keywords"],
             og_description=config["og_description"],
+            **page_kwargs,
         )
         write_text_if_changed(ROOT / f"{section}.html", page)
 
@@ -725,6 +761,12 @@ def build_sitemap(entry_sources: list[tuple[str, Path]]) -> None:
         (f"{SITE_URL}/projects.html", ROOT / "projects.html", "0.8"),
         (f"{SITE_URL}/research.html", ROOT / "research.html", "0.8"),
         (f"{SITE_URL}/resonance.html", ROOT / "resonance.html", "0.8"),
+    ]
+    excluded_sections = {
+        section for section, config in LIST_PAGE_CONFIG.items() if config.get("sitemap_exclude")
+    }
+    pages = [
+        page for page in pages if page[1].stem not in excluded_sections
     ]
     pages.extend((url, source, "0.6") for url, source in entry_sources)
 

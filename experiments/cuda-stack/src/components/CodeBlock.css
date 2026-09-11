@@ -1,0 +1,65 @@
+.code-block {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: #10141a;
+  overflow: hidden;
+}
+
+.code-block__label {
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--fg-faint);
+  border-bottom: 1px solid var(--line);
+}
+
+.code-block__pre {
+  margin: 0;
+  padding: 14px 0;
+  overflow-x: auto;
+}
+
+.code-block__pre code {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+
+.code-block__line {
+  display: block;
+  padding: 0 16px;
+  white-space: pre;
+}
+
+.code-block__gutter {
+  display: inline-block;
+  width: 28px;
+  margin-right: 12px;
+  color: var(--fg-faint);
+  opacity: 0.5;
+  user-select: none;
+  text-align: right;
+}
+
+.code-tok--plain {
+  color: #cdd5dd;
+}
+
+.code-tok--keyword {
+  color: var(--device);
+}
+
+.code-tok--string {
+  color: var(--host);
+}
+
+.code-tok--number {
+  color: #9aa4b0;
+}
+
+.code-tok--comment {
+  color: var(--fg-faint);
+  font-style: italic;
+}

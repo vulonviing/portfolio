@@ -8,7 +8,7 @@ Human-facing overview lives in `PORTFOLIO.md`.
 
 `emrecanulu.com` — a static personal portfolio. Plain HTML/CSS/vanilla JS at
 the root, deployed via GitHub Pages (`CNAME`, `.nojekyll`, branch `main` /
-root). No build step for the site itself. Two self-contained React + Vite
+root). No build step for the site itself. Three self-contained React + Vite
 sub-apps live under `experiments/` and build into the site root.
 
 ## ⚠️ Generated vs hand-written — read this first
@@ -37,29 +37,25 @@ places that must be kept in sync by hand: the `HEADER_HTML` / `FOOTER_HTML` /
 `scripts/build_static_site.py`, and literal copies in `index.html`,
 `about.html`, `entry.html`. Changing nav or footer means editing all of these.
 
-## ⚠️ Known generator drift — do not blindly trust a rebuild
+## Resonance is unindexed by design
 
-Several hand-applied SEO edits were never written back into the generator.
-Running the build today **regresses** them:
+`resonance.html`, and everything it links to (`anlamazdin/`, `sneak-peek/`,
+`cuda-stack/`), is meant to be found by people, not search engines or AI
+crawlers. This used to be a set of hand-applied SEO edits that a plain
+rebuild of `scripts/build_static_site.py` would silently undo — see git
+history before 2026-09 if you need the old drift table. It's now generated on
+purpose: `LIST_PAGE_CONFIG["resonance"]` carries `robots`, `extra_robots`, and
+`sitemap_exclude`, `render_resonance_card()` emits `rel="nofollow"` on every
+card link, and `HEADER_HTML`'s Resonance nav link carries `rel="nofollow"`
+too. `robots.txt` additionally blocks AI crawlers (GPTBot, ClaudeBot, CCBot,
+PerplexityBot, …) from `/resonance.html` and each experiment's paths.
 
-| Currently checked in | What the generator emits |
-|---|---|
-| `index.html`/`about.html` nav has `<a href="/resonance.html" rel="nofollow">` | `HEADER_HTML` has no `rel="nofollow"` |
-| `resonance.html` `<head>` has `noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate` + `googlebot`/`bingbot` variants | `LIST_PAGE_CONFIG["resonance"]` passes no robots override → default `index, follow, …` |
-| `resonance.html` card links carry `rel="nofollow"` | `render_resonance_card()` doesn't emit it |
-| `sitemap.xml` has no `resonance.html` entry | `build_sitemap()` adds it at priority 0.8 |
-
-This isn't accidental — `robots.txt` also blocks AI crawlers (GPTBot,
-ClaudeBot, CCBot, PerplexityBot, …) from `/resonance.html`, `/anlamazdin/`,
-`/sneak-peek/`. "Resonance is unindexed by design" is a deliberate choice; a
-naive rebuild silently undoes it. The hourly sync workflow doesn't push this
-regression (its commit scope excludes `resonance.html`), but a manual rebuild
-will.
-
-**Rule:** if you run the build, `git diff` the result before committing. If
-the four rows above show up as changes, revert them by hand (or fix the
-generator itself — that's a separate task, not something to do as a
-side-effect of a content update).
+**Rule:** if you run the build, `git diff` the result before committing.
+`resonance.html`'s `<head>` robots metas, its cards' `rel="nofollow"`, and
+`sitemap.xml` (no `resonance.html` entry) should come out unchanged unless
+you intentionally touched Resonance config. If you add a new experiment,
+update `robots.txt` (both the asset-path group and the AI-crawler group) to
+match the existing entries.
 
 ## Repo layout
 
@@ -82,7 +78,8 @@ scripts/
 experiments/
   anlamazdin/   React+Vite source → builds into /anlamazdin/
   sneak-peek/   React+Vite source → builds into /sneak-peek/
-anlamazdin/, sneak-peek/   Built output, committed, served by Pages
+  cuda-stack/   React+Vite source → builds into /cuda-stack/
+anlamazdin/, sneak-peek/, cuda-stack/   Built output, committed, served by Pages
 partials/    empty, unused
 ```
 
@@ -108,10 +105,13 @@ as `github-actions[bot]`. **Never hand-edit a `.md` with `content_source` set
 
 **Add a Resonance card**
 Add to `content/resonance/_index.json` (`href`, `visualTheme`, optional
-`audioPreview`) — but `visualTheme` and `audioPreview` are hard-coded branches
-in `render_resonance_card()` (build script) and in `setupResonanceCards()`
-(`assets/js/site.js`), so a genuinely new card needs code changes in both, not
-just a JSON entry.
+`audioPreview`) — but `visualTheme` is a hard-coded branch in
+`render_resonance_card()` (build script; unknown themes raise instead of
+silently reusing another card's reveal markup) and, if the card should have a
+hover-audio preview, `audioPreview` needs a matching branch in
+`setupResonanceCards()` (`assets/js/site.js`) too. A card can omit
+`audioPreview` entirely to stay silent (`cuda-stack` does this). Remember to
+add the new experiment's paths to `robots.txt` in both groups.
 
 **Change nav or footer**
 Edit `HEADER_HTML`/`FOOTER_HTML` in `scripts/build_static_site.py` *and* the
@@ -120,7 +120,7 @@ the site and the generator disagree on the next rebuild.
 
 **Work on a sub-app**
 ```bash
-cd experiments/<anlamazdin|sneak-peek>
+cd experiments/<anlamazdin|sneak-peek|cuda-stack>
 npm install
 npm run dev
 ```
@@ -128,7 +128,7 @@ To publish: `npm run build` writes directly into the site root's `<name>/`
 directory (`vite.config.js` sets `outDir: '../../<name>'`,
 `emptyOutDir: true`) — commit that directory. `anlamazdin` has tests
 (`npm test` → `node --test` over `tests/*.test.js`) and `npm run lint`;
-`sneak-peek` has `npm run lint` only, no tests.
+`sneak-peek` and `cuda-stack` have `npm run lint` only, no tests.
 
 ## Conventions
 
@@ -143,9 +143,9 @@ directory (`vite.config.js` sets `outDir: '../../<name>'`,
   attributes (`data-page`, `data-nav`, `data-year`, `data-theme-toggle`,
   `data-resonance-card`, `data-audio-preview`).
 - **SEO**: every page needs a unique `<title>`, description, canonical, OG +
-  Twitter tags, and the GA4 snippet (`G-LYY1V218NW`). `resonance.html` and
-  both sub-apps are intentionally `noindex, nofollow` — see the drift warning
-  above before touching their meta tags.
+  Twitter tags, and the GA4 snippet (`G-LYY1V218NW`). `resonance.html` and all
+  three sub-apps are intentionally `noindex, nofollow` — see "Resonance is
+  unindexed by design" above before touching their meta tags.
 - **Slugs**: lowercase-kebab, used as filename, JSON `slug`, and URL path.
 
 ## Local dev
@@ -159,10 +159,11 @@ it.
 ## Before claiming a change is done
 
 - If you touched `content/` or the generator: rerun the build, then `git diff`
-  the result — confirm the drift rows above didn't reappear and nothing
-  outside what you intended changed.
+  the result — confirm Resonance's robots/nofollow output didn't change and
+  nothing outside what you intended changed.
 - If you touched `experiments/anlamazdin`: `npm test` and `npm run lint`.
-- If you touched `experiments/sneak-peek`: `npm run lint`.
+- If you touched `experiments/sneak-peek` or `experiments/cuda-stack`:
+  `npm run lint`.
 - Load the changed page at `localhost:8000` in both light and dark theme.
 - If you only touched documentation, none of the above applies — don't run
   the build just to "be safe."

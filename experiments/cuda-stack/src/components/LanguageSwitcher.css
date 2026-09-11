@@ -1,0 +1,39 @@
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.lang-switch__item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.lang-switch__divider {
+  color: var(--line);
+  margin: 0 6px;
+}
+
+.lang-switch__btn {
+  background: none;
+  border: none;
+  padding: 4px 2px;
+  cursor: pointer;
+  color: var(--fg-faint);
+  letter-spacing: 0.03em;
+  transition: color 0.15s var(--ease);
+}
+
+.lang-switch__btn:hover {
+  color: var(--fg-soft);
+}
+
+.lang-switch__btn.is-active {
+  color: var(--device);
+}
+
+.lang-switch__btn:focus-visible {
+  outline: 1px solid var(--device);
+  outline-offset: 2px;
+}

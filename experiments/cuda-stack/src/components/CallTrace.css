@@ -1,0 +1,364 @@
+/* A boustrophedon (ox-plow) flow: host steps run left-to-right, device
+   steps right-to-left, the return step left-to-right again — the same
+   phase grouping the data already carries, just laid out as a path that
+   turns instead of a list that scrolls. Each row's connecting line and
+   node dots are tinted per phase (host/device/return), matching the
+   legend established in Act I and reused in Act II. */
+
+.trace-flow {
+  margin-top: 44px;
+}
+
+.trace-flow__row {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 34px 0 14px;
+}
+
+.trace-flow__row--device {
+  flex-direction: row-reverse;
+}
+
+.trace-flow__row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 45px;
+  height: 1px;
+  opacity: 0.6;
+}
+
+.trace-flow__row--host::before {
+  background: var(--host);
+}
+
+.trace-flow__row--device::before {
+  background: var(--device);
+}
+
+.trace-flow__row--return::before {
+  background: var(--paper);
+  right: auto;
+  width: 280px;
+}
+
+/* The traveling dot is positioned with `left`, not `transform: translateX`,
+   because percentages in a transform resolve against the element's own
+   (tiny, 7px) box — they'd barely move it. `left` percentages resolve
+   against the row's width instead, so the dot actually crosses it.
+
+   One light walks the whole path — row, drop, row, drop, row — as a single
+   10s cycle split into five time-slices, one per element below. Each
+   element sits invisible outside its own slice and only turns opaque and
+   moves during it, so despite being five different DOM nodes it reads as
+   one dot handing off from one segment to the next. */
+.trace-flow__row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 45px;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px currentColor;
+  opacity: 0;
+}
+
+.trace-flow__row--host::after {
+  color: var(--host);
+  background: var(--host);
+  animation: trace-seg-1 10s linear infinite;
+}
+
+.trace-flow__row--device::after {
+  color: var(--device);
+  background: var(--device);
+  animation: trace-seg-3 10s linear infinite;
+}
+
+.trace-flow__row--return::after {
+  color: var(--paper);
+  background: var(--paper);
+  animation: trace-seg-5 10s linear infinite;
+}
+
+@keyframes trace-seg-1 {
+  0% {
+    left: 0;
+    opacity: 1;
+  }
+  20% {
+    left: calc(100% - 7px);
+    opacity: 1;
+  }
+  20.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes trace-seg-3 {
+  0%,
+  28% {
+    left: calc(100% - 7px);
+    opacity: 0;
+  }
+  28.01% {
+    left: calc(100% - 7px);
+    opacity: 1;
+  }
+  48% {
+    left: 0;
+    opacity: 1;
+  }
+  48.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes trace-seg-5 {
+  0%,
+  56% {
+    left: 0;
+    opacity: 0;
+  }
+  56.01% {
+    left: 0;
+    opacity: 1;
+  }
+  76% {
+    left: 273px;
+    opacity: 1;
+  }
+  76.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The two drops connecting host→device and device→return. Each is a real
+   element (not a pseudo-of-a-pseudo) positioned with top/bottom instead of
+   a fixed height, so it automatically stretches through however tall its
+   row's wrapped text happens to be — no gap, no JS measurement — landing
+   exactly on the next row's line 45px later. The traveling light reuses
+   the same trick, animating `background-position-y` on a small fixed-size
+   dot image, which resolves against the box's actual (dynamic) height. */
+.trace-flow__drop {
+  position: absolute;
+  top: 45px;
+  bottom: -45px;
+  width: 1px;
+}
+
+.trace-flow__row--host .trace-flow__drop {
+  right: 0;
+  background: linear-gradient(to bottom, var(--host), var(--device));
+}
+
+.trace-flow__row--device .trace-flow__drop {
+  left: 0;
+  background: linear-gradient(to bottom, var(--device), var(--paper));
+}
+
+.trace-flow__drop::after {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: 0;
+  bottom: 0;
+  width: 7px;
+  box-shadow: 0 0 8px currentColor;
+  background-image: radial-gradient(circle, currentColor 0 3.5px, transparent 3.6px);
+  background-size: 7px 7px;
+  background-repeat: no-repeat;
+  background-position: center 0%;
+  opacity: 0;
+}
+
+.trace-flow__row--host .trace-flow__drop::after {
+  color: var(--host);
+  animation: trace-seg-2 10s linear infinite;
+}
+
+.trace-flow__row--device .trace-flow__drop::after {
+  color: var(--device);
+  animation: trace-seg-4 10s linear infinite;
+}
+
+@keyframes trace-seg-2 {
+  0%,
+  20% {
+    background-position: center 0%;
+    opacity: 0;
+  }
+  20.01% {
+    background-position: center 0%;
+    opacity: 1;
+  }
+  28% {
+    background-position: center 100%;
+    opacity: 1;
+  }
+  28.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes trace-seg-4 {
+  0%,
+  48% {
+    background-position: center 0%;
+    opacity: 0;
+  }
+  48.01% {
+    background-position: center 0%;
+    opacity: 1;
+  }
+  56% {
+    background-position: center 100%;
+    opacity: 1;
+  }
+  56.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.trace-flow__row-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+
+.trace-flow__row--host .trace-flow__row-label {
+  color: var(--host);
+}
+
+.trace-flow__row--device .trace-flow__row-label {
+  left: auto;
+  right: 26px;
+  color: var(--device);
+}
+
+.trace-flow__row--return .trace-flow__row-label {
+  left: 26px;
+  color: var(--paper);
+}
+
+.trace-flow__node {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding-top: 22px;
+}
+
+.trace-flow__row--return .trace-flow__node {
+  flex: 0 1 auto;
+  max-width: 320px;
+}
+
+.trace-flow__node::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 11px;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 2px solid var(--line);
+  z-index: 1;
+}
+
+.trace-flow__row--host .trace-flow__node::before {
+  border-color: var(--host);
+}
+
+.trace-flow__row--device .trace-flow__node::before {
+  border-color: var(--device);
+  background: var(--device);
+}
+
+.trace-flow__row--return .trace-flow__node::before {
+  border-color: var(--paper);
+  background: var(--paper);
+}
+
+.trace-flow__node-index {
+  display: block;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--fg-faint);
+}
+
+.trace-flow__node-label {
+  display: block;
+  margin-top: 6px;
+  padding: 0 8px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--paper);
+}
+
+.trace-flow__node-tag {
+  display: block;
+  width: fit-content;
+  margin: 8px auto 0;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--device);
+  border: 1px solid var(--device-soft);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trace-flow__row::after,
+  .trace-flow__drop::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .trace-flow__row,
+  .trace-flow__row--device {
+    flex-direction: row;
+    flex-wrap: wrap;
+    row-gap: 26px;
+  }
+
+  .trace-flow__row::before,
+  .trace-flow__row::after,
+  .trace-flow__drop {
+    display: none;
+  }
+
+  .trace-flow__node {
+    flex: 1 1 45%;
+  }
+}
+
+.call-trace__closing {
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  max-width: 58ch;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--paper);
+}

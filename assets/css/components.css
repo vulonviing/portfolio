@@ -468,6 +468,60 @@
 .resonance-card:hover .resonance-stadium i:nth-child(4n),
 .resonance-card:focus-within .resonance-stadium i:nth-child(4n) { animation-delay: -.3s; }
 
+.resonance-card__reveal--cuda-stack {
+  display: flex;
+  align-items: center;
+  background:
+    radial-gradient(circle at 82% 12%, rgba(70, 240, 180, .16), transparent 42%),
+    radial-gradient(circle at 10% 88%, rgba(60, 160, 255, .14), transparent 46%),
+    #05080a;
+  color: #7af7c4;
+}
+
+.resonance-grid-cells {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 3px;
+  padding: 18px;
+  opacity: .4;
+}
+
+.resonance-grid-cells i {
+  border-radius: 2px;
+  background: rgba(70, 240, 180, .16);
+  will-change: opacity, background-color;
+}
+
+.resonance-card__reveal--cuda-stack .resonance-card__display-title {
+  color: #eafff5;
+  font: 700 clamp(38px, 5vw, 58px)/.92 "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+  text-shadow: 0 0 28px rgba(70, 240, 180, .22);
+}
+
+.resonance-card__reveal--cuda-stack small {
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, Consolas, monospace;
+  letter-spacing: .04em;
+}
+
+.resonance-card:hover .resonance-grid-cells i,
+.resonance-card:focus-within .resonance-grid-cells i {
+  animation: cuda-cell-wave 2.6s ease-in-out infinite;
+}
+
+.resonance-grid-cells i:nth-child(8n+1) { animation-delay: 0s; }
+.resonance-grid-cells i:nth-child(8n+2) { animation-delay: .08s; }
+.resonance-grid-cells i:nth-child(8n+3) { animation-delay: .16s; }
+.resonance-grid-cells i:nth-child(8n+4) { animation-delay: .24s; }
+.resonance-grid-cells i:nth-child(8n+5) { animation-delay: .32s; }
+.resonance-grid-cells i:nth-child(8n+6) { animation-delay: .4s; }
+.resonance-grid-cells i:nth-child(8n+7) { animation-delay: .48s; }
+.resonance-grid-cells i:nth-child(8n+8) { animation-delay: .56s; }
+
 .resonance-note {
   margin: 22px 2px 0;
   color: var(--color-fg-soft);
@@ -476,6 +530,10 @@
 }
 
 @keyframes resonance-spin { to { transform: rotate(360deg); } }
+@keyframes cuda-cell-wave {
+  0%, 100% { background-color: rgba(70, 240, 180, .16); }
+  50% { background-color: rgba(70, 240, 180, .68); }
+}
 @keyframes resonance-pulse {
   from { transform: scaleY(.5); opacity: .34; filter: brightness(.74); }
   to { transform: scaleY(1.08); opacity: 1; filter: brightness(1.45); }
@@ -512,7 +570,8 @@
   .resonance-card:focus-within .resonance-stadium,
   .resonance-card:hover .resonance-stadium::after,
   .resonance-card:focus-within .resonance-stadium::after,
-  .resonance-stadium i { animation: none; }
+  .resonance-stadium i,
+  .resonance-grid-cells i { animation: none; }
 }
 
 .card__actions {

@@ -1,0 +1,209 @@
+.act1__task {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--fg-faint);
+}
+
+.machine-panels {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.machine-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--ink-panel);
+  padding: 18px;
+  height: 160px;
+}
+
+.machine-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.machine-legend {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.machine-legend__item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.machine-legend__swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.machine-legend__swatch--host {
+  background: var(--host);
+}
+
+.machine-legend__swatch--device {
+  background: var(--device);
+}
+
+.machine-legend__label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--paper);
+}
+
+.machine-legend__desc {
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--fg-soft);
+  max-width: 42ch;
+}
+
+.machine-legend__count {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper);
+}
+
+.machine-legend__count span {
+  font-size: 11px;
+  color: var(--fg-faint);
+  margin-left: 6px;
+}
+
+.cuda-entry {
+  margin-top: 72px;
+  padding-top: 48px;
+  border-top: 1px solid var(--line);
+}
+
+.cuda-entry__title {
+  font-size: clamp(22px, 2.6vw, 28px);
+}
+
+.cuda-path {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+.cuda-path--old {
+  opacity: 0.55;
+}
+
+.cuda-path--new {
+  border-color: var(--device);
+  background: var(--device-soft);
+}
+
+.cuda-path__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  color: var(--fg-faint);
+  flex-shrink: 0;
+}
+
+.cuda-path--new .cuda-path__label {
+  color: var(--device);
+}
+
+.cuda-path__route {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--fg-soft);
+  overflow-wrap: anywhere;
+}
+
+.cuda-path--new .cuda-path__route {
+  color: var(--paper);
+}
+
+.cuda-entry__body {
+  margin-top: 22px;
+  max-width: 62ch;
+  color: var(--fg-soft);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.misconception {
+  margin-top: 56px;
+  padding-top: 48px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 40px;
+}
+
+.misconception__title {
+  font-size: clamp(22px, 2.6vw, 28px);
+  color: var(--host);
+}
+
+.misconception__body {
+  margin-top: 18px;
+  max-width: 58ch;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--fg-soft);
+}
+
+.misconception__note {
+  margin-top: 16px;
+  max-width: 58ch;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--fg-faint);
+  padding-left: 14px;
+  border-left: 2px solid var(--host);
+}
+
+.misconception__amd {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--ink-panel);
+  align-self: start;
+}
+
+.misconception__amd-title {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--paper);
+}
+
+.misconception__amd-body {
+  margin-top: 12px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--fg-soft);
+}
+
+@media (max-width: 760px) {
+  .machine-panels,
+  .machine-legend,
+  .misconception {
+    grid-template-columns: 1fr;
+  }
+
+  .machine-panel {
+    height: 130px;
+  }
+}

@@ -1,0 +1,106 @@
+:root {
+  color-scheme: dark;
+
+  /* Ground. Warm-neutral graphite, not stark black — the subject is silicon
+     and terminals, not a void. */
+  --ink: #14181d;
+  --ink-raised: #191e25;
+  --ink-panel: #1c222a;
+  --line: #2b323c;
+  --line-soft: #232931;
+
+  --paper: #eef1f0;
+  --fg-soft: #9aa4b0;
+  --fg-faint: #626c78;
+
+  /* Two accents carry real meaning throughout the page: amber is the host
+     (CPU, sequential), teal is the device (GPU, parallel). The mapping never
+     changes, so color works as a legend rather than decoration. */
+  --host: #e8a33d;
+  --host-soft: rgba(232, 163, 61, 0.14);
+  --device: #49b8a8;
+  --device-soft: rgba(73, 184, 168, 0.14);
+
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-sans-condensed: 'IBM Plex Sans Condensed', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --content-width: 1320px;
+  --gutter: clamp(20px, 4vw, 64px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-sans-condensed);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--device);
+  color: var(--ink);
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
