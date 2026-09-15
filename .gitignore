@@ -4,7 +4,11 @@ Thumbs.db
 .vscode/
 .idea/
 *.log
+*.pyc
+__pycache__/
 node_modules/
+experiments/epoch/public/data/
+/-.png
 
 # Personal files / source material — kept locally, never published
 Emrecan CV*.pdf

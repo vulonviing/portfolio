@@ -23,10 +23,10 @@ python3 -m http.server 8000
 
 Then open <http://localhost:8000>.
 
-To work on an experiment's source (Sneak Peek, Anlamazdın, or CUDA Stack):
+To work on an experiment's source (Sneak Peek, Anlamazdın, CUDA Stack, or EPOCH):
 
 ```bash
-cd experiments/sneak-peek   # or experiments/anlamazdin, experiments/cuda-stack
+cd experiments/sneak-peek   # or experiments/anlamazdin, experiments/cuda-stack, experiments/epoch
 npm install
 npm run dev
 ```
@@ -56,10 +56,12 @@ and CUDA Stack have `npm run lint` only.
 ├── anlamazdin/             Built static output for the Anlamazdın experience
 ├── sneak-peek/             Built static output for the Sneak Peek experiment
 ├── cuda-stack/             Built static output for the CUDA Stack explainer
+├── epoch/                  Built static output for the EPOCH thesis viewer
 ├── experiments/
 │   ├── anlamazdin/         React/Vite source for the Anlamazdın experience
 │   ├── sneak-peek/         React/Vite source for the Sneak Peek experiment
-│   └── cuda-stack/         React/Vite source for the CUDA Stack explainer
+│   ├── cuda-stack/         React/Vite source for the CUDA Stack explainer
+│   └── epoch/              React/Vite source and anonymized export tooling
 │
 ├── partials/               Empty — no HTML include mechanism; shared header
 │                           /footer markup is duplicated by hand across
@@ -206,6 +208,27 @@ specifically). This is generated on purpose by
 `scripts/build_static_site.py`, not a hand-applied patch — see AGENTS.md's
 "Resonance is unindexed by design" section before changing Resonance's meta
 tags.
+
+### EPOCH viewer
+
+`experiments/epoch/` builds a backend-free, read-only viewer into `/epoch/`.
+It publishes one internally consistent example run for UC1, UC2, UC2.1, UC3,
+and the public-document UC4 pipeline. All tabular use cases are deterministically
+masked; UC4 retains its public regulation/report text. Clean URLs such as
+`/epoch/uc4/rd1/` are pre-rendered for GitHub Pages.
+
+```bash
+cd experiments/epoch
+"/path/to/Siemens Thesis/.venv/bin/python" scripts/export_static_data.py --thesis-root "/path/to/Siemens Thesis"
+npm run test:privacy
+npm run build
+"/path/to/Siemens Thesis/.venv/bin/python" scripts/audit_public_release.py --thesis-root "/path/to/Siemens Thesis"
+```
+
+The app and its source are intentionally `noindex, nofollow` and blocked from
+the AI crawler group in `robots.txt`.
+Its public registry is generated from an allowlisted, anonymized snapshot; the
+raw thesis registry source is not published.
 
 ## SEO
 

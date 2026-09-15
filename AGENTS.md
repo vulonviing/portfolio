@@ -8,7 +8,7 @@ Human-facing overview lives in `PORTFOLIO.md`.
 
 `emrecanulu.com` — a static personal portfolio. Plain HTML/CSS/vanilla JS at
 the root, deployed via GitHub Pages (`CNAME`, `.nojekyll`, branch `main` /
-root). No build step for the site itself. Three self-contained React + Vite
+root). No build step for the site itself. Four self-contained React + Vite
 sub-apps live under `experiments/` and build into the site root.
 
 ## ⚠️ Generated vs hand-written — read this first
@@ -79,7 +79,8 @@ experiments/
   anlamazdin/   React+Vite source → builds into /anlamazdin/
   sneak-peek/   React+Vite source → builds into /sneak-peek/
   cuda-stack/   React+Vite source → builds into /cuda-stack/
-anlamazdin/, sneak-peek/, cuda-stack/   Built output, committed, served by Pages
+  epoch/        React+Vite source → builds into /epoch/
+anlamazdin/, sneak-peek/, cuda-stack/, epoch/   Built output, committed, served by Pages
 partials/    empty, unused
 ```
 
@@ -120,7 +121,7 @@ the site and the generator disagree on the next rebuild.
 
 **Work on a sub-app**
 ```bash
-cd experiments/<anlamazdin|sneak-peek|cuda-stack>
+cd experiments/<anlamazdin|sneak-peek|cuda-stack|epoch>
 npm install
 npm run dev
 ```
@@ -129,6 +130,22 @@ directory (`vite.config.js` sets `outDir: '../../<name>'`,
 `emptyOutDir: true`) — commit that directory. `anlamazdin` has tests
 (`npm test` → `node --test` over `tests/*.test.js`) and `npm run lint`;
 `sneak-peek` and `cuda-stack` have `npm run lint` only, no tests.
+
+`epoch` is a read-only thesis viewer. Before building it, export one coherent
+example per use case from the thesis checkout; the exporter masks all tabular
+cases and keeps UC4's public-document artifacts intact:
+
+```bash
+cd experiments/epoch
+"/path/to/Siemens Thesis/.venv/bin/python" scripts/export_static_data.py --thesis-root "/path/to/Siemens Thesis"
+npm run test:privacy
+npm run build
+"/path/to/Siemens Thesis/.venv/bin/python" scripts/audit_public_release.py --thesis-root "/path/to/Siemens Thesis"
+```
+
+The generated staging data under `experiments/epoch/public/data/` is ignored;
+the publishable, verified copy is included in the committed `/epoch/` output.
+The audit must pass after every EPOCH rebuild; `noindex` is not a privacy check.
 
 ## Conventions
 

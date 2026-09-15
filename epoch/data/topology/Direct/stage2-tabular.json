@@ -1,0 +1,1 @@
+{"topology_id":"Direct","implemented":true,"ranks":[{"mode":"sequential","agents":[{"agent_id":"P1","role":"Result interpreter"}]},{"mode":"sequential","agents":[{"agent_id":"F1","role":"Finalizer"}]}],"final_agent_id":"F1","human_gate_after":"F1"}

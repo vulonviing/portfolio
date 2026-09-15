@@ -7,6 +7,9 @@ Disallow: /sneak-peek/assets/
 Disallow: /experiments/sneak-peek/
 Disallow: /cuda-stack/assets/
 Disallow: /experiments/cuda-stack/
+Disallow: /epoch/assets/
+Disallow: /epoch/data/
+Disallow: /experiments/epoch/
 
 # Search crawlers remain allowed so they can read the noindex directives on
 # these HTML pages. AI training and user-directed retrieval crawlers are denied
@@ -32,5 +35,7 @@ Disallow: /sneak-peek/
 Disallow: /experiments/sneak-peek/
 Disallow: /cuda-stack/
 Disallow: /experiments/cuda-stack/
+Disallow: /epoch/
+Disallow: /experiments/epoch/
 
 Sitemap: https://emrecanulu.com/sitemap.xml

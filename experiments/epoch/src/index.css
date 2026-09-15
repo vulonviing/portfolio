@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    @apply font-sans antialiased;
+  }
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-900;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-700 rounded-full;
+  }
+}
+
+@layer utilities {
+  .epoch-card {
+    @apply bg-gray-900 border border-gray-800 rounded-xl p-5;
+  }
+  .epoch-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  .epoch-btn {
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .epoch-btn-teal {
+    @apply epoch-btn bg-teal text-white hover:bg-teal-dim active:scale-95;
+  }
+  .epoch-btn-ghost {
+    @apply epoch-btn text-gray-400 hover:text-white hover:bg-gray-800 active:scale-95;
+  }
+  .epoch-btn-danger {
+    @apply epoch-btn bg-red-900 text-red-200 hover:bg-red-800 active:scale-95;
+  }
+}
+
+/* ── Cockpit — serpentine pipeline flow ─────────────────────────────────── */
+
+.cockpit-hconn {
+  position: relative;
+  height: 2px;
+  width: 100%;
+  align-self: center;
+  background: #1c2740;
+  overflow: hidden;
+}
+
+.cockpit-vconn {
+  position: relative;
+  width: 2px;
+  height: 28px;
+  background: #1c2740;
+  overflow: hidden;
+}
+
+/* Static continuation of a vertical connector inside a stretched gate cell —
+   bridges the gap between a short gate pill and the row boundary so it reads
+   as one unbroken line with the animated .cockpit-vconn segment below it. */
+.cockpit-vfill {
+  width: 2px;
+  background: #1c2740;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cockpit-hconn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -14px;
+    width: 10px;
+    height: 8px;
+    background: #2dd4bf;
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+    transform: translateY(-50%);
+    animation: cockpit-hdash-ltr 2.2s linear infinite;
+    animation-delay: var(--dash-delay, 0s);
+  }
+  .cockpit-hconn.rtl::after {
+    animation-name: cockpit-hdash-rtl;
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+  }
+
+  @keyframes cockpit-hdash-ltr {
+    0% {
+      left: -14px;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+  @keyframes cockpit-hdash-rtl {
+    0% {
+      left: 100%;
+    }
+    100% {
+      left: -14px;
+    }
+  }
+
+  .cockpit-vconn::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -14px;
+    width: 8px;
+    height: 10px;
+    background: #2dd4bf;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform: translateX(-50%);
+    animation: cockpit-vdash 2.2s linear infinite;
+    animation-delay: var(--dash-delay, 0s);
+  }
+
+  @keyframes cockpit-vdash {
+    0% {
+      top: -14px;
+    }
+    100% {
+      top: 100%;
+    }
+  }
+
+  .cockpit-footer-dot {
+    animation: cockpit-pulse 2s ease-in-out infinite;
+  }
+
+  /* TS1 topology-diagram connector flow (SVG stroke-dasharray travel). */
+  .ts1-flow-dash {
+    stroke-dasharray: 5 7;
+    animation: ts1-dash 1.6s linear infinite;
+    animation-delay: var(--dash-delay, 0s);
+  }
+
+  @keyframes ts1-dash {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+
+  @keyframes cockpit-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 rgba(45, 212, 191, 0.5);
+    }
+    50% {
+      opacity: 0.6;
+      box-shadow: 0 0 0 4px rgba(45, 212, 191, 0);
+    }
+  }
+}
+
+.cockpit-stage-card {
+  transition: transform 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+}
+.cockpit-stage-card:hover {
+  transform: translateY(-4px);
+  border-color: #2dd4bf;
+  box-shadow: 0 8px 28px rgba(45, 212, 191, 0.14), 0 0 0 1px rgba(45, 212, 191, 0.4);
+}
+.cockpit-stage-card:hover .cockpit-stage-tag {
+  color: #2dd4bf;
+}
+.cockpit-stage-card:hover .cockpit-stage-chevron {
+  opacity: 1;
+  transform: translateX(0);
+}
+.cockpit-stage-chevron {
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+
+.cockpit-gate-pill {
+  transition: border-color 250ms ease, box-shadow 250ms ease;
+}
+.cockpit-gate-pill:hover {
+  border-color: #d9a95c;
+  box-shadow: 0 0 0 1px rgba(217, 169, 92, 0.35), 0 6px 20px rgba(217, 169, 92, 0.1);
+}

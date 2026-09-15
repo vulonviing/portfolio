@@ -1,0 +1,1 @@
+{"topology_id":"Coalition","implemented":true,"ranks":[{"mode":"sequential","agents":[{"agent_id":"C1","role":"Divisional attestor"}]},{"mode":"sequential","agents":[{"agent_id":"C2","role":"Coalition synthesis coordinator"}]},{"mode":"sequential","agents":[{"agent_id":"F1","role":"Finalizer"}]}],"final_agent_id":"F1","human_gate_after":"F1"}

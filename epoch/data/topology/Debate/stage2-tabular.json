@@ -1,0 +1,1 @@
+{"topology_id":"Debate","implemented":true,"ranks":[{"mode":"parallel","agents":[{"agent_id":"P2","role":"Energy-method interpreter"},{"agent_id":"P3","role":"Reported-method interpreter"}]},{"mode":"sequential","agents":[{"agent_id":"S1","role":"Synthesizer"}]},{"mode":"sequential","agents":[{"agent_id":"F1","role":"Finalizer"}]}],"final_agent_id":"F1","human_gate_after":"F1"}

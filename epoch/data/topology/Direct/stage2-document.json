@@ -1,0 +1,1 @@
+{"topology_id":"Direct","implemented":true,"ranks":[{"mode":"parallel","agents":[{"agent_id":"P4","role":"Conservative assessor"},{"agent_id":"P5","role":"Balanced assessor"},{"agent_id":"P6","role":"Maximum-assurance assessor"}]},{"mode":"sequential","agents":[{"agent_id":"F2","role":"ESRS impact finalizer"}]}],"final_agent_id":"F2","human_gate_after":"F2"}

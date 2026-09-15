@@ -1,0 +1,631 @@
+[
+  {
+    "id": "uc1_enefg_threshold_check",
+    "natural_request": "Site-level EnEfG prioritisation screen for all German the company sites. EnEfG §8 and §16 obligations are formally placed on the company (Unternehmen), not individual sites; the company as a non-SME entity trivially meets both thresholds **** the company level. This analysis therefore uses the statutory thresholds as a site-level prioritisation criterion: sites whose three-year rolling average of annual final energy consumption exceeds the §8 threshold (****/yr) are flagged as priority candidates for EnMS implementation scope; sites exceeding the §16 threshold (****/yr) are flagged as priority candidates for waste-heat avoidance and public register reporting. Report per-site priority status (obligated / near-breach / compliant) with the threshold gap and, where applicable, the audit timeline. Note the grain mismatch as a limitation: strict legal applicability is **** company level, not site level.",
+    "demand": {
+      "registry_id": "uc1_enefg_threshold_check",
+      "natural_request": "Site-level EnEfG prioritisation screen for all German the company sites. EnEfG §8 and §16 obligations are formally placed on the company (Unternehmen), not individual sites; the company as a non-SME entity trivially meets both thresholds **** the company level. This analysis therefore uses the statutory thresholds as a site-level prioritisation criterion: sites whose three-year rolling average of annual final energy consumption exceeds the §8 threshold (****/yr) are flagged as priority candidates for EnMS implementation scope; sites exceeding the §16 threshold (****/yr) are flagged as priority candidates for waste-heat avoidance and public register reporting. Report per-site priority status (obligated / near-breach / compliant) with the threshold gap and, where applicable, the audit timeline. Note the grain mismatch as a limitation: strict legal applicability is **** company level, not site level.",
+      "expected_output": "Per-site priority flags for §8 (EnMS scope candidacy) and §16 (waste-heat register candidacy), three-year average energy consumption, threshold gaps, near-breach warnings, cited regulation sections, and an explicit limitation noting that the statutory obligation is **** company level while this screen operates **** site level.",
+      "output_profile": {
+        "output_type": "binary",
+        "form": "yes_no_alert",
+        "description": "Per-site binary prioritisation flag: does the site exceed the §8 or §16 energy threshold and therefore qualify as a priority candidate for EnMS implementation or waste-heat reporting? Each finding is a yes/**** flag plus the numeric gap to threshold. The legal obligation rests on the company; this site-level screen is a planning instrument, not a strict legal compliance determination."
+      },
+      "assurance_profile": {
+        "level": "inform_only",
+        "law_reference_required": false,
+        "human_signoff_required": false,
+        "envelope_assurance_level": "routine"
+      }
+    },
+    "scope": {
+      "registry_id": "uc1_enefg_threshold_check",
+      "regulation_refs": [
+        "REG-2"
+      ],
+      "regulation_sources": {
+        "REG-2": "EnEfG.pdf"
+      },
+      "site_filter": {
+        "country": "geo-01"
+      },
+      "time_window": [
+        "2022-01-01",
+        "2024-12-31"
+      ],
+      "time_grain": "year",
+      "threshold_parameters": {
+        "enefg_8": {
+          "value": "****",
+          "column": "energy_mwh",
+          "aggregation": "max",
+          "near_breach_ratio": 0.95
+        },
+        "enefg_16": {
+          "value": "****",
+          "column": "energy_mwh",
+          "aggregation": "max",
+          "near_breach_ratio": 0.95
+        }
+      },
+      "reduction_target": null,
+      "computation_spec": {
+        "kind": "threshold",
+        "source_domain": "energy",
+        "method_a_column": "",
+        "method_b_column": "",
+        "method_a_label": "",
+        "method_b_label": "",
+        "tolerance": 0.05,
+        "group_by_column": "bu_rc_group",
+        "measure_column": ""
+      },
+      "pipeline_family": "tabular",
+      "document_sources": null
+    },
+    "operative": {
+      "id": "uc1_enefg_threshold_check",
+      "natural_request": "Site-level EnEfG prioritisation screen for all German the company sites. EnEfG §8 and §16 obligations are formally placed on the company (Unternehmen), not individual sites; the company as a non-SME entity trivially meets both thresholds **** the company level. This analysis therefore uses the statutory thresholds as a site-level prioritisation criterion: sites whose three-year rolling average of annual final energy consumption exceeds the §8 threshold (****/yr) are flagged as priority candidates for EnMS implementation scope; sites exceeding the §16 threshold (****/yr) are flagged as priority candidates for waste-heat avoidance and public register reporting. Report per-site priority status (obligated / near-breach / compliant) with the threshold gap and, where applicable, the audit timeline. Note the grain mismatch as a limitation: strict legal applicability is **** company level, not site level.",
+      "regulation_refs": [
+        "REG-2"
+      ],
+      "regulation_sources": {
+        "REG-2": "EnEfG.pdf"
+      },
+      "site_filter": {
+        "country": "geo-01"
+      },
+      "time_window": [
+        "2022-01-01",
+        "2024-12-31"
+      ],
+      "expected_output": "Per-site priority flags for §8 (EnMS scope candidacy) and §16 (waste-heat register candidacy), three-year average energy consumption, threshold gaps, near-breach warnings, cited regulation sections, and an explicit limitation noting that the statutory obligation is **** company level while this screen operates **** site level.",
+      "pipeline_family": "tabular",
+      "document_sources": null,
+      "output_profile": {
+        "output_type": "binary",
+        "form": "yes_no_alert",
+        "description": "Per-site binary prioritisation flag: does the site exceed the §8 or §16 energy threshold and therefore qualify as a priority candidate for EnMS implementation or waste-heat reporting? Each finding is a yes/**** flag plus the numeric gap to threshold. The legal obligation rests on the company; this site-level screen is a planning instrument, not a strict legal compliance determination."
+      },
+      "assurance_profile": {
+        "level": "inform_only",
+        "law_reference_required": false,
+        "dual_method_required": false,
+        "human_signoff_required": false,
+        "envelope_assurance_level": "routine"
+      },
+      "threshold_parameters": {
+        "enefg_8": {
+          "value": "****",
+          "column": "energy_mwh",
+          "aggregation": "max",
+          "near_breach_ratio": 0.95
+        },
+        "enefg_16": {
+          "value": "****",
+          "column": "energy_mwh",
+          "aggregation": "max",
+          "near_breach_ratio": 0.95
+        }
+      },
+      "reduction_target": null,
+      "computation_spec": {
+        "kind": "threshold",
+        "source_domain": "energy",
+        "method_a_column": "",
+        "method_b_column": "",
+        "method_a_label": "",
+        "method_b_label": "",
+        "tolerance": 0.05,
+        "group_by_column": "bu_rc_group",
+        "measure_column": ""
+      },
+      "time_grain": "year"
+    },
+    "output_profile": {
+      "output_type": "binary",
+      "form": "yes_no_alert",
+      "description": "Per-site binary prioritisation flag: does the site exceed the §8 or §16 energy threshold and therefore qualify as a priority candidate for EnMS implementation or waste-heat reporting? Each finding is a yes/**** flag plus the numeric gap to threshold. The legal obligation rests on the company; this site-level screen is a planning instrument, not a strict legal compliance determination."
+    },
+    "assurance_profile": {
+      "level": "inform_only",
+      "law_reference_required": false,
+      "dual_method_required": false,
+      "human_signoff_required": false,
+      "envelope_assurance_level": "routine"
+    },
+    "time_grain": "year"
+  },
+  {
+    "id": "uc2_ets1_scope_memo",
+    "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the quarterly CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per quarter (FY2025 Q4 through FY2026 Q2), flag any material discrepancy (|delta| > 5 % of the higher value), and provide the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+    "demand": {
+      "registry_id": "uc2_ets1_scope_memo",
+      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the quarterly CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per quarter (FY2025 Q4 through FY2026 Q2), flag any material discrepancy (|delta| > 5 % of the higher value), and provide the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+      "expected_output": "A structured memo showing, per site per quarter (FY2025 Q4 through FY2026 Q2): ETS 1 scope determination, the two independently computed quarterly CO₂e figures from the emissions fact table — (A) energy-derived (scope2_market_proxy_t) and (B) reported Scope 2 (scope2_location_t) — their absolute delta, a material-discrepancy flag (|delta| > 5 % of the higher value), method provenance, directive-article citations, and residual limitations.",
+      "output_profile": {
+        "output_type": "qualitative",
+        "form": "structured_memo",
+        "description": "Interpretive monitoring-assurance memo: the same quarterly CO₂e claim is independently reproduced by two methods (energy-derived and reported-emissions) and reconciled into one per-site per-quarter conclusion. Every finding must cite the grounding directive article. Output is for compliance-team review, not a formal regulatory filing."
+      },
+      "assurance_profile": {
+        "level": "law_reference_required",
+        "law_reference_required": true,
+        "human_signoff_required": false,
+        "envelope_assurance_level": "elevated"
+      }
+    },
+    "scope": {
+      "registry_id": "uc2_ets1_scope_memo",
+      "regulation_refs": [
+        "REG-1"
+      ],
+      "regulation_sources": {
+        "REG-1": "CELEX_32003L0087_EN_TXT.pdf"
+      },
+      "site_filter": {
+        "size_tier": "large",
+        "bu_rc": [
+          "bu-01",
+          "bu-02"
+        ]
+      },
+      "time_window": [
+        "2025-07-01",
+        "2026-03-31"
+      ],
+      "time_grain": "quarter",
+      "threshold_parameters": {},
+      "reduction_target": null,
+      "computation_spec": {
+        "kind": "dual_method",
+        "source_domain": "emissions",
+        "method_a_column": "scope2_market_proxy_t",
+        "method_b_column": "scope2_location_t",
+        "method_a_label": "Energy-derived CO₂e (amount × factor, Scope 2)",
+        "method_b_label": "Reported Scope 2 CO₂e (co2e_t)",
+        "tolerance": 0.05,
+        "group_by_column": "bu_rc_group",
+        "measure_column": ""
+      },
+      "pipeline_family": "tabular",
+      "document_sources": null
+    },
+    "operative": {
+      "id": "uc2_ets1_scope_memo",
+      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the quarterly CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per quarter (FY2025 Q4 through FY2026 Q2), flag any material discrepancy (|delta| > 5 % of the higher value), and provide the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+      "regulation_refs": [
+        "REG-1"
+      ],
+      "regulation_sources": {
+        "REG-1": "CELEX_32003L0087_EN_TXT.pdf"
+      },
+      "site_filter": {
+        "size_tier": "large",
+        "bu_rc": [
+          "bu-01",
+          "bu-02"
+        ]
+      },
+      "time_window": [
+        "2025-07-01",
+        "2026-03-31"
+      ],
+      "expected_output": "A structured memo showing, per site per quarter (FY2025 Q4 through FY2026 Q2): ETS 1 scope determination, the two independently computed quarterly CO₂e figures from the emissions fact table — (A) energy-derived (scope2_market_proxy_t) and (B) reported Scope 2 (scope2_location_t) — their absolute delta, a material-discrepancy flag (|delta| > 5 % of the higher value), method provenance, directive-article citations, and residual limitations.",
+      "pipeline_family": "tabular",
+      "document_sources": null,
+      "output_profile": {
+        "output_type": "qualitative",
+        "form": "structured_memo",
+        "description": "Interpretive monitoring-assurance memo: the same quarterly CO₂e claim is independently reproduced by two methods (energy-derived and reported-emissions) and reconciled into one per-site per-quarter conclusion. Every finding must cite the grounding directive article. Output is for compliance-team review, not a formal regulatory filing."
+      },
+      "assurance_profile": {
+        "level": "law_reference_required",
+        "law_reference_required": true,
+        "dual_method_required": true,
+        "human_signoff_required": false,
+        "envelope_assurance_level": "elevated"
+      },
+      "threshold_parameters": {},
+      "reduction_target": null,
+      "computation_spec": {
+        "kind": "dual_method",
+        "source_domain": "emissions",
+        "method_a_column": "scope2_market_proxy_t",
+        "method_b_column": "scope2_location_t",
+        "method_a_label": "Energy-derived CO₂e (amount × factor, Scope 2)",
+        "method_b_label": "Reported Scope 2 CO₂e (co2e_t)",
+        "tolerance": 0.05,
+        "group_by_column": "bu_rc_group",
+        "measure_column": ""
+      },
+      "time_grain": "quarter"
+    },
+    "output_profile": {
+      "output_type": "qualitative",
+      "form": "structured_memo",
+      "description": "Interpretive monitoring-assurance memo: the same quarterly CO₂e claim is independently reproduced by two methods (energy-derived and reported-emissions) and reconciled into one per-site per-quarter conclusion. Every finding must cite the grounding directive article. Output is for compliance-team review, not a formal regulatory filing."
+    },
+    "assurance_profile": {
+      "level": "law_reference_required",
+      "law_reference_required": true,
+      "dual_method_required": true,
+      "human_signoff_required": false,
+      "envelope_assurance_level": "elevated"
+    },
+    "time_grain": "quarter"
+  },
+  {
+    "id": "uc2_1_ets1_scope_memo_annual",
+    "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio covering FY2022–FY2024. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the annual CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per year, flag any material discrepancy (|delta| > 5 % of the higher value), and provide year-over-year trend and the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+    "demand": {
+      "registry_id": "uc2_1_ets1_scope_memo_annual",
+      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio covering FY2022–FY2024. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the annual CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per year, flag any material discrepancy (|delta| > 5 % of the higher value), and provide year-over-year trend and the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+      "expected_output": "A structured memo showing, per site per year (FY2022–FY2024): ETS 1 scope determination, the two independently computed annual CO₂e figures from the emissions fact table — (A) energy-derived (scope2_market_proxy_t) and (B) reported Scope 2 (scope2_location_t) — their absolute delta, a material-discrepancy flag (|delta| > 5 % of the higher value), year-over-year trend, method provenance, directive-article citations, and residual limitations.",
+      "output_profile": {
+        "output_type": "qualitative",
+        "form": "structured_memo",
+        "description": "Interpretive monitoring-assurance memo: the same annual CO₂e claim is independently reproduced by two methods (energy-derived and reported-emissions) and reconciled into one per-site per-year conclusion. Three-year coverage enables year-over-year trend analysis. Every finding must cite the grounding directive article. Output is for compliance-team review, not a formal regulatory filing."
+      },
+      "assurance_profile": {
+        "level": "law_reference_required",
+        "law_reference_required": true,
+        "human_signoff_required": false,
+        "envelope_assurance_level": "elevated"
+      }
+    },
+    "scope": {
+      "registry_id": "uc2_1_ets1_scope_memo_annual",
+      "regulation_refs": [
+        "REG-1"
+      ],
+      "regulation_sources": {
+        "REG-1": "CELEX_32003L0087_EN_TXT.pdf"
+      },
+      "site_filter": {
+        "size_tier": "large",
+        "bu_rc": [
+          "bu-01",
+          "bu-02"
+        ]
+      },
+      "time_window": [
+        "2022-01-01",
+        "2024-12-31"
+      ],
+      "time_grain": "year",
+      "threshold_parameters": {},
+      "reduction_target": null,
+      "computation_spec": {
+        "kind": "dual_method",
+        "source_domain": "emissions",
+        "method_a_column": "scope2_market_proxy_t",
+        "method_b_column": "scope2_location_t",
+        "method_a_label": "Energy-derived CO₂e (amount × factor, Scope 2)",
+        "method_b_label": "Reported Scope 2 CO₂e (co2e_t)",
+        "tolerance": 0.05,
+        "group_by_column": "bu_rc_group",
+        "measure_column": ""
+      },
+      "pipeline_family": "tabular",
+      "document_sources": null
+    },
+    "operative": {
+      "id": "uc2_1_ets1_scope_memo_annual",
+      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio covering FY2022–FY2024. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the annual CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per year, flag any material discrepancy (|delta| > 5 % of the higher value), and provide year-over-year trend and the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+      "regulation_refs": [
+        "REG-1"
+      ],
+      "regulation_sources": {
+        "REG-1": "CELEX_32003L0087_EN_TXT.pdf"
+      },
+      "site_filter": {
+        "size_tier": "large",
+        "bu_rc": [
+          "bu-01",
+          "bu-02"
+        ]
+      },
+      "time_window": [
+        "2022-01-01",
+        "2024-12-31"
+      ],
+      "expected_output": "A structured memo showing, per site per year (FY2022–FY2024): ETS 1 scope determination, the two independently computed annual CO₂e figures from the emissions fact table — (A) energy-derived (scope2_market_proxy_t) and (B) reported Scope 2 (scope2_location_t) — their absolute delta, a material-discrepancy flag (|delta| > 5 % of the higher value), year-over-year trend, method provenance, directive-article citations, and residual limitations.",
+      "pipeline_family": "tabular",
+      "document_sources": null,
+      "output_profile": {
+        "output_type": "qualitative",
+        "form": "structured_memo",
+        "description": "Interpretive monitoring-assurance memo: the same annual CO₂e claim is independently reproduced by two methods (energy-derived and reported-emissions) and reconciled into one per-site per-year conclusion. Three-year coverage enables year-over-year trend analysis. Every finding must cite the grounding directive article. Output is for compliance-team review, not a formal regulatory filing."
+      },
+      "assurance_profile": {
+        "level": "law_reference_required",
+        "law_reference_required": true,
+        "dual_method_required": true,
+        "human_signoff_required": false,
+        "envelope_assurance_level": "elevated"
+      },
+      "threshold_parameters": {},
+      "reduction_target": null,
+      "computation_spec": {
+        "kind": "dual_method",
+        "source_domain": "emissions",
+        "method_a_column": "scope2_market_proxy_t",
+        "method_b_column": "scope2_location_t",
+        "method_a_label": "Energy-derived CO₂e (amount × factor, Scope 2)",
+        "method_b_label": "Reported Scope 2 CO₂e (co2e_t)",
+        "tolerance": 0.05,
+        "group_by_column": "bu_rc_group",
+        "measure_column": ""
+      },
+      "time_grain": "year"
+    },
+    "output_profile": {
+      "output_type": "qualitative",
+      "form": "structured_memo",
+      "description": "Interpretive monitoring-assurance memo: the same annual CO₂e claim is independently reproduced by two methods (energy-derived and reported-emissions) and reconciled into one per-site per-year conclusion. Three-year coverage enables year-over-year trend analysis. Every finding must cite the grounding directive article. Output is for compliance-team review, not a formal regulatory filing."
+    },
+    "assurance_profile": {
+      "level": "law_reference_required",
+      "law_reference_required": true,
+      "dual_method_required": true,
+      "human_signoff_required": false,
+      "envelope_assurance_level": "elevated"
+    },
+    "time_grain": "year"
+  },
+  {
+    "id": "uc3_csrd_scope2_measure",
+    "natural_request": "Produce a CSRD-compliant ESRS E1 Scope 2 CO₂ group disclosure for the the company EMEA portfolio via group-consolidated divisional inventories. Each ****-scope business-unit division (****, ****, ****, ****, ****, ****) independently compiles, owns, and attests its own divisional Scope 2 CO₂e sub-total covering its EMEA sites; **** division can produce or sign off another division's figure. The group then consolidates the separately-owned, separately-signed sub-results into one ESRS E1 portfolio total, preserving each division's provenance chain and attestation. Any divisional sub-total not attested by its owning division must **** flagged as unattested **** the consolidated report. The consolidated result must **** suitable for inclusion **** the the company ESRS E1 Climate Change disclosure and carry a FY2027 mandatory-reporting readiness assessment (CSRD Art. 8 + ESRS E1-4 cross-boundary obligations).",
+    "demand": {
+      "registry_id": "uc3_csrd_scope2_measure",
+      "natural_request": "Produce a CSRD-compliant ESRS E1 Scope 2 CO₂ group disclosure for the the company EMEA portfolio via group-consolidated divisional inventories. Each ****-scope business-unit division (****, ****, ****, ****, ****, ****) independently compiles, owns, and attests its own divisional Scope 2 CO₂e sub-total covering its EMEA sites; **** division can produce or sign off another division's figure. The group then consolidates the separately-owned, separately-signed sub-results into one ESRS E1 portfolio total, preserving each division's provenance chain and attestation. Any divisional sub-total not attested by its owning division must **** flagged as unattested **** the consolidated report. The consolidated result must **** suitable for inclusion **** the the company ESRS E1 Climate Change disclosure and carry a FY2027 mandatory-reporting readiness assessment (CSRD Art. 8 + ESRS E1-4 cross-boundary obligations).",
+      "expected_output": "A FY2024 group-consolidated ESRS E1 Scope 2 report showing, per ****-scope division: divisionally-owned Scope 2 sub-total (tCO₂e), method provenance, and divisional attestation status; plus the consolidated portfolio total, an attestation-coverage flag for any unattested divisional sub-result, and a FY2027 readiness assessment.",
+      "output_profile": {
+        "output_type": "quantitative",
+        "form": "numeric_measurement",
+        "description": "Consolidated numeric Scope 2 CO₂ total (tCO₂e) assembled from divisionally-owned sub-totals: each ****-scope division independently owns, computes, and attests its figure; **** single team can own the full group disclosure. The group consolidates the separately-signed sub-results. Provenance chain and per-division attestation status must **** included **** the artifact."
+      },
+      "assurance_profile": {
+        "level": "independently_verifiable",
+        "law_reference_required": true,
+        "human_signoff_required": true,
+        "envelope_assurance_level": "regulatory"
+      }
+    },
+    "scope": {
+      "registry_id": "uc3_csrd_scope2_measure",
+      "regulation_refs": [
+        "REG-4"
+      ],
+      "regulation_sources": {
+        "REG-4": "CELEX_32022L2464_EN_TXT.pdf"
+      },
+      "site_filter": {
+        "region": "EMEA",
+        "bu_rc": [
+          "bu-01",
+          "bu-02",
+          "bu-03",
+          "bu-04",
+          "bu-05",
+          "bu-06"
+        ]
+      },
+      "time_window": [
+        "2024-01-01",
+        "2024-12-31"
+      ],
+      "time_grain": "year",
+      "threshold_parameters": {},
+      "reduction_target": null,
+      "computation_spec": {
+        "kind": "consolidation",
+        "source_domain": "emissions",
+        "method_a_column": "",
+        "method_b_column": "",
+        "method_a_label": "",
+        "method_b_label": "",
+        "tolerance": 0.05,
+        "group_by_column": "bu_rc_group",
+        "measure_column": "scope2_location_t"
+      },
+      "pipeline_family": "tabular",
+      "document_sources": null
+    },
+    "operative": {
+      "id": "uc3_csrd_scope2_measure",
+      "natural_request": "Produce a CSRD-compliant ESRS E1 Scope 2 CO₂ group disclosure for the the company EMEA portfolio via group-consolidated divisional inventories. Each ****-scope business-unit division (****, ****, ****, ****, ****, ****) independently compiles, owns, and attests its own divisional Scope 2 CO₂e sub-total covering its EMEA sites; **** division can produce or sign off another division's figure. The group then consolidates the separately-owned, separately-signed sub-results into one ESRS E1 portfolio total, preserving each division's provenance chain and attestation. Any divisional sub-total not attested by its owning division must **** flagged as unattested **** the consolidated report. The consolidated result must **** suitable for inclusion **** the the company ESRS E1 Climate Change disclosure and carry a FY2027 mandatory-reporting readiness assessment (CSRD Art. 8 + ESRS E1-4 cross-boundary obligations).",
+      "regulation_refs": [
+        "REG-4"
+      ],
+      "regulation_sources": {
+        "REG-4": "CELEX_32022L2464_EN_TXT.pdf"
+      },
+      "site_filter": {
+        "region": "EMEA",
+        "bu_rc": [
+          "bu-01",
+          "bu-02",
+          "bu-03",
+          "bu-04",
+          "bu-05",
+          "bu-06"
+        ]
+      },
+      "time_window": [
+        "2024-01-01",
+        "2024-12-31"
+      ],
+      "expected_output": "A FY2024 group-consolidated ESRS E1 Scope 2 report showing, per ****-scope division: divisionally-owned Scope 2 sub-total (tCO₂e), method provenance, and divisional attestation status; plus the consolidated portfolio total, an attestation-coverage flag for any unattested divisional sub-result, and a FY2027 readiness assessment.",
+      "pipeline_family": "tabular",
+      "document_sources": null,
+      "output_profile": {
+        "output_type": "quantitative",
+        "form": "numeric_measurement",
+        "description": "Consolidated numeric Scope 2 CO₂ total (tCO₂e) assembled from divisionally-owned sub-totals: each ****-scope division independently owns, computes, and attests its figure; **** single team can own the full group disclosure. The group consolidates the separately-signed sub-results. Provenance chain and per-division attestation status must **** included **** the artifact."
+      },
+      "assurance_profile": {
+        "level": "independently_verifiable",
+        "law_reference_required": true,
+        "dual_method_required": false,
+        "human_signoff_required": true,
+        "envelope_assurance_level": "regulatory"
+      },
+      "threshold_parameters": {},
+      "reduction_target": null,
+      "computation_spec": {
+        "kind": "consolidation",
+        "source_domain": "emissions",
+        "method_a_column": "",
+        "method_b_column": "",
+        "method_a_label": "",
+        "method_b_label": "",
+        "tolerance": 0.05,
+        "group_by_column": "bu_rc_group",
+        "measure_column": "scope2_location_t"
+      },
+      "time_grain": "year"
+    },
+    "output_profile": {
+      "output_type": "quantitative",
+      "form": "numeric_measurement",
+      "description": "Consolidated numeric Scope 2 CO₂ total (tCO₂e) assembled from divisionally-owned sub-totals: each ****-scope division independently owns, computes, and attests its figure; **** single team can own the full group disclosure. The group consolidates the separately-signed sub-results. Provenance chain and per-division attestation status must **** included **** the artifact."
+    },
+    "assurance_profile": {
+      "level": "independently_verifiable",
+      "law_reference_required": true,
+      "dual_method_required": false,
+      "human_signoff_required": true,
+      "envelope_assurance_level": "regulatory"
+    },
+    "time_grain": "year"
+  },
+  {
+    "id": "uc4_esrs_2026_impact",
+    "natural_request": "Evaluate the impact of the 2026 Revised ESRS E1-E5 on Siemens' FY2025 Sustainability Statement, comparing it against the 2025 Amended ESRS E1-E5 (the authoritative baseline that actually governed FY2025 reporting). For every Disclosure Requirement in Climate Change (E1), Pollution (E2), Water and Marine Resources (E3), Biodiversity and Ecosystems (E4), and Resource Use and Circular Economy (E5): identify which requirements are no longer required in 2026, which are new, and which were modified, merged, relocated, renumbered, or otherwise materially changed -- verified only against the two authoritative texts, never against the non-authoritative EFRAG comparison helpers alone. Cross-reference each finding against what Siemens actually reported in its FY2025 Sustainability Statement to determine the real reporting impact: a regulatory deletion the company never reported (non-material, not applicable) implies little; simplification of a disclosure the company reports extensively can be a meaningful effort reduction. This assessment must be produced from three genuinely independent risk-posture readings of the same evidence -- one that favors minimal reporting change, one that balances cost against assurance risk, and one that treats any ambiguity as a reason for maximal, audit-ready disclosure -- reconciled into one final structured comparison table plus a plain-language business summary. Company-level only, no site or business-unit breakdown.",
+    "demand": {
+      "registry_id": "uc4_esrs_2026_impact",
+      "natural_request": "Evaluate the impact of the 2026 Revised ESRS E1-E5 on Siemens' FY2025 Sustainability Statement, comparing it against the 2025 Amended ESRS E1-E5 (the authoritative baseline that actually governed FY2025 reporting). For every Disclosure Requirement in Climate Change (E1), Pollution (E2), Water and Marine Resources (E3), Biodiversity and Ecosystems (E4), and Resource Use and Circular Economy (E5): identify which requirements are no longer required in 2026, which are new, and which were modified, merged, relocated, renumbered, or otherwise materially changed -- verified only against the two authoritative texts, never against the non-authoritative EFRAG comparison helpers alone. Cross-reference each finding against what Siemens actually reported in its FY2025 Sustainability Statement to determine the real reporting impact: a regulatory deletion the company never reported (non-material, not applicable) implies little; simplification of a disclosure the company reports extensively can be a meaningful effort reduction. This assessment must be produced from three genuinely independent risk-posture readings of the same evidence -- one that favors minimal reporting change, one that balances cost against assurance risk, and one that treats any ambiguity as a reason for maximal, audit-ready disclosure -- reconciled into one final structured comparison table plus a plain-language business summary. Company-level only, no site or business-unit breakdown.",
+      "expected_output": "A DR/provision-level comparison table (standard, 2025 DR id and requirement, 2026 DR id and requirement, change status, change description, both source references, Siemens FY2025 reported status and source reference, resulting Siemens impact, confidence) covering every E1-E5 Disclosure Requirement, plus a plain-language executive summary highlighting the most relevant impacts for Siemens and any divergence between the three independent risk-posture assessments.",
+      "output_profile": {
+        "output_type": "qualitative",
+        "form": "structured_memo",
+        "description": "A DR-level regulatory-change and reporting-impact memo, independently assessed by three distinct risk postures -- minimal-change, balanced, and maximum-assurance -- over the same verified evidence, then reconciled into one final table and summary. Every row must be traceable to its authoritative source paragraph(s) and, where applicable, its Siemens report section."
+      },
+      "assurance_profile": {
+        "level": "law_reference_required",
+        "law_reference_required": true,
+        "human_signoff_required": true,
+        "envelope_assurance_level": "audit_ready"
+      }
+    },
+    "scope": {
+      "registry_id": "uc4_esrs_2026_impact",
+      "regulation_refs": [
+        "REG-ESRS-E1",
+        "REG-ESRS-E2",
+        "REG-ESRS-E3",
+        "REG-ESRS-E4",
+        "REG-ESRS-E5"
+      ],
+      "regulation_sources": {
+        "REG-ESRS-E1": "esrs/baseline_2025_amended/ESRS_E1_2025_amended.md",
+        "REG-ESRS-E2": "esrs/baseline_2025_amended/ESRS_E2_2025_amended.md",
+        "REG-ESRS-E3": "esrs/baseline_2025_amended/ESRS_E3_2025_amended.md",
+        "REG-ESRS-E4": "esrs/baseline_2025_amended/ESRS_E4_2025_amended.md",
+        "REG-ESRS-E5": "esrs/baseline_2025_amended/ESRS_E5_2025_amended.md"
+      },
+      "site_filter": {},
+      "time_window": [
+        "2024-10-01",
+        "2025-09-30"
+      ],
+      "time_grain": "year",
+      "threshold_parameters": {},
+      "reduction_target": null,
+      "computation_spec": null,
+      "pipeline_family": "document",
+      "document_sources": {
+        "baseline_dir": "regulations/esrs/baseline_2025_amended",
+        "target_dir": "regulations/esrs/2026",
+        "helper_dir": "regulations/comparison_helpers",
+        "company_report_dir": "data/siemens_sustainability_2025",
+        "standards": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ]
+      }
+    },
+    "operative": {
+      "id": "uc4_esrs_2026_impact",
+      "natural_request": "Evaluate the impact of the 2026 Revised ESRS E1-E5 on Siemens' FY2025 Sustainability Statement, comparing it against the 2025 Amended ESRS E1-E5 (the authoritative baseline that actually governed FY2025 reporting). For every Disclosure Requirement in Climate Change (E1), Pollution (E2), Water and Marine Resources (E3), Biodiversity and Ecosystems (E4), and Resource Use and Circular Economy (E5): identify which requirements are no longer required in 2026, which are new, and which were modified, merged, relocated, renumbered, or otherwise materially changed -- verified only against the two authoritative texts, never against the non-authoritative EFRAG comparison helpers alone. Cross-reference each finding against what Siemens actually reported in its FY2025 Sustainability Statement to determine the real reporting impact: a regulatory deletion the company never reported (non-material, not applicable) implies little; simplification of a disclosure the company reports extensively can be a meaningful effort reduction. This assessment must be produced from three genuinely independent risk-posture readings of the same evidence -- one that favors minimal reporting change, one that balances cost against assurance risk, and one that treats any ambiguity as a reason for maximal, audit-ready disclosure -- reconciled into one final structured comparison table plus a plain-language business summary. Company-level only, no site or business-unit breakdown.",
+      "regulation_refs": [
+        "REG-ESRS-E1",
+        "REG-ESRS-E2",
+        "REG-ESRS-E3",
+        "REG-ESRS-E4",
+        "REG-ESRS-E5"
+      ],
+      "regulation_sources": {
+        "REG-ESRS-E1": "esrs/baseline_2025_amended/ESRS_E1_2025_amended.md",
+        "REG-ESRS-E2": "esrs/baseline_2025_amended/ESRS_E2_2025_amended.md",
+        "REG-ESRS-E3": "esrs/baseline_2025_amended/ESRS_E3_2025_amended.md",
+        "REG-ESRS-E4": "esrs/baseline_2025_amended/ESRS_E4_2025_amended.md",
+        "REG-ESRS-E5": "esrs/baseline_2025_amended/ESRS_E5_2025_amended.md"
+      },
+      "site_filter": {},
+      "time_window": [
+        "2024-10-01",
+        "2025-09-30"
+      ],
+      "expected_output": "A DR/provision-level comparison table (standard, 2025 DR id and requirement, 2026 DR id and requirement, change status, change description, both source references, Siemens FY2025 reported status and source reference, resulting Siemens impact, confidence) covering every E1-E5 Disclosure Requirement, plus a plain-language executive summary highlighting the most relevant impacts for Siemens and any divergence between the three independent risk-posture assessments.",
+      "pipeline_family": "document",
+      "document_sources": {
+        "baseline_dir": "regulations/esrs/baseline_2025_amended",
+        "target_dir": "regulations/esrs/2026",
+        "helper_dir": "regulations/comparison_helpers",
+        "company_report_dir": "data/siemens_sustainability_2025",
+        "standards": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5"
+        ]
+      },
+      "output_profile": {
+        "output_type": "qualitative",
+        "form": "structured_memo",
+        "description": "A DR-level regulatory-change and reporting-impact memo, independently assessed by three distinct risk postures -- minimal-change, balanced, and maximum-assurance -- over the same verified evidence, then reconciled into one final table and summary. Every row must be traceable to its authoritative source paragraph(s) and, where applicable, its Siemens report section."
+      },
+      "assurance_profile": {
+        "level": "law_reference_required",
+        "law_reference_required": true,
+        "dual_method_required": false,
+        "human_signoff_required": true,
+        "envelope_assurance_level": "audit_ready"
+      },
+      "threshold_parameters": {},
+      "reduction_target": null,
+      "computation_spec": null,
+      "time_grain": "year"
+    },
+    "output_profile": {
+      "output_type": "qualitative",
+      "form": "structured_memo",
+      "description": "A DR-level regulatory-change and reporting-impact memo, independently assessed by three distinct risk postures -- minimal-change, balanced, and maximum-assurance -- over the same verified evidence, then reconciled into one final table and summary. Every row must be traceable to its authoritative source paragraph(s) and, where applicable, its Siemens report section."
+    },
+    "assurance_profile": {
+      "level": "law_reference_required",
+      "law_reference_required": true,
+      "dual_method_required": false,
+      "human_signoff_required": true,
+      "envelope_assurance_level": "audit_ready"
+    },
+    "time_grain": "year"
+  }
+]
