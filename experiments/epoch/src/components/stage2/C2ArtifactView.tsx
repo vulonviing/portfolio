@@ -12,7 +12,7 @@ import {
   IconScale,
   IconShieldCheck,
 } from "@tabler/icons-react";
-import { MASK, formatMaskedNumber, type MaskedNumber } from "../../lib/maskedValues";
+import { formatMaskedCount, formatMaskedNumber, type MaskedNumber } from "../../lib/maskedValues";
 
 const PANEL = "rounded-xl border border-[#1c2740] bg-[#0d1424]";
 const CARD = "rounded-lg border border-[#1c2740] bg-[#111a2e]";
@@ -52,7 +52,7 @@ export default function C2ArtifactView({ payload }: { payload: C2Payload }) {
         </div>
         {thinData.length > 0 ? (
           <span className="rounded-full border border-[#d97a6c]/45 bg-[#2d1818] px-2.5 py-1 font-mono text-[10px] text-[#d97a6c]">
-            {MASK} thin-data
+            {formatMaskedCount(thinData.length)} thin-data
           </span>
         ) : (
           <span className="rounded-full border border-[#2dd4bf]/40 bg-[#0f2e2c] px-2.5 py-1 font-mono text-[10px] text-[#2dd4bf]">

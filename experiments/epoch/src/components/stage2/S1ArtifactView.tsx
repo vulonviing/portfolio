@@ -10,7 +10,7 @@ import {
   IconQuote,
   IconSearch,
 } from "@tabler/icons-react";
-import { MASK, formatMaskedPercent, type MaskedNumber } from "../../lib/maskedValues";
+import { formatMaskedCount, formatMaskedPercent, type MaskedNumber } from "../../lib/maskedValues";
 
 const PANEL = "rounded-xl border border-[#1c2740] bg-[#0d1424]";
 const CARD = "rounded-lg border border-[#1c2740] bg-[#111a2e]";
@@ -314,10 +314,10 @@ export default function S1ArtifactView({ payload }: { payload: S1Payload }) {
           </h2>
         </div>
         <span className="rounded-full border border-[#1c2740] px-2.5 py-1 font-mono text-[10px] text-[#8b96ad]">
-          {MASK} entries
+          {formatMaskedCount(rows.length)} entries
         </span>
         <span className="rounded-full border border-[#1c2740] px-2.5 py-1 font-mono text-[10px] text-[#8b96ad]">
-          {MASK} sites
+          {formatMaskedCount(sites.length)} sites
         </span>
         <span className="rounded-full border border-[#1c2740] px-2.5 py-1 font-mono text-[10px] text-[#8b96ad]">
           {chainCaveats.length} chain caveats
@@ -332,7 +332,7 @@ export default function S1ArtifactView({ payload }: { payload: S1Payload }) {
                 <IconMapPin size={16} className="text-[#8b96ad]" />
                 <h2 className="text-sm font-medium text-[#e9eef7]">Sites</h2>
               </div>
-              <span className="font-mono text-xs text-[#5c6780]">{MASK}</span>
+              <span className="font-mono text-xs text-[#5c6780]">{formatMaskedCount(sites.length)}</span>
               <div className="ml-auto flex flex-wrap justify-end gap-1.5">
                 <button
                   type="button"
@@ -349,7 +349,7 @@ export default function S1ArtifactView({ payload }: { payload: S1Payload }) {
                   }`}
                 >
                   <IconFilter size={11} /> Flagged
-                  <span className="font-mono">{MASK}</span>
+                  <span className="font-mono">{formatMaskedCount(filterCounts.flagged)}</span>
                 </button>
                 <button
                   type="button"
@@ -366,7 +366,7 @@ export default function S1ArtifactView({ payload }: { payload: S1Payload }) {
                   }`}
                 >
                   <IconFilter size={11} /> False
-                  <span className="font-mono">{MASK}</span>
+                  <span className="font-mono">{formatMaskedCount(filterCounts.false)}</span>
                 </button>
               </div>
             </div>

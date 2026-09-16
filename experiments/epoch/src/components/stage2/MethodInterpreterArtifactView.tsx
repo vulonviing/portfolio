@@ -7,7 +7,7 @@ import {
   IconMapPin,
   IconSearch,
 } from "@tabler/icons-react";
-import { MASK, isPublicNumber, type MaskedNumber } from "../../lib/maskedValues";
+import { formatMaskedCount, isPublicNumber, type MaskedNumber } from "../../lib/maskedValues";
 
 const PANEL = "rounded-xl border border-[#1c2740] bg-[#0d1424]";
 const CARD = "rounded-lg border border-[#1c2740] bg-[#111a2e]";
@@ -202,7 +202,7 @@ export default function MethodInterpreterArtifactView({
             <div className="ml-auto flex flex-wrap justify-end gap-1.5">
               <FilterButton
                 active={siteFilter === "flagged"}
-                count={MASK}
+                count={formatMaskedCount(filterCounts.flagged)}
                 label="Flagged"
                 tone="danger"
                 onClick={() =>
@@ -213,7 +213,7 @@ export default function MethodInterpreterArtifactView({
               />
               <FilterButton
                 active={siteFilter === "clear"}
-                count={MASK}
+                count={formatMaskedCount(filterCounts.clear)}
                 label="Clear"
                 tone="success"
                 onClick={() =>

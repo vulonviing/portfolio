@@ -126,6 +126,7 @@ def _collect_terms_from_shelves(thesis_root: Path, registry_id: str) -> Sensitiv
 
 
 def _merge_terms(target: SensitiveTerms, source: SensitiveTerms) -> None:
+    target.sites.update(source.sites)
     target.identity.update(source.identity)
     target.geography.update(source.geography)
     target.business.update(source.business)

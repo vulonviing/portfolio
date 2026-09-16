@@ -4,6 +4,7 @@ import { IconGitCompare } from "@tabler/icons-react";
 import {
   MASK,
   compareMaskedDescending,
+  formatMaskedCount,
   formatMaskedNumber,
   formatMaskedPercent,
   isPublicNumber,
@@ -171,7 +172,7 @@ function DimensionMatrix({
   return (
     <Section
       title={`${entityLabel} × ${dimensionLabel}`}
-      count={MASK}
+      count={formatMaskedCount(entities.length * dimensions.length)}
       note={`columns are ${entityLabel.toLowerCase()}`}
     >
       {entities.length === 0 || dimensions.length === 0 ? (
@@ -404,12 +405,12 @@ function DualMethodView({
     <>
       <Section
         title="All results"
-        count={MASK}
+        count={formatMaskedCount(sorted.length)}
         note={`worst difference first · site × ${granularity.label}`}
       >
         <DualTable rows={sorted} granularity={granularity} />
       </Section>
-      <Section title="Flagged entries" count={MASK} note={`tolerance ${formatMaskedPercent(payload.tolerance)}`}>
+      <Section title="Flagged entries" count={formatMaskedCount(flagged.length)} note={`tolerance ${formatMaskedPercent(payload.tolerance)}`}>
         {flagged.length > 0 ? (
           <DualTable rows={flagged} granularity={granularity} />
         ) : (
@@ -431,11 +432,11 @@ function DualMethodView({
           };
         }}
         legend={[
-          { state: "exact", label: `exact ${MASK}` },
-          { state: "within", label: `within tolerance ${MASK}` },
-          { state: "flagged", label: `flagged ${MASK}` },
-          { state: "zvz", label: `zero-vs-zero ${MASK}` },
-          { state: "none", label: `no data ${MASK}` },
+          { state: "exact", label: `exact ${formatMaskedCount(counts.exact)}` },
+          { state: "within", label: `within tolerance ${formatMaskedCount(counts.within)}` },
+          { state: "flagged", label: `flagged ${formatMaskedCount(counts.flagged)}` },
+          { state: "zvz", label: `zero-vs-zero ${formatMaskedCount(counts.zvz)}` },
+          { state: "none", label: `no data ${formatMaskedCount(noData)}` },
         ]}
       />
     </>
@@ -550,10 +551,10 @@ function ThresholdView({ payload }: { payload: ThresholdPayload }) {
 
   return (
     <>
-      <Section title="All results" count={MASK} note={`column ${payload.column}`}>
+      <Section title="All results" count={formatMaskedCount(sorted.length)} note={`column ${payload.column}`}>
         <ThresholdTable rows={sorted} />
       </Section>
-      <Section title="Flagged entries" count={MASK} note="obligated + near breach">
+      <Section title="Flagged entries" count={formatMaskedCount(flagged.length)} note="obligated + near breach">
         {flagged.length > 0 ? (
           <ThresholdTable rows={flagged} />
         ) : (
@@ -579,7 +580,7 @@ function ThresholdView({ payload }: { payload: ThresholdPayload }) {
           { state: "obligated", label: `obligated ${payload.n_obligated}` },
           { state: "near", label: `near breach ${payload.n_near_breach}` },
           { state: "compliant", label: `compliant ${payload.n_compliant}` },
-          { state: "none", label: `no data ${MASK}` },
+          { state: "none", label: `no data ${formatMaskedCount(noData)}` },
         ]}
       />
     </>
@@ -661,12 +662,12 @@ function ConsolidationView({
     <>
       <Section
         title="All results"
-        count={MASK}
+        count={formatMaskedCount(sorted.length)}
         note={`${payload.measure_column} grouped by ${payload.group_by_column}`}
       >
         <ConsolidationTable rows={sorted} />
       </Section>
-      <Section title="Flagged entries" count={MASK}>
+      <Section title="Flagged entries" count="none">
         <EmptyBody>This consolidation computation does not classify rows as flagged.</EmptyBody>
       </Section>
       <DimensionMatrix
@@ -679,13 +680,13 @@ function ConsolidationView({
           return {
             state: row ? "computed" : "none",
             title: row
-              ? `${division} · ${period} · ${formatMaskedNumber(row.subtotal_t)} · ${MASK} sites · ${MASK} rows`
+              ? `${division} · ${period} · ${formatMaskedNumber(row.subtotal_t)} · ${row.n_sites} sites · ${row.n_rows} rows`
               : `${division} · ${period} · no data`,
           };
         }}
         legend={[
-          { state: "computed", label: `computed ${MASK}` },
-          { state: "none", label: `no data ${MASK}` },
+          { state: "computed", label: `computed ${formatMaskedCount(payload.rows.length)}` },
+          { state: "none", label: `no data ${formatMaskedCount(noData)}` },
         ]}
       />
     </>

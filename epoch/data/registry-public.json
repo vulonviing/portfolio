@@ -1,15 +1,15 @@
 [
   {
     "id": "uc1_enefg_threshold_check",
-    "natural_request": "Site-level EnEfG prioritisation screen for all German the company sites. EnEfG §8 and §16 obligations are formally placed on the company (Unternehmen), not individual sites; the company as a non-SME entity trivially meets both thresholds **** the company level. This analysis therefore uses the statutory thresholds as a site-level prioritisation criterion: sites whose three-year rolling average of annual final energy consumption exceeds the §8 threshold (****/yr) are flagged as priority candidates for EnMS implementation scope; sites exceeding the §16 threshold (****/yr) are flagged as priority candidates for waste-heat avoidance and public register reporting. Report per-site priority status (obligated / near-breach / compliant) with the threshold gap and, where applicable, the audit timeline. Note the grain mismatch as a limitation: strict legal applicability is **** company level, not site level.",
+    "natural_request": "Site-level EnEfG prioritisation screen for all German the company sites. EnEfG §8 and §16 obligations are formally placed on the company (Unternehmen), not individual sites; the company as a non-SME entity trivially meets both thresholds at the company level. This analysis therefore uses the statutory thresholds as a site-level prioritisation criterion: sites whose three-year rolling average of annual final energy consumption exceeds the §8 threshold (7,50* MWh/yr) are flagged as priority candidates for EnMS implementation scope; sites exceeding the §16 threshold (2,50* MWh/yr) are flagged as priority candidates for waste-heat avoidance and public register reporting. Report per-site priority status (obligated / near-breach / compliant) with the threshold gap and, where applicable, the audit timeline. Note the grain mismatch as a limitation: strict legal applicability is at company level, not site level.",
     "demand": {
       "registry_id": "uc1_enefg_threshold_check",
-      "natural_request": "Site-level EnEfG prioritisation screen for all German the company sites. EnEfG §8 and §16 obligations are formally placed on the company (Unternehmen), not individual sites; the company as a non-SME entity trivially meets both thresholds **** the company level. This analysis therefore uses the statutory thresholds as a site-level prioritisation criterion: sites whose three-year rolling average of annual final energy consumption exceeds the §8 threshold (****/yr) are flagged as priority candidates for EnMS implementation scope; sites exceeding the §16 threshold (****/yr) are flagged as priority candidates for waste-heat avoidance and public register reporting. Report per-site priority status (obligated / near-breach / compliant) with the threshold gap and, where applicable, the audit timeline. Note the grain mismatch as a limitation: strict legal applicability is **** company level, not site level.",
-      "expected_output": "Per-site priority flags for §8 (EnMS scope candidacy) and §16 (waste-heat register candidacy), three-year average energy consumption, threshold gaps, near-breach warnings, cited regulation sections, and an explicit limitation noting that the statutory obligation is **** company level while this screen operates **** site level.",
+      "natural_request": "Site-level EnEfG prioritisation screen for all German the company sites. EnEfG §8 and §16 obligations are formally placed on the company (Unternehmen), not individual sites; the company as a non-SME entity trivially meets both thresholds at the company level. This analysis therefore uses the statutory thresholds as a site-level prioritisation criterion: sites whose three-year rolling average of annual final energy consumption exceeds the §8 threshold (7,50* MWh/yr) are flagged as priority candidates for EnMS implementation scope; sites exceeding the §16 threshold (2,50* MWh/yr) are flagged as priority candidates for waste-heat avoidance and public register reporting. Report per-site priority status (obligated / near-breach / compliant) with the threshold gap and, where applicable, the audit timeline. Note the grain mismatch as a limitation: strict legal applicability is at company level, not site level.",
+      "expected_output": "Per-site priority flags for §8 (EnMS scope candidacy) and §16 (waste-heat register candidacy), three-year average energy consumption, threshold gaps, near-breach warnings, cited regulation sections, and an explicit limitation noting that the statutory obligation is at company level while this screen operates at site level.",
       "output_profile": {
         "output_type": "binary",
         "form": "yes_no_alert",
-        "description": "Per-site binary prioritisation flag: does the site exceed the §8 or §16 energy threshold and therefore qualify as a priority candidate for EnMS implementation or waste-heat reporting? Each finding is a yes/**** flag plus the numeric gap to threshold. The legal obligation rests on the company; this site-level screen is a planning instrument, not a strict legal compliance determination."
+        "description": "Per-site binary prioritisation flag: does the site exceed the §8 or §16 energy threshold and therefore qualify as a priority candidate for EnMS implementation or waste-heat reporting? Each finding is a yes/no flag plus the numeric gap to threshold. The legal obligation rests on the company; this site-level screen is a planning instrument, not a strict legal compliance determination."
       },
       "assurance_profile": {
         "level": "inform_only",
@@ -27,7 +27,7 @@
         "REG-2": "EnEfG.pdf"
       },
       "site_filter": {
-        "country": "geo-01"
+        "country": "DE"
       },
       "time_window": [
         "2022-01-01",
@@ -36,13 +36,13 @@
       "time_grain": "year",
       "threshold_parameters": {
         "enefg_8": {
-          "value": "****",
+          "value": "750*",
           "column": "energy_mwh",
           "aggregation": "max",
           "near_breach_ratio": 0.95
         },
         "enefg_16": {
-          "value": "****",
+          "value": "250*",
           "column": "energy_mwh",
           "aggregation": "max",
           "near_breach_ratio": 0.95
@@ -65,7 +65,7 @@
     },
     "operative": {
       "id": "uc1_enefg_threshold_check",
-      "natural_request": "Site-level EnEfG prioritisation screen for all German the company sites. EnEfG §8 and §16 obligations are formally placed on the company (Unternehmen), not individual sites; the company as a non-SME entity trivially meets both thresholds **** the company level. This analysis therefore uses the statutory thresholds as a site-level prioritisation criterion: sites whose three-year rolling average of annual final energy consumption exceeds the §8 threshold (****/yr) are flagged as priority candidates for EnMS implementation scope; sites exceeding the §16 threshold (****/yr) are flagged as priority candidates for waste-heat avoidance and public register reporting. Report per-site priority status (obligated / near-breach / compliant) with the threshold gap and, where applicable, the audit timeline. Note the grain mismatch as a limitation: strict legal applicability is **** company level, not site level.",
+      "natural_request": "Site-level EnEfG prioritisation screen for all German the company sites. EnEfG §8 and §16 obligations are formally placed on the company (Unternehmen), not individual sites; the company as a non-SME entity trivially meets both thresholds at the company level. This analysis therefore uses the statutory thresholds as a site-level prioritisation criterion: sites whose three-year rolling average of annual final energy consumption exceeds the §8 threshold (7,50* MWh/yr) are flagged as priority candidates for EnMS implementation scope; sites exceeding the §16 threshold (2,50* MWh/yr) are flagged as priority candidates for waste-heat avoidance and public register reporting. Report per-site priority status (obligated / near-breach / compliant) with the threshold gap and, where applicable, the audit timeline. Note the grain mismatch as a limitation: strict legal applicability is at company level, not site level.",
       "regulation_refs": [
         "REG-2"
       ],
@@ -73,19 +73,19 @@
         "REG-2": "EnEfG.pdf"
       },
       "site_filter": {
-        "country": "geo-01"
+        "country": "DE"
       },
       "time_window": [
         "2022-01-01",
         "2024-12-31"
       ],
-      "expected_output": "Per-site priority flags for §8 (EnMS scope candidacy) and §16 (waste-heat register candidacy), three-year average energy consumption, threshold gaps, near-breach warnings, cited regulation sections, and an explicit limitation noting that the statutory obligation is **** company level while this screen operates **** site level.",
+      "expected_output": "Per-site priority flags for §8 (EnMS scope candidacy) and §16 (waste-heat register candidacy), three-year average energy consumption, threshold gaps, near-breach warnings, cited regulation sections, and an explicit limitation noting that the statutory obligation is at company level while this screen operates at site level.",
       "pipeline_family": "tabular",
       "document_sources": null,
       "output_profile": {
         "output_type": "binary",
         "form": "yes_no_alert",
-        "description": "Per-site binary prioritisation flag: does the site exceed the §8 or §16 energy threshold and therefore qualify as a priority candidate for EnMS implementation or waste-heat reporting? Each finding is a yes/**** flag plus the numeric gap to threshold. The legal obligation rests on the company; this site-level screen is a planning instrument, not a strict legal compliance determination."
+        "description": "Per-site binary prioritisation flag: does the site exceed the §8 or §16 energy threshold and therefore qualify as a priority candidate for EnMS implementation or waste-heat reporting? Each finding is a yes/no flag plus the numeric gap to threshold. The legal obligation rests on the company; this site-level screen is a planning instrument, not a strict legal compliance determination."
       },
       "assurance_profile": {
         "level": "inform_only",
@@ -96,13 +96,13 @@
       },
       "threshold_parameters": {
         "enefg_8": {
-          "value": "****",
+          "value": "750*",
           "column": "energy_mwh",
           "aggregation": "max",
           "near_breach_ratio": 0.95
         },
         "enefg_16": {
-          "value": "****",
+          "value": "250*",
           "column": "energy_mwh",
           "aggregation": "max",
           "near_breach_ratio": 0.95
@@ -125,7 +125,7 @@
     "output_profile": {
       "output_type": "binary",
       "form": "yes_no_alert",
-      "description": "Per-site binary prioritisation flag: does the site exceed the §8 or §16 energy threshold and therefore qualify as a priority candidate for EnMS implementation or waste-heat reporting? Each finding is a yes/**** flag plus the numeric gap to threshold. The legal obligation rests on the company; this site-level screen is a planning instrument, not a strict legal compliance determination."
+      "description": "Per-site binary prioritisation flag: does the site exceed the §8 or §16 energy threshold and therefore qualify as a priority candidate for EnMS implementation or waste-heat reporting? Each finding is a yes/no flag plus the numeric gap to threshold. The legal obligation rests on the company; this site-level screen is a planning instrument, not a strict legal compliance determination."
     },
     "assurance_profile": {
       "level": "inform_only",
@@ -138,10 +138,10 @@
   },
   {
     "id": "uc2_ets1_scope_memo",
-    "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the quarterly CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per quarter (FY2025 Q4 through FY2026 Q2), flag any material discrepancy (|delta| > 5 % of the higher value), and provide the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+    "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio. For each site: identify whether it falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the quarterly CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per quarter (FY2025 Q4 through FY2026 Q2), flag any material discrepancy (|delta| > 5 % of the higher value), and provide the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
     "demand": {
       "registry_id": "uc2_ets1_scope_memo",
-      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the quarterly CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per quarter (FY2025 Q4 through FY2026 Q2), flag any material discrepancy (|delta| > 5 % of the higher value), and provide the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio. For each site: identify whether it falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the quarterly CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per quarter (FY2025 Q4 through FY2026 Q2), flag any material discrepancy (|delta| > 5 % of the higher value), and provide the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
       "expected_output": "A structured memo showing, per site per quarter (FY2025 Q4 through FY2026 Q2): ETS 1 scope determination, the two independently computed quarterly CO₂e figures from the emissions fact table — (A) energy-derived (scope2_market_proxy_t) and (B) reported Scope 2 (scope2_location_t) — their absolute delta, a material-discrepancy flag (|delta| > 5 % of the higher value), method provenance, directive-article citations, and residual limitations.",
       "output_profile": {
         "output_type": "qualitative",
@@ -166,8 +166,8 @@
       "site_filter": {
         "size_tier": "large",
         "bu_rc": [
-          "bu-01",
-          "bu-02"
+          "Business Unit 1",
+          "Business Unit 2"
         ]
       },
       "time_window": [
@@ -193,7 +193,7 @@
     },
     "operative": {
       "id": "uc2_ets1_scope_memo",
-      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the quarterly CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per quarter (FY2025 Q4 through FY2026 Q2), flag any material discrepancy (|delta| > 5 % of the higher value), and provide the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio. For each site: identify whether it falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the quarterly CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per quarter (FY2025 Q4 through FY2026 Q2), flag any material discrepancy (|delta| > 5 % of the higher value), and provide the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
       "regulation_refs": [
         "REG-1"
       ],
@@ -203,8 +203,8 @@
       "site_filter": {
         "size_tier": "large",
         "bu_rc": [
-          "bu-01",
-          "bu-02"
+          "Business Unit 1",
+          "Business Unit 2"
         ]
       },
       "time_window": [
@@ -257,10 +257,10 @@
   },
   {
     "id": "uc2_1_ets1_scope_memo_annual",
-    "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio covering FY2022–FY2024. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the annual CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per year, flag any material discrepancy (|delta| > 5 % of the higher value), and provide year-over-year trend and the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+    "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio covering FY2022–FY2024. For each site: identify whether it falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the annual CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per year, flag any material discrepancy (|delta| > 5 % of the higher value), and provide year-over-year trend and the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
     "demand": {
       "registry_id": "uc2_1_ets1_scope_memo_annual",
-      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio covering FY2022–FY2024. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the annual CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per year, flag any material discrepancy (|delta| > 5 % of the higher value), and provide year-over-year trend and the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio covering FY2022–FY2024. For each site: identify whether it falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the annual CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per year, flag any material discrepancy (|delta| > 5 % of the higher value), and provide year-over-year trend and the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
       "expected_output": "A structured memo showing, per site per year (FY2022–FY2024): ETS 1 scope determination, the two independently computed annual CO₂e figures from the emissions fact table — (A) energy-derived (scope2_market_proxy_t) and (B) reported Scope 2 (scope2_location_t) — their absolute delta, a material-discrepancy flag (|delta| > 5 % of the higher value), year-over-year trend, method provenance, directive-article citations, and residual limitations.",
       "output_profile": {
         "output_type": "qualitative",
@@ -285,8 +285,8 @@
       "site_filter": {
         "size_tier": "large",
         "bu_rc": [
-          "bu-01",
-          "bu-02"
+          "Business Unit 1",
+          "Business Unit 2"
         ]
       },
       "time_window": [
@@ -312,7 +312,7 @@
     },
     "operative": {
       "id": "uc2_1_ets1_scope_memo_annual",
-      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio covering FY2022–FY2024. For each site: identify whether **** falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the annual CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per year, flag any material discrepancy (|delta| > 5 % of the higher value), and provide year-over-year trend and the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
+      "natural_request": "Produce a structured ETS 1 monitoring-assurance memo for the the company large-manufacturing site portfolio covering FY2022–FY2024. For each site: identify whether it falls within ETS 1 scope (stationary installations, energy-intensive manufacturing, Annex I activities); compute the annual CO₂-equivalent figure by TWO independent methods — (A) energy-consumption-derived: scope2_market_proxy_t (amount_consumed_mwh × co2_factor, Scope 2 rows) from the emissions fact table, and (B) directly-reported Scope 2 emissions: scope2_location_t (co2e_t, Scope 2 rows) from the same emissions fact table — cross-check the two figures per site per year, flag any material discrepancy (|delta| > 5 % of the higher value), and provide year-over-year trend and the raw per-site figures for downstream regulatory interpretation. Reference the specific directive articles that ground each finding (Art. 14 monitoring, Art. 12 surrender obligation, Annex I scope).",
       "regulation_refs": [
         "REG-1"
       ],
@@ -322,8 +322,8 @@
       "site_filter": {
         "size_tier": "large",
         "bu_rc": [
-          "bu-01",
-          "bu-02"
+          "Business Unit 1",
+          "Business Unit 2"
         ]
       },
       "time_window": [
@@ -376,15 +376,15 @@
   },
   {
     "id": "uc3_csrd_scope2_measure",
-    "natural_request": "Produce a CSRD-compliant ESRS E1 Scope 2 CO₂ group disclosure for the the company EMEA portfolio via group-consolidated divisional inventories. Each ****-scope business-unit division (****, ****, ****, ****, ****, ****) independently compiles, owns, and attests its own divisional Scope 2 CO₂e sub-total covering its EMEA sites; **** division can produce or sign off another division's figure. The group then consolidates the separately-owned, separately-signed sub-results into one ESRS E1 portfolio total, preserving each division's provenance chain and attestation. Any divisional sub-total not attested by its owning division must **** flagged as unattested **** the consolidated report. The consolidated result must **** suitable for inclusion **** the the company ESRS E1 Climate Change disclosure and carry a FY2027 mandatory-reporting readiness assessment (CSRD Art. 8 + ESRS E1-4 cross-boundary obligations).",
+    "natural_request": "Produce a CSRD-compliant ESRS E1 Scope 2 CO₂ group disclosure for the the company EMEA portfolio via group-consolidated divisional inventories. Each in-scope business-unit division (DI, Business Unit 1, SI, Business Unit 2, Business Unit 3, Business Unit 4) independently compiles, owns, and attests its own divisional Scope 2 CO₂e sub-total covering its EMEA sites; no division can produce or sign off another division's figure. The group then consolidates the separately-owned, separately-signed sub-results into one ESRS E1 portfolio total, preserving each division's provenance chain and attestation. Any divisional sub-total not attested by its owning division must be flagged as unattested in the consolidated report. The consolidated result must be suitable for inclusion in the the company ESRS E1 Climate Change disclosure and carry a FY2027 mandatory-reporting readiness assessment (CSRD Art. 8 + ESRS E1-4 cross-boundary obligations).",
     "demand": {
       "registry_id": "uc3_csrd_scope2_measure",
-      "natural_request": "Produce a CSRD-compliant ESRS E1 Scope 2 CO₂ group disclosure for the the company EMEA portfolio via group-consolidated divisional inventories. Each ****-scope business-unit division (****, ****, ****, ****, ****, ****) independently compiles, owns, and attests its own divisional Scope 2 CO₂e sub-total covering its EMEA sites; **** division can produce or sign off another division's figure. The group then consolidates the separately-owned, separately-signed sub-results into one ESRS E1 portfolio total, preserving each division's provenance chain and attestation. Any divisional sub-total not attested by its owning division must **** flagged as unattested **** the consolidated report. The consolidated result must **** suitable for inclusion **** the the company ESRS E1 Climate Change disclosure and carry a FY2027 mandatory-reporting readiness assessment (CSRD Art. 8 + ESRS E1-4 cross-boundary obligations).",
-      "expected_output": "A FY2024 group-consolidated ESRS E1 Scope 2 report showing, per ****-scope division: divisionally-owned Scope 2 sub-total (tCO₂e), method provenance, and divisional attestation status; plus the consolidated portfolio total, an attestation-coverage flag for any unattested divisional sub-result, and a FY2027 readiness assessment.",
+      "natural_request": "Produce a CSRD-compliant ESRS E1 Scope 2 CO₂ group disclosure for the the company EMEA portfolio via group-consolidated divisional inventories. Each in-scope business-unit division (DI, Business Unit 1, SI, Business Unit 2, Business Unit 3, Business Unit 4) independently compiles, owns, and attests its own divisional Scope 2 CO₂e sub-total covering its EMEA sites; no division can produce or sign off another division's figure. The group then consolidates the separately-owned, separately-signed sub-results into one ESRS E1 portfolio total, preserving each division's provenance chain and attestation. Any divisional sub-total not attested by its owning division must be flagged as unattested in the consolidated report. The consolidated result must be suitable for inclusion in the the company ESRS E1 Climate Change disclosure and carry a FY2027 mandatory-reporting readiness assessment (CSRD Art. 8 + ESRS E1-4 cross-boundary obligations).",
+      "expected_output": "A FY2024 group-consolidated ESRS E1 Scope 2 report showing, per in-scope division: divisionally-owned Scope 2 sub-total (tCO₂e), method provenance, and divisional attestation status; plus the consolidated portfolio total, an attestation-coverage flag for any unattested divisional sub-result, and a FY2027 readiness assessment.",
       "output_profile": {
         "output_type": "quantitative",
         "form": "numeric_measurement",
-        "description": "Consolidated numeric Scope 2 CO₂ total (tCO₂e) assembled from divisionally-owned sub-totals: each ****-scope division independently owns, computes, and attests its figure; **** single team can own the full group disclosure. The group consolidates the separately-signed sub-results. Provenance chain and per-division attestation status must **** included **** the artifact."
+        "description": "Consolidated numeric Scope 2 CO₂ total (tCO₂e) assembled from divisionally-owned sub-totals: each in-scope division independently owns, computes, and attests its figure; no single team can own the full group disclosure. The group consolidates the separately-signed sub-results. Provenance chain and per-division attestation status must be included in the artifact."
       },
       "assurance_profile": {
         "level": "independently_verifiable",
@@ -404,12 +404,12 @@
       "site_filter": {
         "region": "EMEA",
         "bu_rc": [
-          "bu-01",
-          "bu-02",
-          "bu-03",
-          "bu-04",
-          "bu-05",
-          "bu-06"
+          "Business Unit 5",
+          "Business Unit 1",
+          "Business Unit 6",
+          "Business Unit 2",
+          "Business Unit 3",
+          "Business Unit 4"
         ]
       },
       "time_window": [
@@ -435,7 +435,7 @@
     },
     "operative": {
       "id": "uc3_csrd_scope2_measure",
-      "natural_request": "Produce a CSRD-compliant ESRS E1 Scope 2 CO₂ group disclosure for the the company EMEA portfolio via group-consolidated divisional inventories. Each ****-scope business-unit division (****, ****, ****, ****, ****, ****) independently compiles, owns, and attests its own divisional Scope 2 CO₂e sub-total covering its EMEA sites; **** division can produce or sign off another division's figure. The group then consolidates the separately-owned, separately-signed sub-results into one ESRS E1 portfolio total, preserving each division's provenance chain and attestation. Any divisional sub-total not attested by its owning division must **** flagged as unattested **** the consolidated report. The consolidated result must **** suitable for inclusion **** the the company ESRS E1 Climate Change disclosure and carry a FY2027 mandatory-reporting readiness assessment (CSRD Art. 8 + ESRS E1-4 cross-boundary obligations).",
+      "natural_request": "Produce a CSRD-compliant ESRS E1 Scope 2 CO₂ group disclosure for the the company EMEA portfolio via group-consolidated divisional inventories. Each in-scope business-unit division (DI, Business Unit 1, SI, Business Unit 2, Business Unit 3, Business Unit 4) independently compiles, owns, and attests its own divisional Scope 2 CO₂e sub-total covering its EMEA sites; no division can produce or sign off another division's figure. The group then consolidates the separately-owned, separately-signed sub-results into one ESRS E1 portfolio total, preserving each division's provenance chain and attestation. Any divisional sub-total not attested by its owning division must be flagged as unattested in the consolidated report. The consolidated result must be suitable for inclusion in the the company ESRS E1 Climate Change disclosure and carry a FY2027 mandatory-reporting readiness assessment (CSRD Art. 8 + ESRS E1-4 cross-boundary obligations).",
       "regulation_refs": [
         "REG-4"
       ],
@@ -445,25 +445,25 @@
       "site_filter": {
         "region": "EMEA",
         "bu_rc": [
-          "bu-01",
-          "bu-02",
-          "bu-03",
-          "bu-04",
-          "bu-05",
-          "bu-06"
+          "Business Unit 5",
+          "Business Unit 1",
+          "Business Unit 6",
+          "Business Unit 2",
+          "Business Unit 3",
+          "Business Unit 4"
         ]
       },
       "time_window": [
         "2024-01-01",
         "2024-12-31"
       ],
-      "expected_output": "A FY2024 group-consolidated ESRS E1 Scope 2 report showing, per ****-scope division: divisionally-owned Scope 2 sub-total (tCO₂e), method provenance, and divisional attestation status; plus the consolidated portfolio total, an attestation-coverage flag for any unattested divisional sub-result, and a FY2027 readiness assessment.",
+      "expected_output": "A FY2024 group-consolidated ESRS E1 Scope 2 report showing, per in-scope division: divisionally-owned Scope 2 sub-total (tCO₂e), method provenance, and divisional attestation status; plus the consolidated portfolio total, an attestation-coverage flag for any unattested divisional sub-result, and a FY2027 readiness assessment.",
       "pipeline_family": "tabular",
       "document_sources": null,
       "output_profile": {
         "output_type": "quantitative",
         "form": "numeric_measurement",
-        "description": "Consolidated numeric Scope 2 CO₂ total (tCO₂e) assembled from divisionally-owned sub-totals: each ****-scope division independently owns, computes, and attests its figure; **** single team can own the full group disclosure. The group consolidates the separately-signed sub-results. Provenance chain and per-division attestation status must **** included **** the artifact."
+        "description": "Consolidated numeric Scope 2 CO₂ total (tCO₂e) assembled from divisionally-owned sub-totals: each in-scope division independently owns, computes, and attests its figure; no single team can own the full group disclosure. The group consolidates the separately-signed sub-results. Provenance chain and per-division attestation status must be included in the artifact."
       },
       "assurance_profile": {
         "level": "independently_verifiable",
@@ -490,7 +490,7 @@
     "output_profile": {
       "output_type": "quantitative",
       "form": "numeric_measurement",
-      "description": "Consolidated numeric Scope 2 CO₂ total (tCO₂e) assembled from divisionally-owned sub-totals: each ****-scope division independently owns, computes, and attests its figure; **** single team can own the full group disclosure. The group consolidates the separately-signed sub-results. Provenance chain and per-division attestation status must **** included **** the artifact."
+      "description": "Consolidated numeric Scope 2 CO₂ total (tCO₂e) assembled from divisionally-owned sub-totals: each in-scope division independently owns, computes, and attests its figure; no single team can own the full group disclosure. The group consolidates the separately-signed sub-results. Provenance chain and per-division attestation status must be included in the artifact."
     },
     "assurance_profile": {
       "level": "independently_verifiable",

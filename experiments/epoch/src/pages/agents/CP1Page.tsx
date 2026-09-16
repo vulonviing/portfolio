@@ -18,6 +18,7 @@ import StageLoading from "../../components/StageLoading";
 import { useAgentEnvelope } from "../../lib/useAgentEnvelope";
 import { useAgentStageState } from "../../lib/useAgentStageState";
 import { useRun } from "../../context/RunContext";
+import type { MaskedNumber } from "../../lib/maskedValues";
 
 // ── CP1 payload shape ────────────────────────────────────────────────────────
 
@@ -31,7 +32,7 @@ interface CP1Payload {
   assurance_artifact: string;
   assurance_level: string;
   dual_method_required: boolean;
-  cluster_count: number;
+  cluster_count: MaskedNumber;
   cross_functional_need: boolean;
   risk_level: string;
   deadline_proximity_days: number | null;

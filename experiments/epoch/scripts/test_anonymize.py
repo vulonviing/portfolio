@@ -38,15 +38,17 @@ class AnonymizeTests(unittest.TestCase):
 
     def test_masks_structured_identity_geography_and_measurements(self) -> None:
         masked = self.mask(self.source)
-        self.assertEqual(masked["location_id"], "site-01")
-        self.assertEqual(masked["location_name"], "site-02")
-        self.assertEqual(masked["bu_rc"], "bu-01")
-        self.assertEqual(masked["country"], "geo-01")
-        self.assertEqual(masked["cdp_region"], "geo-02")
+        self.assertEqual(masked["location_id"], "Site ref 001")
+        self.assertEqual(masked["location_name"], "Site 001")
+        self.assertEqual(masked["bu_rc"], "Business Unit 1")
+        self.assertEqual(masked["country"], "Germany")
+        self.assertEqual(masked["cdp_region"], "Europe")
         self.assertEqual(masked["city"], MASK)
         self.assertEqual(masked["approved_by"], MASK)
-        for key in ("method_a", "method_b", "abs_delta", "pct_diff"):
-            self.assertEqual(masked[key], MASK)
+        self.assertEqual(masked["method_a"], "123.**")
+        self.assertEqual(masked["method_b"], "12*")
+        self.assertEqual(masked["abs_delta"], "3.4*")
+        self.assertEqual(masked["pct_diff"], "2.87*%")
 
     def test_masks_short_business_lists_and_result_prose_numbers(self) -> None:
         value = {
@@ -61,8 +63,11 @@ class AnonymizeTests(unittest.TestCase):
         }
         masked = self.mask(value)
         payload = masked["agents"]["c2"]["payload"]
-        self.assertEqual(payload["thin_data_divisions"], ["bu-01"])
-        self.assertNotRegex(payload["readiness_assessment"], r"\d")
+        self.assertEqual(payload["thin_data_divisions"], ["Business Unit 1"])
+        self.assertEqual(
+            payload["readiness_assessment"],
+            "<10 sites differ by 2.87*% and 12* tonnes.",
+        )
 
     def test_masks_catalog_values_and_statistics_but_keeps_schema_names(self) -> None:
         value = {
@@ -86,12 +91,12 @@ class AnonymizeTests(unittest.TestCase):
         }
         masked = self.mask(value)
         table = masked["catalog_snapshot"]["source_tables"]["dist_ie_energy_raw"]
-        self.assertEqual(table["row_count"], MASK)
-        self.assertEqual(table["columns"][0]["null_count"], MASK)
+        self.assertEqual(table["row_count"], "10*")
+        self.assertEqual(table["columns"][0]["null_count"], "<10")
         self.assertEqual(table["columns"][0]["name"], "amount_consumed_mwh")
         self.assertEqual(
             masked["catalog_snapshot"]["selectable_filters"]["entity_filters"]["country"],
-            ["geo-01"],
+            ["Germany"],
         )
 
     def test_masks_quality_counts_and_evidence_completeness(self) -> None:
@@ -115,12 +120,43 @@ class AnonymizeTests(unittest.TestCase):
         self.assertEqual(
             masked["agents"]["d1"]["payload"]["summary"]["tables_detail"]
             ["public_table_name"]["quality_summary"]["status"]["Approved"],
-            MASK,
+            "1*",
         )
         self.assertEqual(
             masked["agents"]["d2"]["payload"]["evidence_completeness"],
-            MASK,
+            "0.87*",
         )
+
+    def test_masks_granular_period_tolerance_and_profile_count(self) -> None:
+        value = {
+            "agents": {
+                "d3": {
+                    "payload": {
+                        "tolerance": 0.05,
+                        "rows": [{"year": "2025", "years_used": [2023, 2024, 2025]}],
+                    }
+                },
+                "cp1": {
+                    "payload": {
+                        "cluster_count": 6,
+                        "limitations": ["The 2025 dataset contains 17 locations."],
+                    }
+                },
+            }
+        }
+        masked = self.mask(value)
+        self.assertEqual(masked["agents"]["d3"]["payload"]["tolerance"], "5.*%")
+        self.assertEqual(masked["agents"]["d3"]["payload"]["rows"][0]["year"], "2025")
+        self.assertEqual(
+            masked["agents"]["d3"]["payload"]["rows"][0]["years_used"],
+            [2023, 2024, 2025],
+        )
+        self.assertEqual(masked["agents"]["cp1"]["payload"]["cluster_count"], "<10")
+        self.assertEqual(
+            masked["agents"]["cp1"]["payload"]["limitations"][0],
+            "The 2025 dataset contains 1* locations.",
+        )
+        verify_public_tree(masked, REGISTRY_ID, self.terms)
 
     def test_keeps_public_scope_numbers_outside_result_payloads(self) -> None:
         value = {"natural_request": "Apply the public 5% threshold in FY2024."}

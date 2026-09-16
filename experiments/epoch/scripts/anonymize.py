@@ -37,7 +37,8 @@ IDENTITY_KEYS = {
     "longitude",
     "location_city",
 }
-GEOGRAPHY_KEYS = {
+# Country and broad region are safe to publish; street-level geography remains masked.
+PUBLIC_GEOGRAPHY_KEYS = {
     "country",
     "country_name",
     "country_code",
@@ -45,6 +46,7 @@ GEOGRAPHY_KEYS = {
     "cdp_region",
     "region_name",
 }
+GEOGRAPHY_KEYS: set[str] = set()
 PERSON_KEYS = {"approved_by", "reviewer", "reviewed_by", "decided_by", "user"}
 MEASUREMENT_KEYS = {
     "gap",
@@ -71,8 +73,10 @@ DATA_COUNT_KEYS = {
     "unique_count",
     "site_count",
     "division_count",
+    "cluster_count",
 }
-DATA_RESULT_AGENTS = {"d1", "d2", "d3", "p1", "p2", "p3", "s1", "c1", "c2", "f1"}
+DATA_RESULT_AGENTS = {"d1", "d2", "d3", "cp1", "p1", "p2", "p3", "s1", "c1", "c2", "f1"}
+PERCENT_KEYS = {"pct_diff", "tolerance", "near_breach_ratio"}
 PROSE_KEYS = {
     "interpretation",
     "carried_caveats",
@@ -114,6 +118,16 @@ RESULT_COUNT_RE = re.compile(
     re.IGNORECASE,
 )
 RESULT_NUMBER_RE = re.compile(r"(?<![\w-])[+-]?\d[\d,]*(?![\w-])")
+RESULT_TOKEN_RE = re.compile(
+    r"(?<![\w-])[+-]?\d[\d,.]*(?:\s*(?:%|GWh|MWh|kWh|tCO₂e|tCO2e|(?:underlying\s+|source\s+)?(?:sites?|rows?|records?|entries|divisions?|locations?|flags?|findings?)))?(?![\w-])",
+    re.IGNORECASE,
+)
+PARTIAL_OUTPUT_RE = re.compile(r"(?:<10|[+-]?\d[\d,.]*\*+[\d.*]*)(?:\s*%)?")
+PUBLIC_YEAR_RE = re.compile(r"\b(?:19|20)\d{2}\b")
+PUBLIC_CONTEXT_NUMBER_RE = re.compile(
+    r"(?:(?:Business Unit|Site(?: ref)?|Scope|ETS|Art\.?)\s+|§)\d+",
+    re.IGNORECASE,
+)
 NUMBER_RE = re.compile(r"^[+-]?[\d][\d,.]*$")
 ISO_DATETIME_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
 COMPANY_RE = re.compile(r"\bSiemens[\w-]*(?:\s+AG)?\b", re.IGNORECASE)
@@ -147,17 +161,58 @@ def _scalar_values(value: Any) -> Iterable[Any]:
 @dataclass
 class Tokenizer:
     tables: dict[str, dict[str, str]] = field(default_factory=dict)
+    site_index: int = 0
+
+    def register_site_pairs(self, value: Any) -> None:
+        if isinstance(value, dict):
+            location_id = value.get("location_id")
+            location_name = value.get("location_name")
+            if location_id is not None and location_name is not None:
+                ref_table = self.tables.setdefault("site_ref", {})
+                name_table = self.tables.setdefault("site", {})
+                raw_ref = str(location_id).strip().casefold()
+                raw_name = str(location_name).strip().casefold()
+                if raw_ref not in ref_table and raw_name not in name_table:
+                    self.site_index += 1
+                    ref_table[raw_ref] = f"Site ref {self.site_index:03d}"
+                    name_table[raw_name] = f"Site {self.site_index:03d}"
+            for child in value.values():
+                self.register_site_pairs(child)
+        elif isinstance(value, list):
+            for child in value:
+                self.register_site_pairs(child)
+
+    def site_label(self, value: Any) -> str:
+        raw = str(value).strip().casefold()
+        if raw in self.tables.get("site", {}):
+            return self.tables["site"][raw]
+        if raw in self.tables.get("site_ref", {}):
+            return self.tables["site_ref"][raw].replace("Site ref", "Site")
+        return self.token("site", raw)
 
     def token(self, kind: str, value: Any) -> str:
         table = self.tables.setdefault(kind, {})
-        raw = str(value).strip()
+        raw = str(value).strip().casefold()
         if raw not in table:
-            table[raw] = f"{kind}-{len(table) + 1:02d}"
+            if kind in {"site", "site_ref"}:
+                self.site_index += 1
+                index = self.site_index
+            else:
+                index = len(table) + 1
+            if kind == "site":
+                table[raw] = f"Site {index:03d}"
+            elif kind == "site_ref":
+                table[raw] = f"Site ref {index:03d}"
+            elif kind == "bu":
+                table[raw] = f"Business Unit {index}"
+            else:
+                table[raw] = f"{kind}-{index:02d}"
         return table[raw]
 
 
 @dataclass
 class SensitiveTerms:
+    sites: set[str] = field(default_factory=set)
     identity: set[str] = field(default_factory=set)
     geography: set[str] = field(default_factory=set)
     business: set[str] = field(default_factory=set)
@@ -166,10 +221,13 @@ class SensitiveTerms:
     _compiled_prose_pattern: re.Pattern[str] | None = field(
         default=None, init=False, repr=False
     )
+    _compiled_business_pattern: re.Pattern[str] | None = field(default=None, init=False, repr=False)
+    _compiled_site_pattern: re.Pattern[str] | None = field(default=None, init=False, repr=False)
+    _compiled_hidden_pattern: re.Pattern[str] | None = field(default=None, init=False, repr=False)
 
     @property
     def prose_terms(self) -> list[str]:
-        terms = self.identity | self.geography | self.business | self.people
+        terms = self.sites | self.identity | self.geography | self.business | self.people
         return sorted((term for term in terms if term), key=len, reverse=True)
 
     @property
@@ -182,6 +240,32 @@ class SensitiveTerms:
                     rf"(?<!\w)(?:{alternatives})(?!\w)", re.IGNORECASE
                 )
         return self._compiled_prose_pattern
+
+    @staticmethod
+    def _pattern(values: set[str]) -> re.Pattern[str] | None:
+        if not values:
+            return None
+        alternatives = "|".join(re.escape(term) for term in sorted(values, key=len, reverse=True))
+        return re.compile(rf"(?<!\w)(?:{alternatives})(?!\w)", re.IGNORECASE)
+
+    @property
+    def business_pattern(self) -> re.Pattern[str] | None:
+        if self._compiled_business_pattern is None:
+            self._compiled_business_pattern = self._pattern(self.business)
+        return self._compiled_business_pattern
+
+    @property
+    def site_pattern(self) -> re.Pattern[str] | None:
+        if self._compiled_site_pattern is None:
+            self._compiled_site_pattern = self._pattern(self.sites)
+        return self._compiled_site_pattern
+
+    @property
+    def hidden_pattern(self) -> re.Pattern[str] | None:
+        if self._compiled_hidden_pattern is None:
+            hidden = (self.identity - self.sites) | self.geography | self.people
+            self._compiled_hidden_pattern = self._pattern(hidden)
+        return self._compiled_hidden_pattern
 
 
 def collect_sensitive_terms(
@@ -198,6 +282,8 @@ def collect_sensitive_terms(
             text = str(scalar).strip()
             if len(text) >= 5:
                 terms.identity.add(text)
+                if lowered in SITE_KEYS:
+                    terms.sites.add(text)
     elif lowered in GEOGRAPHY_KEYS:
         for scalar in _scalar_values(value):
             text = str(scalar).strip()
@@ -206,7 +292,7 @@ def collect_sensitive_terms(
     elif lowered in BUSINESS_KEYS:
         for scalar in _scalar_values(value):
             text = str(scalar).strip()
-            if text:
+            if len(text) >= 3 and any(character.isalpha() for character in text):
                 terms.business.add(text)
     elif lowered in PERSON_KEYS:
         for scalar in _scalar_values(value):
@@ -250,30 +336,101 @@ def collect_sensitive_terms_from_data_dir(data_dir: Path) -> SensitiveTerms:
     return terms
 
 
-def _replace_terms(text: str, terms: SensitiveTerms) -> str:
-    pattern = terms.prose_pattern
-    return pattern.sub(MASK, text) if pattern else text
+def _replace_terms(text: str, terms: SensitiveTerms, tokenizer: Tokenizer) -> str:
+    cleaned = text
+    if terms.business_pattern:
+        cleaned = terms.business_pattern.sub(
+            lambda match: tokenizer.token("bu", match.group(0)), cleaned
+        )
+    if terms.site_pattern:
+        cleaned = terms.site_pattern.sub(
+            lambda match: tokenizer.site_label(match.group(0)), cleaned
+        )
+    if terms.hidden_pattern:
+        cleaned = terms.hidden_pattern.sub(MASK, cleaned)
+    return cleaned
+
+
+def _partial_mask_text(text: str) -> str:
+    digit_count = sum(character.isdigit() for character in text)
+    if digit_count == 1:
+        return "".join("*" if character.isdigit() else character for character in text)
+    reveal = min(3, max(1, digit_count - 1))
+    seen = 0
+    result: list[str] = []
+    for character in text:
+        if character.isdigit():
+            seen += 1
+            result.append(character if seen <= reveal else "*")
+        else:
+            result.append(character)
+    return "".join(result)
+
+
+def _partial_mask_number(value: int | float) -> str:
+    if abs(value) < 10 and float(value).is_integer():
+        return f"{int(value)}.*"
+    return _partial_mask_text(format(value, ".12g"))
+
+
+def _partial_mask_count(value: int | float) -> str:
+    if 0 <= value < 10:
+        return "<10"
+    return _partial_mask_text(format(value, ".12g"))
+
+
+def _partial_mask_percent(value: int | float) -> str:
+    percent = format(value * 100, ".8f").rstrip("0").rstrip(".")
+    if "." not in percent:
+        percent += ".0"
+    return f"{_partial_mask_text(percent)}%"
+
+
+def _mask_result_token(match: re.Match[str]) -> str:
+    token = match.group(0)
+    context = match.string[max(0, match.start() - 24):match.start()]
+    if re.search(
+        r"(?:(?:Business Unit|Site(?: ref)?|Scope|ETS|Art\.?)\s+|§)$",
+        context,
+        re.IGNORECASE,
+    ):
+        return token
+    parts = re.fullmatch(r"([+-]?\d[\d,.]*)(.*)", token, re.IGNORECASE)
+    if not parts:
+        return token
+    number, suffix = parts.groups()
+    bare = number.replace(",", "")
+    if not suffix and re.fullmatch(r"(?:19|20)\d{2}", bare):
+        return token
+    count_match = re.fullmatch(
+        r"([+-]?\d[\d,.]*)\s+((?:underlying\s+|source\s+)?(?:sites?|rows?|records?|entries|divisions?|locations?|flags?|findings?))",
+        token,
+        re.IGNORECASE,
+    )
+    if count_match and abs(float(count_match.group(1).replace(",", ""))) < 10:
+        return f"<10 {count_match.group(2)}"
+    return f"{_partial_mask_text(number)}{suffix}"
 
 
 def scrub_prose(
     text: str,
     terms: SensitiveTerms,
+    tokenizer: Tokenizer,
     *,
     tabular: bool,
     mask_result_numbers: bool = False,
 ) -> str:
-    cleaned = _replace_terms(text, terms)
+    cleaned = _replace_terms(text, terms, tokenizer)
     if tabular:
         cleaned = COMPANY_RE.sub("the company", cleaned)
-        cleaned = UNIT_NUMBER_RE.sub(MASK, cleaned)
+        if not mask_result_numbers:
+            cleaned = UNIT_NUMBER_RE.sub(_mask_result_token, cleaned)
         if not ISO_DATETIME_RE.match(cleaned):
             cleaned = POSTAL_RE.sub(MASK, cleaned)
-            cleaned = COORD_RE.sub(MASK, cleaned)
+            if not mask_result_numbers:
+                cleaned = COORD_RE.sub(MASK, cleaned)
         if mask_result_numbers:
-            cleaned = RESULT_PERCENT_RE.sub(MASK, cleaned)
-            cleaned = RESULT_DECIMAL_RE.sub(MASK, cleaned)
-            cleaned = RESULT_COUNT_RE.sub(MASK, cleaned)
-            cleaned = RESULT_NUMBER_RE.sub(MASK, cleaned)
+            cleaned = RESULT_TOKEN_RE.sub(_mask_result_token, cleaned)
     return cleaned
 
 
@@ -327,11 +484,15 @@ def anonymize(
     tokenizer = tokenizer or Tokenizer()
     lowered = (key or "").lower()
 
+    if tabular and key is None and not path:
+        tokenizer.register_site_pairs(value)
+
     if lowered in PERSON_KEYS:
         return _map_nested_values(value, lambda _: MASK)
 
     if tabular and lowered in SITE_KEYS:
-        return _map_nested_values(value, lambda item: tokenizer.token("site", item))
+        kind = "site_ref" if lowered == "location_id" else "site"
+        return _map_nested_values(value, lambda item: tokenizer.token(kind, item))
     if tabular and lowered in BUSINESS_KEYS:
         return _map_nested_values(value, lambda item: tokenizer.token("bu", item))
     if tabular and lowered in GEOGRAPHY_KEYS:
@@ -344,9 +505,17 @@ def anonymize(
         if isinstance(value, (int, float)) or (
             isinstance(value, str) and NUMBER_RE.fullmatch(value.strip())
         ):
-            return MASK
+            numeric = float(value) if isinstance(value, str) else value
+            if lowered in PERCENT_KEYS:
+                return _partial_mask_percent(numeric)
+            if _data_count_key(key, path):
+                return _partial_mask_count(numeric)
+            return _partial_mask_number(numeric)
+    if tabular and lowered == "tolerance" and _data_result_path(path):
+        numeric = float(value) if isinstance(value, str) else value
+        return _partial_mask_percent(numeric)
     if tabular and "catalog_snapshot" in path and isinstance(value, (int, float)) and not isinstance(value, bool):
-        return MASK
+        return _partial_mask_number(value)
 
     if isinstance(value, dict):
         filter_column = str(value.get("column", "")).lower() if tabular else ""
@@ -357,8 +526,9 @@ def anonymize(
                     child, lambda item: tokenizer.token("bu", item)
                 )
             elif child_key in {"value", "values"} and filter_column in SITE_KEYS:
+                kind = "site_ref" if filter_column == "location_id" else "site"
                 transformed[child_key] = _map_nested_values(
-                    child, lambda item: tokenizer.token("site", item)
+                    child, lambda item: tokenizer.token(kind, item)
                 )
             elif child_key in {"value", "values"} and filter_column in GEOGRAPHY_KEYS:
                 transformed[child_key] = _map_nested_values(
@@ -366,6 +536,8 @@ def anonymize(
                 )
             elif child_key in {"value", "values"} and filter_column in IDENTITY_KEYS:
                 transformed[child_key] = _map_nested_values(child, lambda _: MASK)
+            elif child_key in {"value", "values"} and filter_column in PUBLIC_GEOGRAPHY_KEYS:
+                transformed[child_key] = child
             elif (
                 child_key in {"value", "values"}
                 and filter_column
@@ -404,11 +576,14 @@ def anonymize(
             return tokenizer.token("geo", raw)
         if raw in terms.identity:
             return MASK
+        if lowered in PUBLIC_GEOGRAPHY_KEYS:
+            return value
         if "selectable_filters" in path or "available_date_range" in path:
             return tokenizer.token("category", raw)
         return scrub_prose(
             value,
             terms,
+            tokenizer,
             tabular=True,
             mask_result_numbers=(
                 _data_result_path(path)
@@ -418,7 +593,7 @@ def anonymize(
     if isinstance(value, str) and (
         lowered in PROSE_KEYS or len(value) >= 80
     ):
-        return scrub_prose(value, terms, tabular=tabular)
+        return scrub_prose(value, terms, tokenizer, tabular=tabular)
     return value
 
 
@@ -444,11 +619,12 @@ def verify_public_tree(
                 raise PrivacyError(f"person field survived at {location}.{lowered}")
     if tabular and lowered in SITE_KEYS:
         for scalar in _scalar_values(value):
-            if not isinstance(scalar, str) or not re.fullmatch(r"site-\d+", scalar):
+            expected = r"Site ref \d+" if lowered == "location_id" else r"Site \d+"
+            if not isinstance(scalar, str) or not re.fullmatch(expected, scalar):
                 raise PrivacyError(f"site identity survived at {location}.{lowered}")
     if tabular and lowered in BUSINESS_KEYS:
         for scalar in _scalar_values(value):
-            if not isinstance(scalar, str) or not re.fullmatch(r"bu-\d+", scalar):
+            if not isinstance(scalar, str) or not re.fullmatch(r"Business Unit \d+", scalar):
                 raise PrivacyError(f"business identity survived at {location}.{lowered}")
     if tabular and lowered in GEOGRAPHY_KEYS:
         for scalar in _scalar_values(value):
@@ -465,6 +641,11 @@ def verify_public_tree(
             isinstance(value, str) and NUMBER_RE.fullmatch(value.strip())
         ):
             raise PrivacyError(f"measurement survived at {location}.{lowered}")
+    if tabular and lowered == "tolerance" and _data_result_path(path) and (
+        isinstance(value, (int, float))
+        or (isinstance(value, str) and NUMBER_RE.fullmatch(value.strip()))
+    ):
+        raise PrivacyError(f"result tolerance survived at {location}.{lowered}")
     if tabular and "catalog_snapshot" in path and isinstance(value, (int, float)) and not isinstance(value, bool):
         raise PrivacyError(f"catalog number survived at {location}.{lowered}")
 
@@ -473,11 +654,12 @@ def verify_public_tree(
         filter_values = value.get("values", value.get("value"))
         if filter_column in BUSINESS_KEYS:
             for scalar in _scalar_values(filter_values):
-                if not isinstance(scalar, str) or not re.fullmatch(r"bu-\d+", scalar):
+                if not isinstance(scalar, str) or not re.fullmatch(r"Business Unit \d+", scalar):
                     raise PrivacyError(f"business filter survived at {location}")
         if filter_column in SITE_KEYS:
             for scalar in _scalar_values(filter_values):
-                if not isinstance(scalar, str) or not re.fullmatch(r"site-\d+", scalar):
+                expected = r"Site ref \d+" if filter_column == "location_id" else r"Site \d+"
+                if not isinstance(scalar, str) or not re.fullmatch(expected, scalar):
                     raise PrivacyError(f"site filter survived at {location}")
         if filter_column in GEOGRAPHY_KEYS:
             for scalar in _scalar_values(filter_values):
@@ -505,7 +687,9 @@ def verify_public_tree(
                 path=(*path, str(index)),
             )
     elif isinstance(value, str):
-        if value == MASK or re.fullmatch(r"(?:site|bu|geo|category)-\d+", value):
+        if value == MASK or re.fullmatch(
+            r"(?:Site|Site ref) \d+|Business Unit \d+|(?:geo|category)-\d+", value
+        ):
             return
         if terms.prose_pattern and terms.prose_pattern.search(value):
             raise PrivacyError(f"denylisted prose survived at {location}")
@@ -514,13 +698,14 @@ def verify_public_tree(
             or (not ISO_DATETIME_RE.match(value) and (POSTAL_RE.search(value) or COORD_RE.search(value)))
         ):
             raise PrivacyError(f"sensitive pattern survived at {location}")
+        numeric_check = PUBLIC_CONTEXT_NUMBER_RE.sub("", value)
+        numeric_check = PUBLIC_YEAR_RE.sub("", PARTIAL_OUTPUT_RE.sub("", numeric_check))
         if tabular and _data_result_path(path) and (
             (lowered in RESULT_PROSE_KEYS or len(value) >= 80)
             and (
-                RESULT_PERCENT_RE.search(value)
-                or RESULT_DECIMAL_RE.search(value)
-                or RESULT_COUNT_RE.search(value)
-                or RESULT_NUMBER_RE.search(value)
+                RESULT_PERCENT_RE.search(numeric_check)
+                or RESULT_DECIMAL_RE.search(numeric_check)
+                or RESULT_COUNT_RE.search(numeric_check)
             )
         ):
             raise PrivacyError(f"result number survived at {location}")

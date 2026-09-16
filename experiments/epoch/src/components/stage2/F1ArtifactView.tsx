@@ -11,7 +11,7 @@ import {
   IconSearch,
 } from "@tabler/icons-react";
 import {
-  MASK,
+  formatMaskedCount,
   formatMaskedNumber,
   formatMaskedPercent,
   isPublicNumber,
@@ -545,7 +545,7 @@ function F1StructuredMemoView({
                   <IconMapPin size={16} className="text-[#8b96ad]" />
                   <h2 className="text-sm font-medium text-[#e9eef7]">Sites</h2>
                 </div>
-                <span className="font-mono text-xs text-[#5c6780]">{MASK}</span>
+                <span className="font-mono text-xs text-[#5c6780]">{formatMaskedCount(sites.length)}</span>
                 <div className="ml-auto flex flex-wrap justify-end gap-1.5">
                   <button
                     type="button"
@@ -941,7 +941,7 @@ function F1YesNoAlertView({
                   <IconMapPin size={16} className="text-[#8b96ad]" />
                   <h2 className="text-sm font-medium text-[#e9eef7]">Sites</h2>
                 </div>
-                <span className="font-mono text-xs text-[#5c6780]">{MASK}</span>
+                <span className="font-mono text-xs text-[#5c6780]">{formatMaskedCount(sites.length)}</span>
                 <div className="ml-auto flex flex-wrap justify-end gap-1">
                   {(["all", "obligated", "near_breach", "compliant"] as const).map(
                     (filter) => (
@@ -1181,7 +1181,7 @@ function F1NumericView({
               <div className="grid grid-cols-2 gap-2">
                 <Kpi
                   label="Portfolio total (t)"
-                  value={isPublicNumber(ps.portfolio_total_t) ? Math.round(ps.portfolio_total_t) : MASK}
+                  value={formatMaskedNumber(ps.portfolio_total_t, { maximumFractionDigits: 0 })}
                   tone="neutral"
                 />
                 <Kpi label="Divisions" value={ps.division_count} tone="neutral" />
@@ -1226,7 +1226,7 @@ function F1NumericView({
             <h2 className="text-sm font-medium text-[#e9eef7]">
               Divisional measurement results
             </h2>
-            <span className="font-mono text-xs text-[#5c6780]">{MASK}</span>
+            <span className="font-mono text-xs text-[#5c6780]">{formatMaskedCount(divisions.length)}</span>
           </div>
           <div className="grid gap-3 p-4 md:grid-cols-2 xl:grid-cols-3">
             {divisions.map((division) => {

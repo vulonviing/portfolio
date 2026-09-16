@@ -19,7 +19,7 @@ export interface DualMethodPayload {
   source_domain: string;
   method_a_column: string;
   method_b_column: string;
-  tolerance: number;
+  tolerance: MaskedNumber;
   rows: DualMethodRow[];
   site_count: MaskedNumber;
   n_flagged: MaskedNumber;
