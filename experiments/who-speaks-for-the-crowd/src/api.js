@@ -36,21 +36,19 @@ async function request(path, options = {}) {
   return response.json();
 }
 
-const adminHeaders = (token) => ({ Authorization: `Bearer ${token}` });
-
 export const getState = () => request('/v1/state');
-export const resetRun = (token) => request('/v1/admin/run/reset', { method: 'POST', headers: adminHeaders(token) });
-export const openPoll = (pollKey, token) => request(`/v1/admin/polls/${pollKey}/open`, { method: 'POST', headers: adminHeaders(token) });
-export const closePoll = (pollKey, token) => request(`/v1/admin/polls/${pollKey}/close`, { method: 'POST', headers: adminHeaders(token) });
-export const reopenPoll = (pollKey, token) => request(`/v1/admin/polls/${pollKey}/reopen`, { method: 'POST', headers: adminHeaders(token) });
+export const resetRun = () => request('/v1/admin/run/reset', { method: 'POST' });
+export const openPoll = (pollKey) => request(`/v1/admin/polls/${pollKey}/open`, { method: 'POST' });
+export const closePoll = (pollKey) => request(`/v1/admin/polls/${pollKey}/close`, { method: 'POST' });
+export const reopenPoll = (pollKey) => request(`/v1/admin/polls/${pollKey}/reopen`, { method: 'POST' });
 
 export const submitVote = ({ runId, pollKey, choice, participantId }) => request('/v1/vote', {
   method: 'PUT',
   body: JSON.stringify({ runId, pollKey, choice, participantId }),
 });
 
-async function downloadCsv(path, filename, token) {
-  const response = await fetch(`${apiBase}${path}`, { headers: adminHeaders(token) });
+async function downloadCsv(path, filename) {
+  const response = await fetch(`${apiBase}${path}`);
   if (!response.ok) throw new ApiError(`Export failed (${response.status})`, response.status);
   const blob = await response.blob();
   const url = URL.createObjectURL(blob);
@@ -61,5 +59,5 @@ async function downloadCsv(path, filename, token) {
   URL.revokeObjectURL(url);
 }
 
-export const downloadExport = (token) => downloadCsv('/v1/admin/export', 'science-slam-results', token);
-export const downloadRawExport = (token) => downloadCsv('/v1/admin/export/raw', 'science-slam-raw-votes', token);
+export const downloadExport = () => downloadCsv('/v1/admin/export', 'science-slam-results');
+export const downloadRawExport = () => downloadCsv('/v1/admin/export/raw', 'science-slam-raw-votes');

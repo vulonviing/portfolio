@@ -113,7 +113,7 @@ function PollSlide({ poll, phase, state, audienceUrl, warning }) {
   );
 }
 
-function PresenterPanel({ open, onClose, token, setToken, state, currentPoll, onReset, onReopen, onExport, onRawExport, message }) {
+function PresenterPanel({ open, onClose, state, currentPoll, onReset, onReopen, onExport, onRawExport, message }) {
   if (!open) return null;
   return (
     <div className="presenter-backdrop" role="presentation" onMouseDown={onClose}>
@@ -122,7 +122,6 @@ function PresenterPanel({ open, onClose, token, setToken, state, currentPoll, on
           <div><span>PRESENTER CONTROL</span><h2>Live voting preflight</h2></div>
           <button type="button" onClick={onClose} aria-label="Close presenter controls">×</button>
         </header>
-        <label>Admin token<input type="password" value={token} onChange={(event) => setToken(event.target.value)} autoComplete="off" /></label>
         <div className="presenter-status">
           <span>Run</span><strong>{state?.runId ? 'ready' : 'not started'}</strong>
           <span>API phase</span><strong>{state?.phase || 'offline'}</strong>
@@ -134,7 +133,7 @@ function PresenterPanel({ open, onClose, token, setToken, state, currentPoll, on
           <button type="button" onClick={onExport}>Download results CSV</button>
           <button type="button" onClick={onRawExport}>Download raw archive</button>
         </div>
-        <p className="presenter-message">{message || 'Token stays in this browser tab only.'}</p>
+        <p className="presenter-message">{message || 'The VPS controls whether voting is online.'}</p>
       </section>
     </div>
   );
@@ -148,8 +147,6 @@ function PresentationApp() {
   const [controlsVisible, setControlsVisible] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [adminToken, setAdminToken] = useState(() => sessionStorage.getItem('science-slam-admin-token')
-    || (import.meta.env.DEV ? 'dev-admin-token' : ''));
   const [presenterMessage, setPresenterMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const localMode = useRef(new Set());
@@ -167,11 +164,6 @@ function PresentationApp() {
     return url.toString();
   }, []);
 
-  const persistToken = useCallback((value) => {
-    setAdminToken(value);
-    if (value) sessionStorage.setItem('science-slam-admin-token', value);
-    else sessionStorage.removeItem('science-slam-admin-token');
-  }, []);
   const showControls = useCallback(() => {
     setControlsVisible(true);
     window.clearTimeout(hideTimer.current);
@@ -209,15 +201,9 @@ function PresentationApp() {
     if (phase === 'tweet') { setPollPhase(poll.key, 'candidates'); return; }
     if (phase === 'candidates') {
       setWarning('');
-      if (!adminToken) {
-        localMode.current.add(poll.key);
-        setWarning('Presenter token missing — continuing in offline mode.');
-        setPollPhase(poll.key, 'live');
-        return;
-      }
       setBusy(true);
       try {
-        const state = await openPoll(poll.key, adminToken);
+        const state = await openPoll(poll.key);
         setRemoteState(state);
         localMode.current.delete(poll.key);
       } catch (error) {
@@ -233,7 +219,7 @@ function PresentationApp() {
       if (localMode.current.has(poll.key)) { setPollPhase(poll.key, 'closed'); return; }
       setBusy(true);
       try {
-        const state = await closePoll(poll.key, adminToken);
+        const state = await closePoll(poll.key);
         setRemoteState(state);
         setWarning('');
         setPollPhase(poll.key, 'closed');
@@ -245,7 +231,7 @@ function PresentationApp() {
       return;
     }
     goTo(current + 1);
-  }, [adminToken, busy, current, goTo, phase, poll, setPollPhase]);
+  }, [busy, current, goTo, phase, poll, setPollPhase]);
 
   const previous = useCallback(async () => {
     if (busy) return;
@@ -322,10 +308,8 @@ function PresentationApp() {
   };
 
   const handleReset = async () => {
-    persistToken(adminToken.trim());
-    if (!adminToken.trim()) { setPresenterMessage('Enter the admin token first.'); return; }
     try {
-      const state = await resetRun(adminToken.trim());
+      const state = await resetRun();
       setRemoteState(state);
       setPhases(initialPhases());
       localMode.current.clear();
@@ -333,9 +317,9 @@ function PresentationApp() {
     } catch (error) { setPresenterMessage(error.message); }
   };
   const handleReopen = async () => {
-    if (!poll || !adminToken.trim()) return;
+    if (!poll) return;
     try {
-      const state = await reopenPoll(poll.key, adminToken.trim());
+      const state = await reopenPoll(poll.key);
       setRemoteState(state);
       localMode.current.delete(poll.key);
       setPollPhase(poll.key, 'live');
@@ -343,13 +327,11 @@ function PresentationApp() {
     } catch (error) { setPresenterMessage(error.message); }
   };
   const handleExport = async () => {
-    if (!adminToken.trim()) { setPresenterMessage('Enter the admin token first.'); return; }
-    try { await downloadExport(adminToken.trim()); setPresenterMessage('CSV downloaded.'); }
+    try { await downloadExport(); setPresenterMessage('CSV downloaded.'); }
     catch (error) { setPresenterMessage(error.message); }
   };
   const handleRawExport = async () => {
-    if (!adminToken.trim()) { setPresenterMessage('Enter the admin token first.'); return; }
-    try { await downloadRawExport(adminToken.trim()); setPresenterMessage('Raw vote CSV downloaded.'); }
+    try { await downloadRawExport(); setPresenterMessage('Raw vote CSV downloaded.'); }
     catch (error) { setPresenterMessage(error.message); }
   };
 
@@ -374,7 +356,7 @@ function PresentationApp() {
         <button type="button" onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}><span className="fullscreen-mark" aria-hidden="true">{isFullscreen ? '×' : '⛶'}</span></button>
       </nav>
       <p className="keyboard-hint" aria-hidden="true">← → navigate · P preflight · F fullscreen</p>
-      <PresenterPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} token={adminToken} setToken={persistToken} state={remoteState} currentPoll={poll} onReset={handleReset} onReopen={handleReopen} onExport={handleExport} onRawExport={handleRawExport} message={presenterMessage} />
+      <PresenterPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} state={remoteState} currentPoll={poll} onReset={handleReset} onReopen={handleReopen} onExport={handleExport} onRawExport={handleRawExport} message={presenterMessage} />
     </main>
   );
 }

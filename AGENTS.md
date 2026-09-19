@@ -156,9 +156,9 @@ under `who-speaks-for-the-crowd/`. Before publishing it, run `npm test`,
 
 The production API is `https://vote-api.emrecanulu.com`; its deployment and
 operator runbook live outside this repo at
-`../science slam seds/docs/live-voting-operations.md`. Never commit API admin
-tokens, Cloudflare connector tokens, participant secrets, or local `.env`
-files here.
+`../science slam seds/docs/live-voting-operations.md`. There is no presenter
+token; VPS start/stop controls public availability. Never commit Cloudflare
+connector tokens, participant secrets, or local `.env` files here.
 
 This deck must remain absent from the portfolio home page, navigation,
 Resonance cards, content indexes, and `sitemap.xml`. Preserve the strict
