@@ -1,10 +1,12 @@
+import { polls } from './polls.js';
+
 const base = import.meta.env.BASE_URL;
 
 const titles = [
   'Who Speaks for the Crowd?',
-  'Would you show this note? A factual correction',
-  'Would you show this note? An unsupported attack',
-  'Would you show this note? A troll punchline',
+  'Which note should be shown? Wikimedia',
+  'Which note should be shown? Shelter post',
+  'Which note should be shown? A punchline',
   'One note. One decision.',
   '95.1% said helpful. X still did not display it.',
   'X already looks for unlikely agreement.',
@@ -18,9 +20,15 @@ const titles = [
   'The crowd is not one number.',
 ];
 
-export const slides = titles.map((title, index) => ({
-  id: index + 1,
-  type: 'image',
-  title,
-  src: `${base}slides/slide-${String(index + 1).padStart(2, '0')}.png`,
-}));
+export const slides = titles.map((title, index) => {
+  const id = index + 1;
+  const poll = polls.find((item) => item.slideId === id);
+  return poll
+    ? { id, type: 'poll', title, pollKey: poll.key }
+    : {
+        id,
+        type: 'image',
+        title,
+        src: `${base}slides/slide-${String(id).padStart(2, '0')}.png`,
+      };
+});

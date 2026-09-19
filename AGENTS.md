@@ -147,6 +147,26 @@ The generated staging data under `experiments/epoch/public/data/` is ignored;
 the publishable, verified copy is included in the committed `/epoch/` output.
 The audit must pass after every EPOCH rebuild; `noindex` is not a privacy check.
 
+### Science Slam deck and live voting
+
+`experiments/who-speaks-for-the-crowd/` is the source for the unlisted Science
+Slam presentation and audience voting UI. Its production output is committed
+under `who-speaks-for-the-crowd/`. Before publishing it, run `npm test`,
+`npm run lint`, and `npm run build` from the experiment directory.
+
+The production API is `https://vote-api.emrecanulu.com`; its deployment and
+operator runbook live outside this repo at
+`../science slam seds/docs/live-voting-operations.md`. Never commit API admin
+tokens, Cloudflare connector tokens, participant secrets, or local `.env`
+files here.
+
+This deck must remain absent from the portfolio home page, navigation,
+Resonance cards, content indexes, and `sitemap.xml`. Preserve the strict
+`noindex, nofollow, noarchive, nosnippet, noimageindex` meta in both source and
+built HTML. Preserve both `/who-speaks-for-the-crowd/` blocks in `robots.txt`.
+Do not block the HTML route for generic search crawlers: they need to fetch it
+to observe `noindex`. AI crawlers are blocked from the entire route.
+
 ## Conventions
 
 - **CSS**: no inline `<style>`, no framework, no bundler. Load order is always
