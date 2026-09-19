@@ -10,6 +10,9 @@ Disallow: /experiments/cuda-stack/
 Disallow: /epoch/assets/
 Disallow: /epoch/data/
 Disallow: /experiments/epoch/
+Disallow: /who-speaks-for-the-crowd/assets/
+Disallow: /who-speaks-for-the-crowd/slides/
+Disallow: /experiments/who-speaks-for-the-crowd/
 
 # Search crawlers remain allowed so they can read the noindex directives on
 # these HTML pages. AI training and user-directed retrieval crawlers are denied
@@ -37,5 +40,7 @@ Disallow: /cuda-stack/
 Disallow: /experiments/cuda-stack/
 Disallow: /epoch/
 Disallow: /experiments/epoch/
+Disallow: /who-speaks-for-the-crowd/
+Disallow: /experiments/who-speaks-for-the-crowd/
 
 Sitemap: https://emrecanulu.com/sitemap.xml
