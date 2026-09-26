@@ -477,6 +477,15 @@ function ClosingSlide({ number }) {
         <span>Cross-Constituency Aggregation for Community Notes</span>
         <h1>Any questions?</h1>
         <p>Emrecan Ulu · Jingyao Shi</p>
+        <div className="closing-contact">
+          <div className="closing-emails">
+            <span>Emrecan · <a href="mailto:emrecanulu@outlook.com">emrecanulu@outlook.com</a></span>
+            <span>Jingyao · xxxx@xxx.com</span>
+          </div>
+          <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes" target="_blank" rel="noopener noreferrer">
+            github.com/vulonviing/cross-constituency-aggregation-community-notes
+          </a>
+        </div>
       </div>
     </article>
   );

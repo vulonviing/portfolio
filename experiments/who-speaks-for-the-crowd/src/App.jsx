@@ -524,6 +524,7 @@ function PresentationApp() {
       setPhases(initialPhases());
       setSlideSteps({});
       localMode.current.clear();
+      goTo(0);
       setPresenterMessage('Fresh run started. The fixed QR is ready.');
     } catch (error) { setPresenterMessage(error.message); }
   };

@@ -478,10 +478,14 @@
 /* 17 · closing */
 .closing-slide { display: flex; align-items: center; justify-content: center; padding: 0; }
 .closing-number { position: absolute; top: 4.7cqh; right: 4.5cqw; color: var(--native-muted); font-size: 1.55cqh; font-weight: 700; }
-.closing-content { display: grid; max-width: 82%; justify-items: center; gap: 4cqh; text-align: center; }
+.closing-content { display: grid; max-width: 88%; justify-items: center; gap: 2.8cqh; text-align: center; }
 .closing-content > span { color: var(--native-blue); font-size: 2.5cqh; font-weight: 800; }
 .closing-content h1 { margin: 0; font-size: 8cqh; line-height: 1.05; letter-spacing: -0.04em; white-space: nowrap; }
 .closing-content p { margin: 0; color: var(--native-muted); font-size: 2.35cqh; font-weight: 700; }
+.closing-contact { display: grid; gap: 1.1cqh; justify-items: center; font-size: 1.8cqh; }
+.closing-emails { display: grid; gap: 0.5cqh; color: var(--native-muted); }
+.closing-contact a { color: var(--native-ink); text-decoration: none; overflow-wrap: anywhere; }
+.closing-contact a:hover, .closing-contact a:focus-visible { color: var(--native-blue); text-decoration: underline; }
 
 @media (prefers-reduced-motion: reduce) {
   .native-reveal { transform: none; }
