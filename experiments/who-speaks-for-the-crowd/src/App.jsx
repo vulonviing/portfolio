@@ -32,35 +32,46 @@ function VoteQr({ audienceUrl, large = false, compact = false, label = 'Scan onc
   );
 }
 
+const BLUE_COLS = [3, 7.5, 12, 16.5, 21];
+const BLUE_ROWS = [14, 20, 26, 32, 38];
+const CORAL_COLS = [79, 83.5, 88, 92.5, 97];
+const CORAL_ROWS = [50, 57, 64, 71, 78];
+const CARD_LEFT = 25;
+const CARD_RIGHT = 47;
+const BLUE_LINE_ENDS = [27, 31, 35, 39, 43];
+const CORAL_LINE_STARTS = [30, 38, 46, 54, 60];
+
 function NetworkArtwork({ audienceUrl }) {
-  const dots = Array.from({ length: 25 }, (_, index) => index);
+  const blueDots = BLUE_ROWS.flatMap((y) => BLUE_COLS.map((x) => ({ x, y })));
+  const coralDots = CORAL_ROWS.flatMap((y) => CORAL_COLS.map((x) => ({ x, y })));
+  const blueLinkX = BLUE_COLS[3];
+  const coralLinkX = CORAL_COLS[1];
+
   return (
     <div className="network-artwork" aria-label="Two groups connecting to a shared note">
-      <div className="network-dots network-dots-blue" aria-hidden="true">
-        {dots.map((dot) => <span key={`blue-${dot}`} />)}
-      </div>
-      <svg className="network-lines" viewBox="0 0 100 100" aria-hidden="true">
+      <svg className="network-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <g className="network-dots-blue">
+          {blueDots.map((dot, index) => <circle key={`blue-${index}`} cx={dot.x} cy={dot.y} r="0.85" />)}
+        </g>
+        <g className="network-dots-coral">
+          {coralDots.map((dot, index) => <circle key={`coral-${index}`} cx={dot.x} cy={dot.y} r="0.85" />)}
+        </g>
         <g className="network-lines-blue">
-          <line x1="24" y1="28" x2="43" y2="40" />
-          <line x1="24" y1="36" x2="43" y2="45" />
-          <line x1="24" y1="44" x2="43" y2="50" />
-          <line x1="24" y1="52" x2="43" y2="55" />
+          {BLUE_ROWS.map((y, index) => (
+            <line key={`blue-line-${index}`} x1={blueLinkX} y1={y} x2={CARD_LEFT + 6} y2={BLUE_LINE_ENDS[index]} />
+          ))}
         </g>
         <g className="network-lines-coral">
-          <line x1="64" y1="52" x2="79" y2="67" />
-          <line x1="64" y1="57" x2="79" y2="75" />
-          <line x1="64" y1="62" x2="79" y2="83" />
-          <line x1="64" y1="67" x2="79" y2="91" />
+          {CORAL_ROWS.map((y, index) => (
+            <line key={`coral-line-${index}`} x1={CARD_RIGHT - 6} y1={CORAL_LINE_STARTS[index]} x2={coralLinkX} y2={y} />
+          ))}
         </g>
       </svg>
       <div className="cover-qr-card">
         <div role="img" aria-label="QR code for the live audience vote">
-          <QRCodeSVG value={audienceUrl} size={220} level="M" />
+          <QRCodeSVG value={audienceUrl} size={280} level="M" />
         </div>
         <strong>JOIN THE LIVE VOTE</strong>
-      </div>
-      <div className="network-dots network-dots-coral" aria-hidden="true">
-        {dots.map((dot) => <span key={`coral-${dot}`} />)}
       </div>
     </div>
   );
@@ -228,15 +239,15 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
   return (
     <div className={`poll-slide poll-phase-${phase}`}>
       <div className="poll-heading">
-        <div><span>{poll.eyebrow}</span><span>{String(number).padStart(2, '0')}</span></div>
-        <h1>{phase === 'tweet' ? 'Read the post first.' : poll.title}</h1>
+        <div className="poll-heading-text">
+          <div><span>{poll.eyebrow}</span><span>{String(number).padStart(2, '0')}</span></div>
+          <h1>{phase === 'tweet' ? 'Read the post first.' : poll.title}</h1>
+        </div>
+        <VoteQr audienceUrl={audienceUrl} compact label="JOIN" />
       </div>
       <div className="poll-content">
         {!showCandidates ? (
-          <>
-            <div className="poll-stage-qr"><VoteQr audienceUrl={audienceUrl} compact label="JOIN" /></div>
-            <div className="poll-source poll-source-feature"><PostCard post={poll.post} /></div>
-          </>
+          <div className="poll-source poll-source-feature"><PostCard post={poll.post} /></div>
         ) : (
           <>
             <div className="poll-source">
@@ -250,7 +261,6 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
                 </span>
                 <strong>{total} {total === 1 ? 'vote' : 'votes'}</strong>
               </div>
-              <VoteQr audienceUrl={audienceUrl} compact label="JOIN" />
             </div>
             <div className="candidate-grid">
               {poll.candidates.map((candidate, index) => (
