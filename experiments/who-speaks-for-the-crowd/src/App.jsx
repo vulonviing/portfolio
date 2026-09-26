@@ -2,12 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import {
-  closePoll, downloadExport, downloadRawExport, getState, joinRun, openPoll, reopenPoll, resetRun, submitVote,
+  closePoll, downloadExport, downloadRawExport, getState, getVotingHealth, joinRun, openPoll, reopenPoll, resetRun, submitVote,
 } from './api.js';
 import { hasNextSlideStep, nextSlideStep, previousSlideStep } from './deck-model.js';
 import { NativeSlide } from './native-slides.jsx';
 import { createParticipantId, resultRows } from './poll-model.js';
 import { pollKeys, pollsByKey } from './polls.js';
+import { nextHealthCheckDelayMs, nextRefreshCooldownMs } from './preflight-timing.js';
 import { PostCard } from './post-card.jsx';
 import { slides } from './slides.js';
 
@@ -128,10 +129,10 @@ function JoinSlide({ audienceUrl, number, state }) {
         <span>SEDS Data Science Slam · 1 October 2026</span>
       </div>
       <span className="join-eyebrow">INTERACTIVE PRESENTATION</span>
-      <h1>WHO SPEAKS<br />FOR THE CROWD?</h1>
+      <h1>WHO SPEAKS FOR THE CROWD?</h1>
+      <p className="join-subtitle">Please join before we start — this talk is interactive, and you’ll vote live from your phone throughout.</p>
       <JoinedCount count={state?.joinedCount} />
       <VoteQr audienceUrl={audienceUrl} large label="Scan now." />
-      <p>Please join before we start — this talk is interactive, and you’ll vote live from your phone throughout.</p>
     </div>
   );
 }
@@ -260,8 +261,69 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
   );
 }
 
-function PresenterPanel({ open, onClose, state, currentPoll, onReset, onReopen, onExport, onRawExport, message }) {
+function PresenterPanel({ open, onClose, state, currentPoll, onOnline, onReset, onReopen, onExport, onRawExport, message }) {
+  const [healthStatus, setHealthStatus] = useState('checking');
+  const [refreshNonce, setRefreshNonce] = useState(0);
+  const [refreshLocked, setRefreshLocked] = useState(false);
+  const [actionBusy, setActionBusy] = useState(false);
+  const cooldownTimer = useRef(null);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    let cancelled = false;
+    let nextTimer;
+    let timeout;
+    let controller;
+    const check = async () => {
+      setHealthStatus((previous) => previous === 'online' ? previous : 'checking');
+      controller = new AbortController();
+      timeout = window.setTimeout(() => controller.abort(), 4000);
+      try {
+        await getVotingHealth(controller.signal);
+        const nextState = await onOnline(controller.signal);
+        if (!cancelled) setHealthStatus(nextState ? 'online' : 'offline');
+      } catch {
+        if (!cancelled) setHealthStatus('offline');
+      } finally {
+        window.clearTimeout(timeout);
+        if (!cancelled) nextTimer = window.setTimeout(check, nextHealthCheckDelayMs());
+      }
+    };
+    const firstTimer = window.setTimeout(check, 0);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(firstTimer);
+      window.clearTimeout(nextTimer);
+      window.clearTimeout(timeout);
+      controller?.abort();
+    };
+  }, [open, refreshNonce, onOnline]);
+
+  useEffect(() => () => window.clearTimeout(cooldownTimer.current), []);
+
+  const refreshNow = () => {
+    if (refreshLocked) return;
+    setRefreshLocked(true);
+    setHealthStatus('checking');
+    setRefreshNonce((previous) => previous + 1);
+    window.clearTimeout(cooldownTimer.current);
+    cooldownTimer.current = window.setTimeout(() => setRefreshLocked(false), nextRefreshCooldownMs());
+  };
+  const runAction = async (action) => {
+    if (healthStatus !== 'online' || actionBusy) return;
+    setActionBusy(true);
+    try {
+      await getVotingHealth(AbortSignal.timeout(4000));
+      await action();
+    } catch {
+      setHealthStatus('offline');
+    } finally {
+      setActionBusy(false);
+    }
+  };
   if (!open) return null;
+  const online = healthStatus === 'online';
+  const visibleState = online ? state : null;
   return (
     <div className="presenter-backdrop" role="presentation" onMouseDown={onClose}>
       <section className="presenter-panel" role="dialog" aria-modal="true" aria-label="Presenter controls" onMouseDown={(event) => event.stopPropagation()}>
@@ -270,17 +332,23 @@ function PresenterPanel({ open, onClose, state, currentPoll, onReset, onReopen, 
           <button type="button" onClick={onClose} aria-label="Close presenter controls">×</button>
         </header>
         <div className="presenter-status">
-          <span>Run</span><strong>{state?.runId ? 'ready' : 'not started'}</strong>
-          <span>API phase</span><strong>{state?.phase || 'offline'}</strong>
-          <span>Current poll</span><strong>{state?.pollKey || 'none'}</strong>
+          <span>Voting API</span><strong className={`presenter-health-${healthStatus}`}>{healthStatus}</strong>
+          <span>Run</span><strong>{visibleState?.runId ? 'ready' : 'not started'}</strong>
+          <span>API phase</span><strong>{visibleState?.phase || 'offline'}</strong>
+          <span>Current poll</span><strong>{visibleState?.pollKey || 'none'}</strong>
         </div>
         <div className="presenter-actions">
-          <button type="button" className="action-primary" onClick={onReset}>Start fresh run</button>
-          <button type="button" onClick={onReopen} disabled={!currentPoll}>Reopen current poll</button>
-          <button type="button" onClick={onExport}>Download results CSV</button>
-          <button type="button" onClick={onRawExport}>Download raw archive</button>
+          <button type="button" className="action-primary" onClick={() => runAction(onReset)} disabled={!online || actionBusy}>Start fresh run</button>
+          <button type="button" onClick={() => runAction(onReopen)} disabled={!online || actionBusy || !currentPoll}>Reopen current poll</button>
+          <button type="button" onClick={() => runAction(onExport)} disabled={!online || actionBusy}>Download results CSV</button>
+          <button type="button" onClick={() => runAction(onRawExport)} disabled={!online || actionBusy}>Download raw archive</button>
         </div>
-        <p className="presenter-message">{message || 'The VPS controls whether voting is online.'}</p>
+        <div className="presenter-footer">
+          <p className={`presenter-message ${healthStatus === 'offline' ? 'presenter-message-error' : ''}`} role="status">
+            {healthStatus === 'offline' ? 'Voting is offline. Activate voting on the VPS before starting.' : healthStatus === 'checking' ? 'Checking the VPS voting service…' : message || 'Voting API is online.'}
+          </p>
+          <button type="button" className="presenter-refresh" onClick={refreshNow} disabled={refreshLocked} aria-label="Refresh voting API status">Refresh</button>
+        </div>
       </section>
     </div>
   );
@@ -323,24 +391,29 @@ function PresentationApp() {
     window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${nextIndex + 1}`);
     setWarning('');
   }, []);
-  const refreshState = useCallback(async () => {
+  const refreshState = useCallback(async (signal) => {
     try {
-      const state = await getState();
+      const state = await getState(signal);
       setRemoteState(state);
       return state;
     } catch {
+      setRemoteState(null);
       return null;
     }
   }, []);
 
+  const livePolling = Boolean(poll && phase === 'live');
   useEffect(() => {
-    const immediate = window.setTimeout(refreshState, 0);
-    const timer = window.setInterval(refreshState, 750);
-    return () => {
-      window.clearTimeout(immediate);
-      window.clearInterval(timer);
+    if (settingsOpen && !livePolling) return undefined;
+    let cancelled = false;
+    let timer;
+    const check = async () => {
+      await refreshState();
+      if (!cancelled) timer = window.setTimeout(check, livePolling ? 750 : nextHealthCheckDelayMs());
     };
-  }, [refreshState]);
+    check();
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, [refreshState, settingsOpen, livePolling]);
 
   const next = useCallback(async () => {
     if (busy) return;
@@ -493,7 +566,7 @@ function PresentationApp() {
         <button type="button" onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}><span className="fullscreen-mark" aria-hidden="true">{isFullscreen ? '×' : '⛶'}</span></button>
       </nav>
       <p className="keyboard-hint" aria-hidden="true">← → navigate · P preflight · F fullscreen</p>
-      <PresenterPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} state={remoteState} currentPoll={poll} onReset={handleReset} onReopen={handleReopen} onExport={handleExport} onRawExport={handleRawExport} message={presenterMessage} />
+      {settingsOpen && <PresenterPanel open onClose={() => setSettingsOpen(false)} state={remoteState} currentPoll={poll} onOnline={refreshState} onReset={handleReset} onReopen={handleReopen} onExport={handleExport} onRawExport={handleRawExport} message={presenterMessage} />}
     </main>
   );
 }

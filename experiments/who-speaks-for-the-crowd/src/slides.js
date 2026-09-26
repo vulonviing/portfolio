@@ -4,14 +4,16 @@ const researchSlides = [
   { key: 'community-notes', title: 'One note. One decision.', steps: 1 },
   { key: 'approval-puzzle', title: '95.1% said helpful. X still did not display it.', steps: 3 },
   { key: 'unlikely-agreement', title: 'X already looks for unlikely agreement.', steps: 1 },
-  { key: 'implicit-electorate', title: 'The handshake is right. The electorate is not.', steps: 4 },
+  { key: 'implicit-electorate', title: 'A hyperactive minority held the note back.', steps: 2 },
+  { key: 'cca-proposal', title: 'What do we propose? CCA.', steps: 1 },
   { key: 'constituencies', title: 'We recover constituencies from voting behavior.', steps: 1 },
-  { key: 'camp-approval', title: 'Each camp gets its own approval rate.', steps: 1 },
+  { key: 'topic-signatures', title: 'Which cluster agrees more depends on the topic.', steps: 1 },
+  { key: 'camp-approval', title: 'Each cluster gets its own approval rate.', steps: 1 },
   { key: 'soft-veto', title: 'Enthusiasm cannot buy consent.', steps: 3 },
   { key: 'visibility-results', title: 'A different rule changes who is heard.', steps: 4 },
-  { key: 'text-review', title: '8,558 held up under independent text review.', steps: 1 },
-  { key: 'yarmouk', title: 'High approval. Wrong battle.', steps: 2 },
-  { key: 'closing', title: 'The crowd is not one number.', steps: 1 },
+  { key: 'text-review', title: 'An AI judge read all 13,655 candidate notes.', steps: 2 },
+  { key: 'yarmouk', title: '3,000 soldiers. But which battle?', steps: 2 },
+  { key: 'closing', title: 'Any questions?', steps: 1 },
 ];
 
 export const slides = [

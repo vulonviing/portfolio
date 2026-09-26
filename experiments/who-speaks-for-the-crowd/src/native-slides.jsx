@@ -1,4 +1,5 @@
 import { PostCard } from './post-card.jsx';
+import { polls } from './polls.js';
 
 const base = import.meta.env?.BASE_URL || '/who-speaks-for-the-crowd/';
 const dotRange = (count) => Array.from({ length: count }, (_, index) => index);
@@ -91,6 +92,41 @@ const rawChickenPost = {
   engagement: { replies: '12', reposts: '34', likes: '210', views: '8.4K' },
   meta: 'Mar 14, 2024',
 };
+const weidelExample = polls.find((poll) => poll.key === 'case-oxford');
+
+function InfluenceGroup({ tone, label, force, strength, figures }) {
+  return (
+    <div className={`influence-group influence-group-${tone}`}>
+      <div className="influence-group-label">
+        <span className="influence-group-name">{label}</span>
+        <span className="influence-group-force" aria-label={`Force: ${force.toLowerCase()}`}>
+          <span className="influence-force-meter" aria-hidden="true">
+            {[1, 2, 3].map((level) => <i className={level <= strength ? 'is-active' : ''} key={level} />)}
+          </span>
+          <span>FORCE: {force}</span>
+        </span>
+      </div>
+      <div className="influence-group-figures">
+        {figures.map((mark, index) => (
+          <div className={`influence-figure influence-${tone}`} key={index}>
+            <Person tone={tone} />
+            <span className={`influence-mark influence-mark-${mark === '✓' ? 'positive' : 'negative'}`}>{mark}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InfluenceRow() {
+  return (
+    <div className="influence-row" aria-label="A hyperactive minority outweighs a quiet, positive majority">
+      <InfluenceGroup tone="coral" label="AMIGO" force="LOW" strength={1} figures={['✓', '✓']} />
+      <InfluenceGroup tone="blue" label="NORMAL" force="NONE" strength={0} figures={['✓', '✓', '✓', '✓', '✓']} />
+      <InfluenceGroup tone="amber" label="STRONG VOTER" force="HIGH" strength={3} figures={['×', '×']} />
+    </div>
+  );
+}
 
 function ApprovalPuzzleSlide({ number, step }) {
   return (
@@ -118,29 +154,69 @@ function HandshakeDiagram({ compact = false }) {
   );
 }
 
+const DOMINANCE_SPARSE = [
+  [24, 18], [64, 18], [104, 18], [144, 18],
+  [24, 58], [144, 58],
+  [24, 100], [144, 100],
+  [24, 142], [144, 142],
+  [24, 182], [64, 182], [104, 182], [144, 182],
+];
+const DOMINANCE_HEAVY = [[64, 58], [104, 100], [64, 142]];
+const DOMINANCE_ESTIMATE = [280, 100];
+
+function DominanceDiagram() {
+  return (
+    <svg className="dominance-graph" viewBox="0 0 320 220" aria-label="A few raters supply most of the model's observations">
+      <g className="dominance-edges-sparse">
+        {DOMINANCE_SPARSE.map(([x, y], index) => (
+          <line key={`sparse-${index}`} x1={x} y1={y} x2={DOMINANCE_ESTIMATE[0]} y2={DOMINANCE_ESTIMATE[1]} />
+        ))}
+      </g>
+      <g className="dominance-edges-heavy">
+        {DOMINANCE_HEAVY.map(([x, y], index) => (
+          <line key={`heavy-${index}`} x1={x} y1={y} x2={DOMINANCE_ESTIMATE[0]} y2={DOMINANCE_ESTIMATE[1]} />
+        ))}
+      </g>
+      <g className="dominance-nodes-sparse">
+        {DOMINANCE_SPARSE.map(([x, y], index) => <circle key={`sparse-node-${index}`} cx={x} cy={y} r="5" />)}
+      </g>
+      <g className="dominance-nodes-heavy">
+        {DOMINANCE_HEAVY.map(([x, y], index) => <circle key={`heavy-node-${index}`} cx={x} cy={y} r="7.5" />)}
+      </g>
+      <circle className="dominance-estimate" cx={DOMINANCE_ESTIMATE[0]} cy={DOMINANCE_ESTIMATE[1]} r="9" />
+    </svg>
+  );
+}
+
 function AgreementSlide({ number }) {
   return (
-    <SlideFrame number={number} eyebrow="HOW X WORKS" title="X already looks for unlikely agreement.">
-      <div className="agreement-grid">
-        <section><span className="agreement-label agreement-coral">AMIGO</span><div className="support-visual"><Person tone="coral" /><CheckMark /><div className="support-note support-note-coral"><Person tone="coral" /></div></div><strong className="agreement-coral">Predictable support</strong></section>
-        <section><span className="agreement-label agreement-green">ENEMIES SHAKE HANDS</span><HandshakeDiagram /><strong className="agreement-green">Unexpected agreement</strong></section>
+    <SlideFrame number={number} eyebrow="HOW X WORKS" title="X already looks for unlikely agreement." footer="Rater-dominance schematic · paper/main.tex">
+      <div className="agreement-layout">
+        <div className="agreement-grid">
+          <section><span className="agreement-label agreement-coral">AMIGO</span><div className="support-visual"><Person tone="coral" /><CheckMark /><div className="support-note support-note-coral"><Person tone="coral" /></div></div><strong className="agreement-coral">Predictable support</strong></section>
+          <section><span className="agreement-label agreement-amber">HYPERACTIVE MINORITY</span><DominanceDiagram /><strong className="agreement-amber">A few raters set the axis</strong></section>
+        </div>
+        <strong className="agreement-bottom">Even a high, correct-looking vote can stall — the system is scoring rater quality and intent, not counting the vote itself.</strong>
       </div>
-      <strong className="agreement-bottom">The system reads the rater—not only the rating.</strong>
     </SlideFrame>
   );
 }
 
 function GapSlide({ number, step }) {
   return (
-    <SlideFrame number={number} eyebrow="THE GAP" title="The handshake is right. The electorate is not.">
-      <div className="gap-layout">
-        <div className="gap-instinct"><HandshakeDiagram compact /><strong>Good instinct</strong></div>
-        <div className="gap-divider" />
-        <div className="gap-points">
-          <Reveal show={step >= 1} className="gap-point"><i className="bullet-blue" /><span>One learned map</span></Reveal>
-          <Reveal show={step >= 2} className="gap-point"><i className="bullet-coral" /><span>One fitted visibility score</span></Reveal>
-          <Reveal show={step >= 3} className="gap-point gap-point-strong"><i className="bullet-amber" /><span>Representation stays implicit</span></Reveal>
-          <Reveal show={step >= 3} className="gap-callout"><strong>CCA makes constituencies explicit.</strong></Reveal>
+    <SlideFrame number={number} eyebrow="THE ANSWER" title="A hyperactive minority held the note back." footer="Raw-chicken case · paper/main.tex">
+      <div className="puzzle-layout puzzle-layout-dominance">
+        <PostCard
+          post={rawChickenPost}
+          note={<>Raw chicken does not need to be washed before cooking. Washing poultry can spread bacterial contamination around the kitchen.<br />CDC · USDA</>}
+        />
+        <div className="puzzle-results">
+          <Reveal show={step >= 1} className="approval-block">
+            <InfluenceRow />
+            <div className="approval-number"><strong>95.1%</strong><span>overall approval</span></div>
+          </Reveal>
+          <Reveal show={step >= 2} className="nmr-status"><span>X STATUS</span><strong>NOT SHOWN</strong></Reveal>
+          <Reveal show={step >= 2} className="puzzle-takeaway"><strong>A few raters decided — not the room.</strong></Reveal>
         </div>
       </div>
     </SlideFrame>
@@ -161,6 +237,44 @@ function CoRatingGraph() {
   );
 }
 
+function CountryFlag({ country }) {
+  return (
+    <svg className="cca-country-flag" viewBox="0 0 48 32" aria-hidden="true">
+      {country === 'switzerland' && <><rect x="8" width="32" height="32" fill="#da291c" /><path d="M21 6h6v7h7v6h-7v7h-6v-7h-7v-6h7z" fill="#fff" /></>}
+      {country === 'belgium' && <><rect width="16" height="32" fill="#111" /><rect x="16" width="16" height="32" fill="#fdda24" /><rect x="32" width="16" height="32" fill="#ef3340" /></>}
+      {country === 'bosnia' && <><rect width="48" height="32" fill="#002395" /><path d="M16 0h24v32z" fill="#fecb00" />{[[12, 3], [16, 8], [20, 13], [24, 18], [28, 23], [32, 28]].map(([x, y]) => <circle cx={x} cy={y} r="1.8" fill="#fff" key={x} />)}</>}
+      {country === 'northern-ireland' && <><rect width="48" height="32" fill="#012169" /><path d="M0 0l48 32M48 0L0 32" stroke="#fff" strokeWidth="8" /><path d="M0 0l48 32M48 0L0 32" stroke="#c8102e" strokeWidth="3.5" /><path d="M24 0v32M0 16h48" stroke="#fff" strokeWidth="11" /><path d="M24 0v32M0 16h48" stroke="#c8102e" strokeWidth="5" /></>}
+    </svg>
+  );
+}
+
+function CcaProposalSlide({ number }) {
+  return (
+    <SlideFrame number={number} eyebrow="OUR PROPOSAL" title="What do we propose? CCA." footer="Institutional inspiration and implementation · paper/main.tex">
+      <div className="cca-proposal-layout">
+        <div className="cca-proposal-name">
+          <strong>CCA</strong>
+          <span>Cross-Constituency<br />Aggregation</span>
+        </div>
+        <div className="cca-inspiration">
+          <strong>INSPIRED BY DECISIONS THAT NEED SUPPORT ACROSS GROUPS</strong>
+          <div className="cca-country-grid">
+            <div><CountryFlag country="switzerland" /><b>SWITZERLAND</b><span>People + cantons</span></div>
+            <div><CountryFlag country="belgium" /><b>BELGIUM</b><span>Linguistic groups</span></div>
+            <div><CountryFlag country="bosnia" /><b>BOSNIA</b><span>Constituent peoples</span></div>
+            <div><CountryFlag country="northern-ireland" /><b>N. IRELAND</b><span>Parallel consent</span></div>
+          </div>
+          <p>We borrow the decision logic, not the group identities.</p>
+        </div>
+        <div className="cca-commitments">
+          <div className="cca-commitment cca-commitment-limit"><span>WHAT WE DO NOT PROMISE</span><strong>A drop-in replacement for X’s full algorithm.</strong></div>
+          <div className="cca-commitment cca-commitment-built"><span>WHAT WE BUILT</span><strong>A working implementation on real ratings.</strong></div>
+        </div>
+      </div>
+    </SlideFrame>
+  );
+}
+
 function ConstituenciesSlide({ number }) {
   return (
     <SlideFrame number={number} eyebrow="OUR APPROACH" title="We recover constituencies from voting behavior.">
@@ -175,80 +289,182 @@ function ConstituenciesSlide({ number }) {
   );
 }
 
-function CampApprovalSlide({ number }) {
+function TopicSignaturesSlide({ number }) {
   return (
-    <SlideFrame number={number} eyebrow="CCA" title="Each camp gets its own approval rate.">
-      <div className="camp-approval-layout">
-        <div className="camp-side camp-side-blue"><DotGrid tone="blue" count={32} columns={8} /><span>Camp A: pA</span></div>
-        <FlowArrow tone="blue" />
-        <NoteGlyph className="camp-note" />
-        <FlowArrow tone="coral" />
-        <div className="camp-side camp-side-coral"><DotGrid tone="coral" count={32} columns={8} /><span>Camp B: pB</span></div>
+    <SlideFrame number={number} eyebrow="CHECKING THE CLUSTERS" title="Which cluster agrees more depends on the topic." footer="Topic signatures · paper/main.tex · figures/script_figures/cn-topic-signatures.png">
+      <div className="topic-evidence-layout">
+        <div className="topic-evidence-main">
+          <figure className="topic-evidence-figure">
+            <img src={`${base}media/cn-topic-signatures.png`} alt="Average note approval by topic: the higher-approval cluster changes across the 13 topics; bubble size represents note count." />
+          </figure>
+          <div className="topic-evidence-point">
+            <span>THE PATTERN</span>
+            <strong>Not one strict cluster and one lenient cluster.</strong>
+            <p>The higher-approval cluster changes with the topic.</p>
+            <div className="topic-third-cluster"><i aria-hidden="true" />Third cluster: 64 highly active raters were reassigned to the two larger clusters by their voting profiles.</div>
+          </div>
+        </div>
       </div>
-      <div className="coverage-floor">Coverage floor: ≥3 raters from every camp</div>
     </SlideFrame>
   );
 }
 
+function CampApprovalSlide({ number }) {
+  return (
+    <SlideFrame number={number} eyebrow="CCA" title="Each cluster gets its own approval rate." footer="Method B vote-profile reassignment · paper/main.tex">
+      <div className="camp-approval-layout">
+        <div className="camp-side camp-side-blue"><strong className="camp-size">107,734 raters</strong><DotGrid tone="blue" count={32} columns={8} /><span>CLUSTER A: pA</span></div>
+        <FlowArrow tone="blue" />
+        <div className="camp-example-center">
+          <PostCard post={weidelExample.post} className="camp-example-post" />
+          <div className="camp-reassignment-note"><i aria-hidden="true" />Third cluster: 64 highly active raters reassigned by their voting profiles.</div>
+        </div>
+        <FlowArrow tone="coral" className="camp-arrow-inward" />
+        <div className="camp-side camp-side-coral"><strong className="camp-size">92,266 raters</strong><DotGrid tone="coral" count={32} columns={8} /><span>CLUSTER B: pB</span></div>
+      </div>
+    </SlideFrame>
+  );
+}
+
+function CandidateCommunityNote({ candidate, show, tone }) {
+  return (
+    <Reveal show={show} className={`veto-note veto-note-${tone}`}>
+      <div className="post-note-head">
+        <span className="post-note-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-4.8 7.6 8.5 8.5 0 0 1-3.7.9 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></svg></span>
+        <strong>Community Note</strong><span className="veto-note-letter">{candidate.id}</span>
+      </div>
+      <p>{candidate.text}</p>
+    </Reveal>
+  );
+}
+
 function SoftVetoSlide({ number, step }) {
+  const oneSidedNote = weidelExample.candidates.find((candidate) => candidate.id === 'A');
+  const balancedNote = weidelExample.candidates.find((candidate) => candidate.id === 'B');
   return (
     <SlideFrame number={number} eyebrow="CCA" title="Enthusiasm cannot buy consent.">
-      <div className="formula">C<sub>i</sub> = √(pA × pB)</div>
-      <div className="veto-examples">
-        <Reveal show={step >= 1} className="veto-card veto-pass"><span>BOTH ACCEPT</span><strong>70% × 68%</strong><b>0.69 → PASS</b></Reveal>
-        <Reveal show={step >= 2} className="veto-card veto-fail"><span>ONE-SIDED</span><strong>90% × 20%</strong><b>0.42 → FAIL</b></Reveal>
+      <div className="soft-veto-layout">
+        <div className="soft-veto-tweet-shell">
+          <PostCard post={weidelExample.post} className="soft-veto-post" />
+          <CandidateCommunityNote candidate={oneSidedNote} show={step >= 1} tone="fail" />
+          <CandidateCommunityNote candidate={balancedNote} show={step >= 2} tone="pass" />
+        </div>
+        <div className="soft-veto-explainer">
+          <span>GEOMETRIC MEAN</span>
+          <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
+          <p>Multiply approvals; take square root.</p>
+        </div>
+        <Reveal show={step >= 1} className="veto-result veto-result-fail"><span>IF APPROVAL IS ONE-SIDED</span><strong>√(90% × 20%) ≈ 0.42</strong><b>FAIL · below 0.5</b></Reveal>
+        <Reveal show={step >= 2} className="veto-result veto-result-pass"><span>IF BOTH CLUSTERS APPROVE</span><strong>√(70% × 68%) ≈ 0.69</strong><b>PASS · above 0.5</b></Reveal>
       </div>
-      <Reveal show={step >= 2} className="soft-veto-label"><strong>Soft veto · C<sub>i</sub> &gt; 0.5</strong></Reveal>
     </SlideFrame>
   );
 }
 
 function VisibilityResultsSlide({ number, step }) {
   return (
-    <SlideFrame number={number} eyebrow="RESULTS" title="A different rule changes who is heard.">
-      <div className="results-tree">
-        <Reveal show={step >= 0} className="result-root"><strong>44,722</strong><span>posts</span></Reveal>
-        <div className="result-branches" aria-hidden="true"><span /><span /></div>
-        <Reveal show={step >= 1} className="result-box result-x"><span>X DISPLAYS</span><strong>6,832</strong><b>15%</b></Reveal>
-        <Reveal show={step >= 2} className="result-box result-cca"><span>CCA QUALIFIES</span><strong>20,405</strong><b>46%</b></Reveal>
-        <Reveal show={step >= 3} className="rescue-arrow"><FlowArrow tone="green" /></Reveal>
-        <Reveal show={step >= 3} className="rescue-pool"><span>RESCUE POOL</span><strong>13,655</strong><b>not displayed by X<br />but CCA-qualified</b></Reveal>
+    <SlideFrame number={number} eyebrow="RESULTS" title="A different rule changes who is heard." footer="Selection overlap · tests/RESULTS.md · data/processed/selection_log.parquet">
+      <div className="results-flow">
+        <div className="results-line">
+          <Reveal show={step >= 0} className="result-root"><strong>44,722</strong><span>posts</span></Reveal>
+          <Reveal show={step >= 1} className="result-flow-arrow"><FlowArrow tone="ink" /></Reveal>
+          <Reveal show={step >= 1} className="result-box result-cca"><span>CCA QUALIFIES</span><strong>20,405</strong><b>46%</b></Reveal>
+          <Reveal show={step >= 2} className="result-flow-arrow"><FlowArrow tone="green" /></Reveal>
+          <Reveal show={step >= 2} className="rescue-pool"><span>RESCUE POOL</span><strong>13,655</strong><b>not displayed by X<br />but CCA-qualified</b></Reveal>
+        </div>
+        <Reveal show={step >= 3} className="result-overlap-note">
+          <strong>6,750 already displayed by X</strong>
+          <span>X displays 6,832 in total; 82 do not meet CCA requirements.</span>
+        </Reveal>
       </div>
-      <Reveal show={step >= 3} className="results-takeaway"><strong>Different rule. Different visibility decisions.</strong></Reveal>
     </SlideFrame>
   );
 }
 
-function TextReviewSlide({ number }) {
+function TextReviewSlide({ number, step }) {
   return (
-    <SlideFrame number={number} eyebrow="VALIDATION" title="8,558 held up under independent text review.">
+    <SlideFrame number={number} eyebrow="VALIDATION" title="An AI judge read all 13,655 candidate notes.">
       <div className="review-flow">
-        <div className="review-number"><strong>13,655</strong><span>candidates</span></div><FlowArrow />
-        <div className="review-card"><span>GEMMA</span><strong>TEXT REVIEW</strong><b>source + quality</b></div><FlowArrow tone="green" />
-        <div className="review-number review-success"><strong>8,558</strong><span>62.7%</span></div>
+        <div className="review-number"><strong>13,655</strong><span>candidate notes</span></div><FlowArrow />
+        <div className="review-center">
+          <div className="review-card">
+            <span className="review-ai-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m12 2 2.1 6.1L20 10l-5.9 1.9L12 18l-2.1-6.1L4 10l5.9-1.9L12 2Z" />
+                <path d="m19 17 .7 1.3L21 19l-1.3.7L19 21l-.7-1.3L17 19l1.3-.7L19 17Z" />
+              </svg>
+            </span>
+            <strong>AI TEXT REVIEW</strong>
+            <b>Checks sourcing + quality</b>
+          </div>
+          <div className="review-method">
+            <span>Gemma 4 31B IT · zero-shot rubric · score ≥ 50</span>
+            <span>BF16 · 2× NVIDIA L40S · vLLM 0.25.0</span>
+            <small>Note text only · No URL opening or source-content verification</small>
+          </div>
+        </div><FlowArrow tone="green" />
+        <div className="review-results">
+          <div className="review-number review-success"><strong>8,558</strong><span>held up · 62.7%</span></div>
+          <Reveal show={step >= 1} className="review-breakdown">
+            <span className="review-breakdown-label">OTHER OUTCOMES</span>
+            <div className="review-outcome-list">
+              <div className="review-outcome review-outcome-screen"><strong>3,279</strong><div><b>Not suitable as sourced context</b><small>Screened out before quality scoring</small></div></div>
+              <div className="review-outcome review-outcome-quality"><strong>1,818</strong><div><b>AI-rated quality below the bar</b><small>Rubric score under 50</small></div></div>
+            </div>
+            <span className="review-breakdown-label review-first-pass-label">FIRST PASS · ALL 13,655 NOTES</span>
+            <ul className="review-label-list">
+              <li className="review-label-sourced"><b>10,096</b><span>with a visible source</span></li>
+              <li className="review-label-opinion"><b>1,703</b><span>opinion / speculation</span></li>
+              <li className="review-label-irrelevant"><b>1,340</b><span>irrelevant / spam</span></li>
+              <li className="review-label-unsourced"><b>373</b><span>unsourced</span></li>
+              <li className="review-label-hostile"><b>142</b><span>hostile</span></li>
+              <li className="review-label-unresolved"><b>1</b><span>unresolved</span></li>
+            </ul>
+          </Reveal>
+        </div>
       </div>
-      <div className="review-caveat"><strong>Note text + visible source pointer only</strong><span>No URL opening · No source-content verification</span></div>
     </SlideFrame>
   );
 }
 
-function BattleCard({ tone, label, approval, verb, battle, children }) {
+function BattleNote({ tone, label, approval, score, children }) {
   return (
-    <div className={`battle-card battle-card-${tone}`}>
-      <span>{label}</span><div className="battle-approval"><strong>{approval}</strong><small>overall approval</small></div><hr />
-      <b>{verb}</b><h2>{battle}</h2><p>{children}</p>
+    <div className={`battle-note battle-note-${tone}`}>
+      <div className="post-note-head">
+        <span className="post-note-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-4.8 7.6 8.5 8.5 0 0 1-3.7.9 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></svg></span>
+        <strong>Community Note</strong>
+      </div>
+      <p>{children}</p>
+      <div className="battle-note-stats"><span>{label}</span><strong>{approval} <small>overall approval</small></strong><b>CCA {score}</b></div>
     </div>
   );
 }
 
+// Post text/date: X oEmbed. Media, current avatar, and engagement snapshot (2026-09-26): FxTwitter mirror.
+// The paired note decisions and scores come from the research paper and selection_log.parquet.
+const yarmoukPost = {
+  author: 'Jvnior', handle: '@Jvnior', verified: true,
+  avatarImage: `${base}media/yarmouk-jvnior-avatar.jpg`,
+  sourceUrl: 'https://x.com/Jvnior/status/1987985480952975416',
+  text: '3,000 Muslims defeated 200,000 Romans.\n\nIt can easily happen again.',
+  engagement: { replies: '3,895', reposts: '1,560', likes: '15,571', views: '2,976,459' },
+  image: `${base}media/yarmouk-jvnior-post.jpg`,
+  imageAlt: 'Image attached to the original post: a small formation facing a much larger army in a desert.',
+  zoomable: false,
+  meta: 'Nov 10, 2025',
+};
+
 function YarmoukSlide({ number, step }) {
   return (
-    <SlideFrame number={number} eyebrow="CASE: YARMOUK / MU’TAH" title="High approval. Wrong battle.">
-      <div className="battle-grid">
-        <BattleCard tone="coral" label="PLATFORM-SHOWN NOTE" approval="92.2%" verb="DESCRIBES" battle="THE BATTLE OF MU’TAH">High raw approval.<br />Lower cross-constituency support.</BattleCard>
-        <Reveal show={step >= 1}><BattleCard tone="green" label="CCA ALTERNATIVE" approval="91.2%" verb="ADDRESSES" battle="THE BATTLE OF YARMOUK">Slightly lower raw approval.<br />Higher cross-constituency support.</BattleCard></Reveal>
+    <SlideFrame number={number} eyebrow="CASE: YARMOUK / MU’TAH" title="3,000 soldiers. But which battle?" footer="Original post and Community Notes · paper/long-version/main_long.tex">
+      <div className="battle-layout">
+        <PostCard post={yarmoukPost} className="battle-post" />
+        <div className="battle-notes">
+          <BattleNote tone="coral" label="X DISPLAYED" approval="92.2%" score="0.774">The Battle of Mu’tah was fought between the Byzantine Empire and the First Islamic State. The true size of the armies is considered to be around 10,000 for the Byzantines and 3000 for the Muslims. It ended with a Byzantine victory.</BattleNote>
+          <Reveal show={step >= 1}><BattleNote tone="green" label="CCA ALTERNATIVE" approval="91.2%" score="0.837">The post refers to the Battle of Yarmouk (636 AD), but reliable estimates put Muslim forces at 15,000–40,000, not 3,000, vs. 15,000–150,000 Byzantines. 3,000 Muslims fought at the earlier Battle of Mu’tah (629 AD).</BattleNote></Reveal>
+          <Reveal show={step >= 1} className="battle-takeaway"><strong>Less raw approval. More balanced support.</strong></Reveal>
+        </div>
       </div>
-      <Reveal show={step >= 1} className="battle-takeaway"><strong>Lower popularity. Better-balanced support.</strong></Reveal>
     </SlideFrame>
   );
 }
@@ -257,8 +473,11 @@ function ClosingSlide({ number }) {
   return (
     <article className="native-slide closing-slide">
       <span className="closing-number">{String(number).padStart(2, '0')}</span>
-      <div className="closing-copy"><h1>THE CROWD IS<br />NOT ONE NUMBER.</h1><p>Every aggregation rule decides who gets heard.</p><strong>Cross-Constituency Aggregation for Community Notes</strong></div>
-      <div className="closing-network"><DotGrid tone="blue" count={25} columns={5} /><div className="closing-lines closing-lines-blue" aria-hidden="true" /><NoteGlyph /><div className="closing-lines closing-lines-coral" aria-hidden="true" /><DotGrid tone="coral" count={25} columns={5} /></div>
+      <div className="closing-content">
+        <span>Cross-Constituency Aggregation for Community Notes</span>
+        <h1>Any questions?</h1>
+        <p>Emrecan Ulu · Jingyao Shi</p>
+      </div>
     </article>
   );
 }
@@ -268,7 +487,9 @@ const nativeSlideComponents = {
   'approval-puzzle': ApprovalPuzzleSlide,
   'unlikely-agreement': AgreementSlide,
   'implicit-electorate': GapSlide,
+  'cca-proposal': CcaProposalSlide,
   constituencies: ConstituenciesSlide,
+  'topic-signatures': TopicSignaturesSlide,
   'camp-approval': CampApprovalSlide,
   'soft-veto': SoftVetoSlide,
   'visibility-results': VisibilityResultsSlide,

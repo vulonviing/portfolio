@@ -36,7 +36,12 @@ async function request(path, options = {}) {
   return response.json();
 }
 
-export const getState = () => request('/v1/state');
+export const getState = (signal) => request('/v1/state', { signal });
+export async function getVotingHealth(signal) {
+  const health = await request('/healthz', { cache: 'no-store', signal });
+  if (health?.status !== 'ok') throw new ApiError('Voting API is not healthy');
+  return health;
+}
 export const resetRun = () => request('/v1/admin/run/reset', { method: 'POST' });
 export const openPoll = (pollKey) => request(`/v1/admin/polls/${pollKey}/open`, { method: 'POST' });
 export const closePoll = (pollKey) => request(`/v1/admin/polls/${pollKey}/close`, { method: 'POST' });

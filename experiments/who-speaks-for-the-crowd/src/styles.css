@@ -236,12 +236,12 @@ button {
 
 .join-meta strong {
   color: #4f9cf9;
-  font-size: 1.55cqh;
+  font-size: 2.1cqh;
 }
 
 .join-meta span {
   color: #6d737d;
-  font-size: 1.3cqh;
+  font-size: 1.6cqh;
 }
 
 .join-slide {
@@ -259,16 +259,19 @@ button {
 }
 
 .join-slide h1 {
-  margin: 1.2cqh 0 1.6cqh;
-  font-size: 5.8cqh;
+  margin: 1.2cqh 0 0;
+  font-size: 4.6cqh;
   line-height: 1;
   letter-spacing: -0.04em;
+  white-space: nowrap;
 }
 
-.join-slide > p {
-  margin: 2.4cqh 0 0;
+.join-subtitle {
+  max-width: 58cqw;
+  margin: 1.8cqh 0 2.8cqh;
   color: #6d737d;
-  font-size: 1.7cqh;
+  font-size: 2cqh;
+  line-height: 1.4;
 }
 
 .joined-count {
@@ -1125,11 +1128,18 @@ button {
 .presenter-panel input { width: 100%; padding: 12px 14px; border: 1px solid #353b45; border-radius: 10px; color: #fff; background: #0a0c10; }
 .presenter-status { display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; margin: 20px 0; color: #8d949e; font-size: 13px; }
 .presenter-status strong { color: #fff; text-align: right; }
+.presenter-status .presenter-health-online { color: #36c79b; }
+.presenter-status .presenter-health-offline { color: #ff6668; }
+.presenter-status .presenter-health-checking { color: #f0b34b; }
 .presenter-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .presenter-actions button { padding: 11px 12px; border: 1px solid #3a414b; border-radius: 10px; color: #fff; background: #22262d; cursor: pointer; }
 .presenter-actions .action-primary { grid-column: 1 / -1; color: #07120e; font-weight: 800; background: #36c79b; }
 .presenter-actions button:disabled { opacity: 0.38; cursor: default; }
-.presenter-message { min-height: 1.3em; margin: 16px 0 0; color: #aeb4bd; font-size: 13px; }
+.presenter-footer { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-top: 16px; }
+.presenter-message { min-height: 1.3em; margin: 0; color: #aeb4bd; font-size: 13px; line-height: 1.4; }
+.presenter-message-error { color: #ff6668; font-weight: 700; }
+.presenter-refresh { flex: none; padding: 7px 10px; border: 1px solid #3a414b; border-radius: 8px; color: #f7f7f4; background: #22262d; cursor: pointer; }
+.presenter-refresh:disabled { opacity: 0.45; cursor: default; }
 
 /* Expandable post images */
 .qr-lightbox {
