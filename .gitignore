@@ -7,6 +7,7 @@ Thumbs.db
 *.pyc
 __pycache__/
 node_modules/
+experiments/who-speaks-for-the-crowd/dist-operator/
 experiments/epoch/public/data/
 /-.png
 

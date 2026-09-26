@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import {
-  closePoll, downloadExport, downloadRawExport, getState, getVotingHealth, joinRun, openPoll, reopenPoll, resetRun, submitVote,
+  closePoll, downloadExport, downloadRawExport, getState, getVotingHealth, joinRun, openPoll, reopenPoll, resetRun, startVotingService, stopVotingService, submitVote,
 } from './api.js';
 import { hasNextSlideStep, nextSlideStep, previousSlideStep } from './deck-model.js';
 import { NativeSlide } from './native-slides.jsx';
@@ -15,6 +15,7 @@ import { slides } from './slides.js';
 const clamp = (value) => Math.min(slides.length - 1, Math.max(0, value));
 const initialPhases = () => Object.fromEntries(pollKeys.map((key) => [key, 'tweet']));
 const POLL_COUNTDOWN_SECONDS = 40;
+const OPERATOR_BUILD = import.meta.env.MODE === 'operator';
 
 function slideFromHash() {
   const parsed = Number.parseInt(window.location.hash.slice(1), 10);
@@ -260,7 +261,7 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
   );
 }
 
-function PresenterPanel({ open, onClose, state, currentPoll, onOnline, onReset, onReopen, onExport, onRawExport, message }) {
+function PresenterPanel({ open, onClose, state, currentPoll, onOnline, onReset, onReopen, onExport, onRawExport, onStartService, onStopService, message }) {
   const [healthStatus, setHealthStatus] = useState('checking');
   const [refreshNonce, setRefreshNonce] = useState(0);
   const [refreshLocked, setRefreshLocked] = useState(false);
@@ -320,6 +321,16 @@ function PresenterPanel({ open, onClose, state, currentPoll, onOnline, onReset, 
       setActionBusy(false);
     }
   };
+  const runServiceAction = async (action) => {
+    if (actionBusy) return;
+    setActionBusy(true);
+    try {
+      await action();
+      setRefreshNonce((previous) => previous + 1);
+    } finally {
+      setActionBusy(false);
+    }
+  };
   if (!open) return null;
   const online = healthStatus === 'online';
   const visibleState = online ? state : null;
@@ -337,6 +348,8 @@ function PresenterPanel({ open, onClose, state, currentPoll, onOnline, onReset, 
           <span>Current poll</span><strong>{visibleState?.pollKey || 'none'}</strong>
         </div>
         <div className="presenter-actions">
+          <button type="button" onClick={() => runServiceAction(onStartService)} disabled={healthStatus === 'online' || actionBusy}>Start voting API</button>
+          <button type="button" onClick={() => runServiceAction(onStopService)} disabled={actionBusy}>Stop voting API</button>
           <button type="button" className="action-primary" onClick={() => runAction(onReset)} disabled={!online || actionBusy}>Start fresh run</button>
           <button type="button" onClick={() => runAction(onReopen)} disabled={!online || actionBusy || !currentPoll}>Reopen current poll</button>
           <button type="button" onClick={() => runAction(onExport)} disabled={!online || actionBusy}>Download results CSV</button>
@@ -364,7 +377,6 @@ function PresentationApp() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [presenterMessage, setPresenterMessage] = useState('');
   const [busy, setBusy] = useState(false);
-  const localMode = useRef(new Set());
   const hideTimer = useRef(null);
   const wheelLocked = useRef(false);
 
@@ -373,7 +385,7 @@ function PresentationApp() {
   const phase = poll ? phases[poll.key] : null;
   const slideStep = slideSteps[slide.id] || 0;
   const audienceUrl = useMemo(() => {
-    const url = new URL(import.meta.env.BASE_URL, window.location.origin);
+    const url = new URL('https://emrecanulu.com/who-speaks-for-the-crowd/');
     url.searchParams.set('audience', '1');
     return url.toString();
   }, []);
@@ -424,23 +436,22 @@ function PresentationApp() {
     }
     if (phase === 'tweet') { setPollPhase(poll.key, 'candidates'); return; }
     if (phase === 'candidates') {
+      if (!OPERATOR_BUILD) { setPollPhase(poll.key, 'live'); return; }
       setWarning('');
       setBusy(true);
       try {
         const state = await openPoll(poll.key);
         setRemoteState(state);
-        localMode.current.delete(poll.key);
-      } catch (error) {
-        localMode.current.add(poll.key);
-        setWarning(`API unavailable — offline mode (${error.message}).`);
-      } finally {
         setPollPhase(poll.key, 'live');
+      } catch (error) {
+        setWarning(`Voting did not open. Check the local operator panel and retry (${error.message}).`);
+      } finally {
         setBusy(false);
       }
       return;
     }
     if (phase === 'live') {
-      if (localMode.current.has(poll.key)) { setPollPhase(poll.key, 'closed'); return; }
+      if (!OPERATOR_BUILD) { setPollPhase(poll.key, 'closed'); return; }
       setBusy(true);
       try {
         const state = await closePoll(poll.key);
@@ -488,7 +499,7 @@ function PresentationApp() {
       else if (event.key === 'Home') { event.preventDefault(); goTo(0); }
       else if (event.key === 'End') { event.preventDefault(); goTo(slides.length - 1); }
       else if (event.key.toLowerCase() === 'f') { event.preventDefault(); toggleFullscreen(); }
-      else if (event.key.toLowerCase() === 'p') { event.preventDefault(); setSettingsOpen(true); }
+      else if (OPERATOR_BUILD && event.key.toLowerCase() === 'p') { event.preventDefault(); setSettingsOpen(true); }
       showControls();
     };
     const handleWheel = (event) => {
@@ -518,12 +529,12 @@ function PresentationApp() {
     return () => window.clearTimeout(hideTimer.current);
   }, []);
   const handleReset = async () => {
+    if (remoteState?.runId && !window.confirm('Start a new run? Download the current results CSV first.')) return;
     try {
       const state = await resetRun();
       setRemoteState(state);
       setPhases(initialPhases());
       setSlideSteps({});
-      localMode.current.clear();
       goTo(0);
       setPresenterMessage('Fresh run started. The fixed QR is ready.');
     } catch (error) { setPresenterMessage(error.message); }
@@ -533,7 +544,6 @@ function PresentationApp() {
     try {
       const state = await reopenPoll(poll.key);
       setRemoteState(state);
-      localMode.current.delete(poll.key);
       setPollPhase(poll.key, 'live');
       setPresenterMessage(`${poll.key} reopened.`);
     } catch (error) { setPresenterMessage(error.message); }
@@ -545,6 +555,20 @@ function PresentationApp() {
   const handleRawExport = async () => {
     try { await downloadRawExport(); setPresenterMessage('Raw vote CSV downloaded.'); }
     catch (error) { setPresenterMessage(error.message); }
+  };
+  const handleStartService = async () => {
+    try {
+      await startVotingService();
+      await refreshState();
+      setPresenterMessage('Voting API is online. Start a fresh run when ready.');
+    } catch (error) { setPresenterMessage(error.message); }
+  };
+  const handleStopService = async () => {
+    try {
+      await stopVotingService();
+      setRemoteState(null);
+      setPresenterMessage('Voting API is offline. The run data remains on the VPS.');
+    } catch (error) { setPresenterMessage(error.message); }
   };
 
   const progress = ((current + 1) / slides.length) * 100;
@@ -565,11 +589,11 @@ function PresentationApp() {
         <output aria-live="polite"><strong>{String(current + 1).padStart(2, '0')}</strong><span>/</span><span>{slides.length}</span></output>
         <button type="button" onClick={next} disabled={busy} aria-label="Next step"><span aria-hidden="true">›</span></button>
         <span className="control-divider" aria-hidden="true" />
-        <button type="button" onClick={() => setSettingsOpen(true)} aria-label="Presenter controls"><span className="settings-mark" aria-hidden="true">⚙</span></button>
+        {OPERATOR_BUILD && <button type="button" onClick={() => setSettingsOpen(true)} aria-label="Presenter controls"><span className="settings-mark" aria-hidden="true">⚙</span></button>}
         <button type="button" onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}><span className="fullscreen-mark" aria-hidden="true">{isFullscreen ? '×' : '⛶'}</span></button>
       </nav>
-      <p className="keyboard-hint" aria-hidden="true">← → navigate · P preflight · F fullscreen</p>
-      {settingsOpen && <PresenterPanel open onClose={() => setSettingsOpen(false)} state={remoteState} currentPoll={poll} onOnline={refreshState} onReset={handleReset} onReopen={handleReopen} onExport={handleExport} onRawExport={handleRawExport} message={presenterMessage} />}
+      <p className="keyboard-hint" aria-hidden="true">{OPERATOR_BUILD ? '← → navigate · P preflight · F fullscreen' : '← → navigate · F fullscreen'}</p>
+      {OPERATOR_BUILD && settingsOpen && <PresenterPanel open onClose={() => setSettingsOpen(false)} state={remoteState} currentPoll={poll} onOnline={refreshState} onReset={handleReset} onReopen={handleReopen} onExport={handleExport} onRawExport={handleRawExport} onStartService={handleStartService} onStopService={handleStopService} message={presenterMessage} />}
     </main>
   );
 }
@@ -618,13 +642,14 @@ function AudienceApp() {
     if (!state?.runId || !state?.pollKey || state.phase !== 'open' || submitting) return;
     setSubmitting(true);
     try {
+      await joinRun({ runId: state.runId, participantId });
       await submitVote({ runId: state.runId, pollKey: state.pollKey, choice, participantId });
       localStorage.setItem(`science-slam-selection:${state.runId}:${state.pollKey}`, choice);
       setSelected(choice);
       setMessage(`Vote ${choice} recorded. You can still change it until the round closes.`);
       await refresh();
     } catch (error) {
-      setMessage(error.status === 409 ? 'The round just closed. Your last confirmed vote is final.' : 'Your vote was not saved. Tap again to retry.');
+      setMessage(error.status === 409 ? 'Voting may have closed or the room is unavailable. Check the big screen.' : 'Your vote was not saved. Tap again to retry.');
     } finally { setSubmitting(false); }
   };
   const poll = state?.pollKey ? pollsByKey[state.pollKey] : null;

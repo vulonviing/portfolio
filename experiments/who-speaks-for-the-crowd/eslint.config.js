@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default [
-  { ignores: ['dist', '../../who-speaks-for-the-crowd'] },
+  { ignores: ['dist', 'dist-operator', '../../who-speaks-for-the-crowd'] },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
