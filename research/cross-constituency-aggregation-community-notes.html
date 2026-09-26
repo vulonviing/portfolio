@@ -117,11 +117,154 @@
       <div class="container">
         <article class="prose">
 <h1>Cross-Constituency Aggregation for Community Notes</h1>
-<p><strong>Emrecan Ulu and Jingyao Shi · University of Konstanz</strong></p>
-<p>Community Notes lets people add context to posts on X, but a note appears only when enough raters agree that it is helpful. Our work asks a different question: what if agreement had to extend across groups of people who usually vote differently?</p>
-<p>Cross-Constituency Aggregation (CCA) finds those groups from co-rating behavior, without assigning them political identities. It then scores each note using the geometric mean of approval across groups. Strong support in one group cannot simply compensate for rejection in another.</p>
-<p>In our analysis of 44,722 posts, CCA qualifies 20,405 notes. Of those, 13,655 were not displayed by X. An independent language-model review found that 8,558 of these candidate notes held up on sourcing and quality. That review examined the note text and visible source pointer; it did <strong>not</strong> open links or verify that the cited sources supported the claims. These results show how a different aggregation rule changes visibility decisions, not that every qualified note is true or that X intentionally suppressed any note.</p>
-<p>The <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes">paper and reproducible implementation</a> include the method, figures, tests, and instructions for checking the reported results.</p>
+<p>Emrecan Ulu and Jingyao Shi — University of Konstanz</p>
+<p>On X, ordinary users write fact-checks on posts and rate each other's work. Only the notes the crowd agrees on ever appear under a post. Defining that agreement is the whole problem: count raw votes and the larger side wins every time, so a note can be buried by the group it makes uncomfortable rather than by anything wrong with it.</p>
+<p>Cross-Constituency Aggregation (CCA) settles it differently. Readers are first sorted into groups by how they actually vote, and a note then has to earn approval from each group separately. Enthusiasm from one camp cannot make up for rejection by another, no matter how large that camp is.</p>
+<p>Run against real Community Notes data covering 44,722 posts, the rule qualifies <strong>20,405</strong> notes — and <strong>13,655</strong> of them are notes X never showed to anyone. Of those hidden notes, <strong>8,558</strong> still hold up when an independent language model checks them for sourcing and quality.</p>
+<p>Underneath, this is a 100k-note, 200k-rater pipeline: spectral clustering over a co-rating graph, vote-profile reassignment of outlier raters, and a geometric-mean score, validated end to end with Gemma 4 31B IT. Every number above can be re-derived from the files in this repository.</p>
+<h2>Start here</h2>
+<table><thead><tr><th>If you want to</th><th>Go to</th></tr></thead><tbody><tr><td><strong>Read the paper</strong></td><td><a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/paper/Ulu_Yao.pdf"><code>paper/Ulu_Yao.pdf</code></a></td></tr><tr><td><strong>See the final talk</strong> (July 2026)</td><td><a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/docs/presentations/11-07-2026-community-notes-final/community-notes-final-presentation.pdf"><code>community-notes-final-presentation.pdf</code></a></td></tr><tr><td><strong>See the class talk</strong> (June 2026)</td><td><a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/docs/presentations/25-06-2026-1408-class_presentation/CCA_presentation.pdf"><code>CCA_presentation.pdf</code></a></td></tr><tr><td><strong>Check a number in the paper</strong></td><td><a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/REPRODUCING.md">REPRODUCING.md</a> — maps every result to the file that produced it</td></tr><tr><td><strong>Verify the results yourself</strong></td><td><code>python run_tests.py</code> — 68 tests, no data downloads needed (<a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/tests/RESULTS.md">last run</a>)</td></tr><tr><td><strong>Read the method</strong></td><td><a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/src"><code>src/</code></a> for the implementation, <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/notebooks"><code>notebooks/</code></a> for the stages</td></tr><tr><td><strong>Find a data file</strong></td><td><a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/data/README.md"><code>data/README.md</code></a></td></tr><tr><td><strong>Reuse this work</strong></td><td><a href="#licensing">Licensing</a></td></tr></tbody></table>
+<h2>Repository Map</h2>
+<pre><code class="language-text">.
+├── paper/                   # The manuscript, source and PDF
+├── REPRODUCING.md           # Paper result -&gt; source file, with runnable snippets
+├── run_tests.py             # Runs all 68 tests
+├── tests/                   # Aggregation-rule units + paper-number regressions
+├── src/                     # Reusable Python implementation
+├── notebooks/               # Canonical pipeline notebooks
+│   └── llm_validation/      # Gemma validation package and its own tests
+├── data/                    # All derived artifacts (see data/README.md)
+│   ├── interim/             # Clustering outputs and the canonical partition
+│   ├── processed/           # Scoring, selection, and topic outputs
+│   ├── scale-ladder/        # Diagnostics from all 42 scale runs, backing Table 1
+│   └── llm_validation/      # Gemma run records, auditable call by call
+├── figures/script_figures/  # Paper figures, each with its generating script
+├── jobs/                    # Job scripts that run the notebooks on a cluster
+├── scripts/                 # Hugging Face helpers and the checksum verifier
+├── docs/
+│   ├── presentations/       # The two talks given on this work
+│   └── scale-selection/     # Why the analysis runs at 200k
+└── raw/                     # Local snapshot inputs (contents gitignored)</code></pre>
+<h2>Canonical Stages</h2>
+<ol><li><code>notebooks/00_ingest.ipynb</code></li><li><code>notebooks/01_clustering.ipynb</code></li><li><code>notebooks/02_scoring.ipynb</code></li><li><code>notebooks/03_topics.ipynb</code></li><li><code>notebooks/llm_validation/</code> (canonical Gemma validation)</li><li><code>notebooks/06_plots.ipynb</code></li><li><code>notebooks/07_paper_visuals.ipynb</code></li></ol>
+<p>Each stage is submitted through one command:</p>
+<pre><code class="language-bash">jobs/submit_stage.sh [--dry-run] &lt;stage&gt;</code></pre>
+<p>Supported stages: <code>ingest</code>, <code>clustering</code>, <code>scoring</code>, <code>topics</code>, <code>plots</code>, <code>paper_visuals</code>. Canonical validation uses the separate <code>jobs/submit_llm_validation.sh</code> interface.</p>
+<p>Notebooks are the single source of truth. Jobs execute them for their data and figure side-effects and do not persist executed copies.</p>
+<p><code>TEST_MODE=1</code> in <code>config.txt</code> isolates all smoke-test output under <code>.artifacts/smoke/</code>. Production output always uses the root paths shown above.</p>
+<p>The three oversized files below are not stored in Git. See <a href="#large-local-data">Large Local Data</a> for their Hugging Face paths, and fetch or upload them with <code>scripts/fetch_interim_from_hf.sh</code> and <code>scripts/upload_interim_to_hf.sh</code>.</p>
+<h2>Large Local Data</h2>
+<p>Three files are never committed to Git (see <code>.gitignore</code>) because they exceed GitHub's size limits. All three are mirrored on the <code>vulonviing/community-notes-rescue-interim</code> Hugging Face dataset repo:</p>
+<table><thead><tr><th>File</th><th>Size</th><th>Hugging Face path</th></tr></thead><tbody><tr><td><code>data/master_full.parquet</code></td><td>~6.6 GB</td><td><code>master/master_full.parquet</code></td></tr><tr><td><code>data/interim/ratings_filtered.parquet</code></td><td>~3 GB</td><td><code>200k/ratings_filtered.parquet</code></td></tr><tr><td><code>data/interim/ratings_clustered.parquet</code></td><td>~3 GB</td><td><code>200k/ratings_clustered.parquet</code></td></tr></tbody></table>
+<p>Fetch all three with:</p>
+<pre><code class="language-bash">scripts/fetch_interim_from_hf.sh</code></pre>
+<p>If the dataset is ever rotated or re-created, confirm it still holds current uploads before relying on it (<code>hf download --repo-type=dataset vulonviing/community-notes-rescue-interim --include "master/*.parquet" "200k/*.parquet"</code> or check the HF web UI) — re-upload with <code>scripts/upload_interim_to_hf.sh</code> if it does not.</p>
+<h3>The Scale Ladder Mirror</h3>
+<p><strong>Read this first if you are coming back to the project after a long gap.</strong></p>
+<p>Before settling on 200,000 raters, we ran the clustering at many scales and with three different eigensolvers — forty-five runs in all, of which forty-two produced output. Table 1 of the paper reports six of them, and its footnote turns on the pattern across all nineteen AMG runs. Those runs lived only in <code>/work/&lt;user&gt;/cnotes_all/data/full_spectral_fast_*/interim_B/</code> on the University of Konstanz cluster, and a cluster account does not outlive a degree.</p>
+<p>They are now mirrored under <code>scale-ladder/</code> on the same <code>vulonviing/community-notes-rescue-interim</code> dataset, one folder per run:</p>
+<table><thead><tr><th>What</th><th>Where</th><th>Size</th></tr></thead><tbody><tr><td>Small diagnostics (stability, silhouette, cluster summary, graph, runtime)</td><td>committed to this repo, <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/data/scale-ladder"><code>data/scale-ladder/</code></a></td><td>~1.3 MB</td></tr><tr><td>Per-rater cluster assignments and vote statistics (<code>user_clusters*</code>, <code>user_stats</code>)</td><td>Hugging Face <code>scale-ladder/&lt;run&gt;/</code></td><td>~845 MB</td></tr><tr><td><code>ratings_filtered</code>, <code>ratings_clustered</code>, <code>embedding</code></td><td><strong>kept nowhere</strong></td><td>373 GB on the cluster</td></tr></tbody></table>
+<p>The third row is deliberate. Those files are joins and embeddings derived from <code>master_full.parquet</code>, which is mirrored in the same dataset, so they can be rebuilt from what was kept. The first two rows cannot be rebuilt at all without re-running days of cluster compute against a snapshot of X that no longer exists — that is the whole reason for the mirror.</p>
+<p>Fetch a run:</p>
+<pre><code class="language-bash">hf download vulonviing/community-notes-rescue-interim --repo-type=dataset \
+    --include &quot;scale-ladder/full_spectral_fast_amg_200k/*&quot; --local-dir .</code></pre>
+<p><code>scale-ladder/MANIFEST.md</code> in the dataset lists every run with its solver, selected <code>k</code>, ARI, and cluster sizes, so the mirror stays readable on its own. To refresh or rebuild it from the cluster, run <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/scripts/backup_scale_ladder_to_hf.sh"><code>scripts/backup_scale_ladder_to_hf.sh</code></a> there; it uploads the whole selection in one commit, since the Hub allows only 128 commits an hour.</p>
+<h3>Raw Data Provenance</h3>
+<p><code>data/master_full.parquet</code> is the direct output of <code>notebooks/00_ingest.ipynb</code> run against the official Community Notes snapshot (<code>notes-*.tsv</code>, <code>ratings-*.tsv</code>, <code>noteStatusHistory-00000.tsv</code> from</p>
+<https://x.com/i/communitynotes/download-data>). X's published snapshot
+<p>changes continuously — new notes, ratings, and status updates are added over time — so re-downloading it today and re-running ingest will <strong>not</strong> reproduce the exact same <code>master_full.parquet</code>, and downstream clustering/scoring numbers may shift as a result.</p>
+<p>The snapshot behind this repository's <code>master_full.parquet</code> (and therefore behind every committed <code>data/interim/</code>, <code>data/processed/</code>, and <code>data/llm_validation/</code> artifact) was retrieved on <strong>2026-05-08</strong>. Anyone who needs this exact historical result set should use the committed <code>data/interim/</code>, <code>data/processed/</code>, and <code>data/llm_validation/</code> outputs (or fetch <code>master_full.parquet</code> from Hugging Face above) rather than re-downloading raw inputs from X.</p>
+<h2>How To Run</h2>
+<h3>Local Setup</h3>
+<pre><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt</code></pre>
+<p>Place the Community Notes snapshot and FastText files under <code>raw/</code>; see <code>raw/PUT_SOURCE_FILES_HERE.md</code>.</p>
+<h3>Running From Scratch</h3>
+<p>How much you need to fetch or run depends on what you are trying to do:</p>
+<ol><li><strong>Just read the results / build the paper.</strong> No download needed. Cloning</li></ol>
+<p>this repository already gives you <code>data/processed/</code>, <code>data/interim/</code> (except the two oversized ratings files), and <code>data/llm_validation/</code> — everything the paper and its figures are built from. Skip straight to <a href="#build-the-paper">Build The Paper</a>.</p>
+<ol><li><strong>Re-run clustering/scoring/topics to check the pipeline.</strong> You do not need</li></ol>
+<p>the raw X snapshot. Run <code>scripts/fetch_interim_from_hf.sh</code> to pull <code>master_full.parquet</code> and the two interim ratings files (see <a href="#large-local-data">Large Local Data</a>), then start from <code>notebooks/01_clustering.ipynb</code> onward — <code>data/master_full.parquet</code> is <code>01_clustering.ipynb</code>'s input.</p>
+<ol><li><strong>Reproduce ingestion itself from raw X data.</strong> Download a fresh snapshot</li></ol>
+<p>from the official links in <code>raw/PUT_SOURCE_FILES_HERE.md</code> and the FastText language model, place them under <code>raw/</code>, then run <code>00_ingest.ipynb</code> onward. Read <a href="#raw-data-provenance">Raw Data Provenance</a> first: X's snapshot changes over time, so a newly downloaded snapshot will not reproduce this repository's exact <code>master_full.parquet</code> or its downstream numbers.</p>
+<h3>Smoke Test</h3>
+<p>Set <code>TEST_MODE=1</code> in <code>config.txt</code>. Smoke runs use a small input slice and write only under <code>.artifacts/smoke/</code>.</p>
+<pre><code class="language-bash">for stage in ingest clustering scoring topics plots paper_visuals; do
+  jobs/submit_stage.sh --dry-run &quot;$stage&quot;
+done</code></pre>
+<p>Submit the stages in order:</p>
+<pre><code class="language-bash">jobs/submit_stage.sh ingest
+jobs/submit_stage.sh clustering
+jobs/submit_stage.sh scoring
+jobs/submit_stage.sh topics
+jobs/submit_stage.sh plots
+jobs/submit_stage.sh paper_visuals</code></pre>
+<h3>Production Run</h3>
+<ol><li>Put the raw snapshot and FastText files in the root <code>raw/</code> directory.</li><li>Install any missing packages in the active Python environment, including <code>pyamg</code>.</li><li>Set <code>TEST_MODE=0</code> in <code>config.txt</code>.</li><li>Submit the six stages in the order shown above.</li></ol>
+<p>The production clustering configuration is fixed at 100,000 notes and 200,000 users. Downstream stages always consume Method-B reassigned clusters from <code>data/interim/user_clusters_method_b_voteprofile.parquet</code>.</p>
+<p><code>jobs/submit_stage.sh</code> and <code>jobs/submit_llm_validation.sh</code> target an SGE-style scheduler (<code>qsub</code>/<code>qstat</code>/<code>qacct</code>); adapt the queue names and resource flags to whatever job scheduler is available, or run the underlying Python entry points directly for a local run. Logs and status files are written under <code>.artifacts/logs/</code>.</p>
+<h3>Resume From Interim Data</h3>
+<pre><code class="language-bash">scripts/fetch_interim_from_hf.sh</code></pre>
+<p>This populates <code>data/interim/ratings_filtered.parquet</code> and <code>data/interim/ratings_clustered.parquet</code>. The remaining clustering artifacts, especially the Method-B user assignment, must also exist before starting from <code>scoring</code>.</p>
+<h3>Canonical Gemma Validation</h3>
+<p>The canonical validation is implemented under <code>notebooks/llm_validation/</code> and evaluates the frozen 13,655-note universe with Gemma 4 31B IT in BF16 on two L40S-class GPUs. Prompts contain only note text: no tweet retrieval, URL fetching, Gabriel scaffold, or upstream selection score is supplied to the model.</p>
+<p>Install the pinned runtime and model, then submit the 128-note Stage 1 smoke:</p>
+<pre><code class="language-bash">jobs/submit_llm_validation.sh setup
+jobs/submit_llm_validation.sh smoke
+jobs/submit_llm_validation.sh stage1-array 2-7 3 64</code></pre>
+<p>The three frozen prompts are reproduced verbatim, with their hashes, in <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/data/llm_validation/PROMPTS.md">data/llm_validation/PROMPTS.md</a>. See <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/notebooks/llm_validation/README.md">notebooks/llm_validation/README.md</a> for adaptive batch sizing, parallel Stage 1 shards, checkpoint behavior, and output schemas.</p>
+<p>The separately reported Stage 1.5 sensitivity analysis rechecks only the 1,703 resolved Gemma opinion notes for a substantial sourced factual core. It keeps canonical Stage 1 immutable and writes to a separate run directory:</p>
+<pre><code class="language-bash">jobs/submit_llm_validation.sh --dry-run stage1-5 1703 64
+jobs/submit_llm_validation.sh stage1-5 1703 64</code></pre>
+<p>Its 280 additional admissions join the 10,096 strict sourced notes in a 10,376-note expanded Stage 2 run. The completed and merged run retains 8,527 strict-route notes and 31 Stage 1.5 recall-route notes at the frozen threshold of 50. The canonical final rescue set therefore contains <strong>8,558 notes</strong>. The admission route is audited but never shown to the model. Operational and audit details are in <code>notebooks/llm_validation/README.md</code>.</p>
+<h3>Build The Paper</h3>
+<pre><code class="language-bash">cd paper
+latexmk -pdf main.tex</code></pre>
+<p>The five figures and the three frozen prompt files the appendix quotes are pulled in from <code>figures/</code> and <code>data/</code>, so a fresh clone builds without any extra downloads. See <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/paper/README.md">paper/README.md</a>.</p>
+<h2>Methodology</h2>
+<h3>1. Ingestion</h3>
+<p><code>notebooks/00_ingest.ipynb</code> reads the official Community Notes notes, ratings, and status-history files.</p>
+<ul><li>FastText retains English notes.</li><li>Tweets must have at least three English notes.</li><li>Ratings are joined to note metadata and status history.</li><li>Output: <code>data/master_full.parquet</code> (large, ignored by Git).</li></ul>
+<h3>2. Clustering</h3>
+<p><code>notebooks/01_clustering.ipynb</code> selects a dense slice with 100,000 notes and 200,000 users. Only ratings cast within 48 hours of note creation are eligible, and notes require at least three eligible ratings.</p>
+<p>The clustering implementation in <code>src/spectral_fast.py</code>:</p>
+<ul><li>builds a sparse mean-centered user-note matrix;</li><li>constructs a symmetric 15-nearest-neighbor affinity graph;</li><li>computes spectral embeddings with AMG for production;</li><li>evaluates <code>k=2..7</code> using silhouette and repeated stability diagnostics.</li></ul>
+<p>Clusters smaller than <code>max(1% of users, 500 users)</code> are treated as outliers. Method A assigns those users by embedding-centroid distance. Method B assigns them by correlation with the main camps' note-level vote profiles. Method B is the canonical downstream assignment; the initial spectral label remains available as <code>initial_cluster</code>.</p>
+<h3>3. Scoring And Representative Selection</h3>
+<p><code>notebooks/02_scoring.ipynb</code> computes global and camp-conditional approval. Notes need at least three total ratings. A bridge score is computed only when every camp has at least three ratings for the note:</p>
+<pre><code class="language-text">bridge score = geometric mean of camp-conditional approval rates</code></pre>
+<p>For each tweet, the Representative strategy selects the note with the highest bridge score. A non-helpful note counts as rescued when its bridge score is strictly above <code>0.5</code>.</p>
+<p>Topic input is restricted to notes whose maximum-minus-minimum camp approval is at least <code>0.90</code>, again requiring at least three ratings from every camp.</p>
+<h3>4. Representative Topics</h3>
+<p><code>notebooks/03_topics.ipynb</code> runs BERTopic on the diagnostic note subset using <code>all-MiniLM-L6-v2</code>, cosine UMAP, and the repository's fixed text-cleaning rules.</p>
+<p>Three auditable layers:</p>
+<ul><li>fine-grained topics;</li><li>a 30-topic parent layer;</li><li>a paper-facing super-parent layer selected from candidate counts <code>6, 8, 10, 12</code>.</li></ul>
+<p>HDBSCAN outliers remain visible in the strict parent output. A separate reassigned table maps them to the nearest parent centroid and records similarity diagnostics. Process/meta vocabulary is removed from labels without removing notes from the corpus.</p>
+<h3>5. Gemma Validation And Figures</h3>
+<p>The canonical Gemma pipeline first classifies all 13,655 Representative rescue candidates, applies a targeted Stage 1.5 recall check to resolved opinion notes, and scores the resulting 10,376 sourced candidates for rescue worthiness. The final rescue definition is <code>passes_rescue_threshold == True</code> in the merged expanded Stage 2 result, which yields 8,558 notes.</p>
+<p><code>notebooks/06_plots.ipynb</code> produces exploratory analysis plots, and <code>notebooks/07_paper_visuals.ipynb</code> is the historical manuscript-figure notebook.</p>
+<p>Every figure in the current paper is produced by a standalone script in <code>figures/script_figures/</code>, where the script and its <code>.pdf</code> and <code>.png</code> outputs share one basename. Regenerate any of them in place:</p>
+<pre><code class="language-bash">python figures/script_figures/fig1-rater-dominance.py        # Figure 1
+python figures/script_figures/fig2-dataset-construction.py   # Figure 2
+python figures/script_figures/fig3-rescue-panels.py          # Figure 3
+python figures/script_figures/cn-gemma-validation-funnel.py  # Figure 4
+python figures/script_figures/cn-topic-signatures.py         # Figure 5</code></pre>
+<p>All but Figure 2 run on a fresh clone; that one also needs <code>data/interim/ratings_clustered.parquet</code> from Hugging Face. See <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/figures/README.md">figures/README.md</a>.</p>
+<p>Smoke mode changes scale and output location only. It does not redefine the production methodology.</p>
+<h2>Tests</h2>
+<pre><code class="language-bash">python -m pip install -r requirements.txt
+python run_tests.py          # all 68 tests
+python run_tests.py -v       # per-test names</code></pre>
+<p>Three suites run: the aggregation rule on synthetic data, the paper's headline numbers re-derived from the committed parquet files, and the Gemma validation package with every model call mocked. The tests themselves need only <code>pandas</code>, <code>numpy</code>, and <code>pyarrow</code> from that requirements file; <code>pytest</code> is not a dependency, and no data has to be downloaded. <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/tests/RESULTS.md">tests/RESULTS.md</a> records the last full run and lists what each suite asserts.</p>
+<h2>Licensing</h2>
+<table><thead><tr><th>Content</th><th>License</th></tr></thead><tbody><tr><td>Code — <code>src/</code>, <code>notebooks/</code>, <code>jobs/</code>, <code>scripts/</code>, <code>tests/</code>, figure scripts</td><td>MIT, see <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/LICENSE">LICENSE</a></td></tr><tr><td>Data, figures, manuscript, presentations</td><td>CC BY 4.0, see <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/LICENSE-DATA">LICENSE-DATA</a></td></tr></tbody></table>
+<p>The underlying Community Notes data remains subject to X's own terms; no raw snapshot files are redistributed here. To cite this work, see <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/CITATION.cff">CITATION.cff</a>.</p>
+<h2>Acknowledgments</h2>
+<p>The authors acknowledge support by the local computing resources through the core facility <a href="https://scc.uni-konstanz.de">SCCKN</a>.</p>
+<h2>References</h2>
+<ul><li>Paper: <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/paper/README.md">paper/README.md</a></li><li>Reproduction map: <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/REPRODUCING.md">REPRODUCING.md</a></li><li>Data catalogue: <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/data/README.md">data/README.md</a></li><li>Figures: <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/figures/README.md">figures/README.md</a></li><li>Presentations: <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes/blob/main/docs/README.md">docs/README.md</a></li></ul>
         </article>
       </div>
     </section>

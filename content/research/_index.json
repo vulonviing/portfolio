@@ -5,7 +5,12 @@
     "date": "2026",
     "excerpt": "A voting-based aggregation rule for Community Notes that asks each behavioral constituency to support a note, rather than letting one large group dominate the score.",
     "tags": ["Community Notes", "Spectral Clustering", "Voting", "LLM Review"],
-    "repo": "https://github.com/vulonviing/cross-constituency-aggregation-community-notes"
+    "repo": "https://github.com/vulonviing/cross-constituency-aggregation-community-notes",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
   },
   {
     "slug": "social-intuition-vectors",
