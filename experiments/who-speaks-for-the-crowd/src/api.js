@@ -47,6 +47,11 @@ export const submitVote = ({ runId, pollKey, choice, participantId }) => request
   body: JSON.stringify({ runId, pollKey, choice, participantId }),
 });
 
+export const joinRun = ({ runId, participantId }) => request('/v1/join', {
+  method: 'PUT',
+  body: JSON.stringify({ runId, participantId }),
+});
+
 async function downloadCsv(path, filename) {
   const response = await fetch(`${apiBase}${path}`);
   if (!response.ok) throw new ApiError(`Export failed (${response.status})`, response.status);

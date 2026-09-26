@@ -1,3 +1,6 @@
+import { PostCard } from './post-card.jsx';
+
+const base = import.meta.env?.BASE_URL || '/who-speaks-for-the-crowd/';
 const dotRange = (count) => Array.from({ length: count }, (_, index) => index);
 
 function Reveal({ show, className = '', children }) {
@@ -50,42 +53,56 @@ function CheckMark() {
   return <span className="check-mark" aria-hidden="true">✓</span>;
 }
 
+function ArchetypeCard({ tone, headline, detail }) {
+  return (
+    <div className={`archetype-card archetype-card-${tone}`}>
+      <span className="archetype-eyebrow"><i /> CANDIDATE NOTE</span>
+      <strong>{headline}</strong>
+      <p>{detail}</p>
+    </div>
+  );
+}
+
 function DecisionFlowSlide({ number }) {
   return (
-    <SlideFrame number={number} eyebrow="WHAT IS COMMUNITY NOTES?" title="One note. One decision.">
-      <div className="decision-flow">
-        <div className="decision-card"><span>POST</span><strong>Someone posts<br />a claim.</strong></div>
-        <FlowArrow />
-        <div className="decision-card"><span>CANDIDATE NOTE</span><strong>A contributor<br />adds context.</strong></div>
-        <FlowArrow />
-        <div className="decision-card"><span>HELPFUL?</span><div className="decision-votes"><b>✓</b><b>−</b></div></div>
-        <FlowArrow />
-        <div className="decision-card"><span>VISIBILITY</span><strong className="decision-show">SHOW</strong><strong className="decision-nmr">or NMR</strong></div>
+    <SlideFrame number={number} eyebrow="WHAT IS COMMUNITY NOTES?" title="Not every candidate note is trying to help.">
+      <div className="archetype-layout">
+        <div className="archetype-grid">
+          <ArchetypeCard tone="green" headline="On-topic. Accurate." detail="The note that should win." />
+          <ArchetypeCard tone="amber" headline="Sounds right. Isn’t." detail="Same tone and style — wrong or irrelevant information." />
+          <ArchetypeCard tone="coral" headline="Troll note." detail="Doesn’t even try to be true." />
+        </div>
+        <div className="archetype-vote">
+          <div className="archetype-vote-people"><Person tone="blue" /><Person tone="coral" /></div>
+          <span className="archetype-vote-arrow" aria-hidden="true" />
+          <strong className="archetype-summary">Congratulations. You are now the algorithm.</strong>
+        </div>
       </div>
-      <div className="decision-summary"><strong>Congratulations. You are now the algorithm.</strong><span>The ratings become one visibility decision.</span></div>
     </SlideFrame>
   );
 }
 
-function ContextNote({ children }) {
-  return (
-    <div className="context-note">
-      <div className="context-note-head"><span className="context-note-icon" aria-hidden="true">♣</span><strong>Readers added context</strong></div>
-      <p>{children}</p>
-    </div>
-  );
-}
+const rawChickenPost = {
+  author: 'Home Kitchen Hacks',
+  handle: '@dailyfoodhacks',
+  avatarImage: `${base}media/home-kitchen-hacks-avatar.jpg`,
+  text: 'PSA: always wash your raw chicken thoroughly before cooking. Basic food safety 101.',
+  timeAgo: '22s',
+  engagement: { replies: '12', reposts: '34', likes: '210', views: '8.4K' },
+  meta: 'Mar 14, 2024',
+};
 
 function ApprovalPuzzleSlide({ number, step }) {
   return (
     <SlideFrame number={number} eyebrow="THE PUZZLE" title="95.1% said helpful. X still did not display it." footer="Raw-chicken case · paper/main.tex">
       <div className="puzzle-layout">
-        <ContextNote>
-          Raw chicken does not need to be washed<br />before cooking. Washing poultry can spread<br />bacterial contamination around the kitchen.<br />CDC · USDA
-        </ContextNote>
+        <PostCard
+          post={rawChickenPost}
+          note={<>Raw chicken does not need to be washed before cooking. Washing poultry can spread bacterial contamination around the kitchen.<br />CDC · USDA</>}
+        />
         <div className="puzzle-results">
           <Reveal show={step >= 1} className="approval-number"><strong>95.1%</strong><span>overall approval</span></Reveal>
-          <Reveal show={step >= 2} className="nmr-status"><span>X STATUS</span><strong>NEEDS MORE RATINGS</strong></Reveal>
+          <Reveal show={step >= 2} className="nmr-status"><span>X STATUS</span><strong>NOT SHOWN</strong></Reveal>
           <Reveal show={step >= 2} className="puzzle-takeaway"><strong>High approval was not enough.</strong></Reveal>
         </div>
       </div>

@@ -77,30 +77,6 @@ button {
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.48);
 }
 
-.click-zone {
-  position: fixed;
-  z-index: 2;
-  top: 0;
-  bottom: 0;
-  width: 28vw;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
-}
-
-.click-zone:disabled {
-  cursor: default;
-}
-
-.click-zone-left {
-  left: 0;
-}
-
-.click-zone-right {
-  right: 0;
-}
-
 .progress-track {
   position: fixed;
   z-index: 5;
@@ -358,7 +334,7 @@ button {
 }
 
 .join-slide h1 {
-  margin: 1.2cqh 0 3.2cqh;
+  margin: 1.2cqh 0 1.6cqh;
   font-size: 5.8cqh;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -368,6 +344,32 @@ button {
   margin: 2.4cqh 0 0;
   color: #6d737d;
   font-size: 1.7cqh;
+}
+
+.joined-count {
+  display: flex;
+  align-items: center;
+  gap: 0.6cqw;
+  margin-bottom: 2.6cqh;
+  color: #6d737d;
+  font-size: 1.65cqh;
+}
+
+.joined-count strong {
+  color: #202228;
+  font-variant-numeric: tabular-nums;
+}
+
+.joined-count-dot {
+  width: 0.85cqh;
+  height: 0.85cqh;
+  border-radius: 50%;
+  background: #22b88b;
+}
+
+.joined-count-compact {
+  margin-bottom: 0;
+  font-size: 1.2cqh;
 }
 
 .vote-qr {
@@ -388,7 +390,9 @@ button {
   height: 11.5cqh;
   place-items: center;
   padding: 0.55cqh;
+  border: 0;
   background: #fff;
+  cursor: zoom-in;
 }
 
 .vote-qr-code svg {
@@ -469,10 +473,18 @@ button {
 }
 
 .poll-heading {
+  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 2cqw;
+}
+
+.poll-countdown-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .poll-heading span,
@@ -493,6 +505,13 @@ button {
 
 .poll-heading-text {
   min-width: 0;
+}
+
+.poll-heading-aside {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 1.3cqw;
 }
 
 .poll-heading-text > div {
@@ -557,6 +576,17 @@ button {
   background: #eff1f3;
 }
 
+.post-avatar-default {
+  overflow: hidden;
+  background: #cfd4da;
+}
+
+.post-avatar-default svg {
+  width: 68%;
+  height: 68%;
+  color: #8b929b;
+}
+
 .post-identity {
   display: flex;
   min-width: 0;
@@ -567,7 +597,20 @@ button {
 .post-identity strong { font-size: 1.75cqh; }
 .post-identity > span { color: #69717c; font-size: 1.4cqh; }
 .post-verified { display: inline-grid; width: 1.7cqh; height: 1.7cqh; margin-left: 0.35cqw; place-items: center; border-radius: 50%; color: #fff; font-size: 1.05cqh; background: #1d9bf0; }
-.post-more { margin-left: auto; color: #69717c; font-size: 1.55cqh; letter-spacing: 0.08em; }
+
+.post-header-meta {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.7cqw;
+  margin-left: auto;
+  color: #69717c;
+}
+
+.post-time { font-size: 1.5cqh; white-space: nowrap; }
+.post-spark { display: grid; width: 1.7cqh; height: 1.7cqh; place-items: center; }
+.post-spark img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.post-more { font-size: 1.55cqh; letter-spacing: 0.08em; }
 
 .post-text {
   margin: 2.2cqh 0 1.8cqh;
@@ -601,6 +644,15 @@ button {
 .post-media-button:focus-visible {
   outline: 0.35cqh solid #1d9bf0;
   outline-offset: 0.35cqh;
+}
+
+.post-media-static {
+  position: relative;
+  z-index: 3;
+  display: block;
+  min-width: 0;
+  border-radius: 1.4cqh;
+  overflow: hidden;
 }
 
 .post-media-button-prominent {
@@ -675,13 +727,68 @@ button {
 
 .post-actions {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: flex-start;
   margin-top: 1.25cqh;
   padding-top: 1.15cqh;
   border-top: 1px solid #e7e9eb;
   color: #69717c;
-  font-size: 1.75cqh;
 }
+
+.post-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 4.2cqw;
+}
+
+.post-actions-extra {
+  display: flex;
+  align-items: center;
+  gap: 0.9cqw;
+  margin-left: 2.6cqw;
+}
+
+.post-action,
+.post-action-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5cqw;
+  font-size: 1.5cqh;
+  font-variant-numeric: tabular-nums;
+}
+
+.post-action svg,
+.post-action-icon svg {
+  width: 1.9cqh;
+  height: 1.9cqh;
+}
+
+.post-note {
+  margin-top: 1.6cqh;
+  padding: 1.5cqh 1.4cqw;
+  border: 1px solid #e2e5e8;
+  border-radius: 1.4cqh;
+  background: #f7f8f9;
+}
+
+.post-note-head {
+  display: flex;
+  align-items: center;
+  gap: 0.7cqw;
+  margin-bottom: 1.1cqh;
+}
+
+.post-note-icon {
+  flex: 0 0 auto;
+  width: 2.1cqh;
+  height: 2.1cqh;
+  color: #1d9bf0;
+}
+
+.post-note-icon svg { display: block; width: 100%; height: 100%; }
+.post-note-head strong { font-size: 1.65cqh; line-height: 1.3; }
+.post-note p { margin: 0; color: #202228; font-size: 1.95cqh; line-height: 1.4; }
+.post-note-source { display: block; margin-top: 0.7cqh; color: #69717c; font-size: 1.5cqh; }
 
 .poll-phase-candidates .poll-content,
 .poll-phase-live .poll-content,
@@ -715,7 +822,37 @@ button {
 .poll-slide .post-card-compact .post-media-grid-multiple .post-media { height: 23cqh; }
 .poll-slide .post-card-compact .post-media-grid-split-document .post-media { height: 32cqh; max-height: none; }
 .poll-slide .post-card-compact .post-meta { margin-top: 1.1cqh; font-size: 1.3cqh; }
-.poll-slide .post-card-compact .post-actions { margin-top: 1cqh; padding-top: 0.95cqh; font-size: 1.65cqh; }
+.poll-slide .post-card-compact .post-actions { margin-top: 1cqh; padding-top: 0.95cqh; }
+.poll-slide .post-card-compact .post-action,
+.poll-slide .post-card-compact .post-action-icon { font-size: 1.4cqh; }
+.poll-slide .post-card-compact .post-action svg,
+.poll-slide .post-card-compact .post-action-icon svg { width: 1.75cqh; height: 1.75cqh; }
+.poll-slide .post-card-compact .post-time { font-size: 1.3cqh; }
+.poll-slide .post-card-compact .post-spark { width: 1.5cqh; height: 1.5cqh; }
+.poll-slide .post-card-compact .post-more { font-size: 1.3cqh; }
+
+.poll-slide .post-card-compact-tight { padding: 2.1cqh 1.4cqw 1.6cqh; }
+.poll-slide .post-card-compact-tight .post-avatar { width: 5.2cqh; height: 5.2cqh; font-size: 1.4cqh; }
+.poll-slide .post-card-compact-tight .post-identity strong { font-size: 1.6cqh; }
+.poll-slide .post-card-compact-tight .post-identity > span { font-size: 1.35cqh; }
+.poll-slide .post-card-compact-tight .post-text { margin: 1.5cqh 0 1.4cqh; font-size: 2.5cqh; }
+.poll-slide .post-card-compact-tight .post-media { max-height: 30cqh; }
+.poll-slide .post-card-compact-tight .post-media-grid-split-document .post-media { height: 24cqh; max-height: none; }
+.poll-slide .post-card-compact-tight .post-meta { margin-top: 1cqh; font-size: 1.2cqh; }
+.poll-slide .post-card-compact-tight .post-actions { margin-top: 0.9cqh; padding-top: 0.85cqh; }
+.poll-slide .post-card-compact-tight .post-action,
+.poll-slide .post-card-compact-tight .post-action-icon { font-size: 1.15cqh; }
+.poll-slide .post-card-compact-tight .post-action svg,
+.poll-slide .post-card-compact-tight .post-action-icon svg { width: 1.4cqh; height: 1.4cqh; }
+.poll-slide .post-card-compact-tight .post-time { font-size: 1.05cqh; }
+.poll-slide .post-card-compact-tight .post-spark { width: 1.2cqh; height: 1.2cqh; }
+.poll-slide .post-card-compact-tight .post-more { font-size: 1.05cqh; }
+.poll-slide .post-card-compact-tight .post-note { margin-top: 1.3cqh; padding: 1.3cqh 1.2cqw; }
+.poll-slide .post-card-compact-tight .post-note-head { gap: 0.65cqw; margin-bottom: 0.9cqh; }
+.poll-slide .post-card-compact-tight .post-note-icon { width: 1.9cqh; height: 1.9cqh; }
+.poll-slide .post-card-compact-tight .post-note-head strong { font-size: 1.5cqh; }
+.poll-slide .post-card-compact-tight .post-note p { font-size: 1.75cqh; }
+.poll-slide .post-card-compact-tight .post-note-source { margin-top: 0.6cqh; font-size: 1.35cqh; }
 
 .poll-main {
   display: grid;
@@ -968,6 +1105,52 @@ button {
 .status-open { background: #22b88b; }
 .status-closed { background: #69717c; }
 
+.countdown-ring {
+  position: relative;
+  display: grid;
+  width: 7.2cqh;
+  height: 7.2cqh;
+  flex: 0 0 auto;
+  place-items: center;
+}
+
+.countdown-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+
+.countdown-ring-track {
+  fill: none;
+  stroke: #e2e5e8;
+  stroke-width: 9;
+}
+
+.countdown-ring-progress {
+  fill: none;
+  stroke: #22b88b;
+  stroke-width: 9;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 250ms linear, stroke 300ms ease;
+}
+
+.countdown-ring-urgent .countdown-ring-progress { stroke: #ff625d; }
+
+.countdown-ring-large {
+  width: 11.5cqh;
+  height: 11.5cqh;
+}
+
+.countdown-ring-large .countdown-ring-value {
+  font-size: 4cqh;
+}
+
+.countdown-ring-value {
+  position: absolute;
+  color: #202228;
+  font-size: 2.4cqh;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-ring-urgent .countdown-ring-value { color: #ff625d; }
+
 .poll-footer {
   display: flex;
   align-items: end;
@@ -1016,6 +1199,50 @@ button {
 .presenter-message { min-height: 1.3em; margin: 16px 0 0; color: #aeb4bd; font-size: 13px; }
 
 /* Expandable post images */
+.qr-lightbox {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(5, 6, 8, 0.82);
+  backdrop-filter: blur(18px);
+  cursor: zoom-out;
+}
+
+.qr-lightbox-card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  cursor: default;
+}
+
+.qr-lightbox-card svg {
+  display: block;
+  width: min(56vh, 56vw);
+  height: min(56vh, 56vw);
+}
+
+.qr-lightbox-close {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 22px;
+  background: #202228;
+  cursor: pointer;
+}
+
 .image-lightbox {
   position: fixed;
   z-index: 1000;
@@ -1056,20 +1283,34 @@ button {
 .image-lightbox-toolbar .image-lightbox-close { position: absolute; right: max(16px, env(safe-area-inset-right)); }
 
 .image-lightbox-viewport {
+  display: grid;
   min-width: 0;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
+  place-items: center;
   overscroll-behavior: contain;
-  touch-action: pan-x pan-y;
+  touch-action: none;
+  cursor: zoom-in;
 }
 
-.image-lightbox-viewport img {
+.image-lightbox-viewport-zoomed { cursor: grab; }
+.image-lightbox-viewport-zoomed .image-lightbox-media:active { cursor: grabbing; }
+
+.image-lightbox-media {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 100%;
+  max-height: 100%;
+  touch-action: none;
+}
+
+.image-lightbox-media-img {
   display: block;
-  width: auto;
-  max-width: none;
-  margin: 0 auto;
+  min-width: 0;
+  max-width: 100%;
+  max-height: 88dvh;
   object-fit: contain;
-  transition: height 160ms ease;
 }
 
 .image-lightbox-hint {
@@ -1121,7 +1362,22 @@ button {
 .audience-waiting p { max-width: 320px; margin: 0 auto; color: #686e76; line-height: 1.5; }
 
 .audience-poll { width: min(680px, 100%); margin: 0 auto; padding: 26px 18px max(36px, env(safe-area-inset-bottom)); }
-.audience-round { font-size: 11px; }
+.audience-round { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11px; }
+
+.countdown-ring-compact {
+  width: 40px;
+  height: 40px;
+}
+
+.countdown-ring-compact .countdown-ring-track,
+.countdown-ring-compact .countdown-ring-progress {
+  stroke-width: 10;
+}
+
+.countdown-ring-compact .countdown-ring-value {
+  font-size: 14px;
+}
+
 .audience-poll > h1 { margin: 7px 0 18px; font-size: clamp(28px, 8vw, 42px); line-height: 1.05; letter-spacing: -0.04em; }
 .audience-poll .post-card { width: 100%; padding: 18px; border-radius: 14px; box-shadow: 0 12px 40px rgba(26, 31, 40, 0.12); }
 .audience-poll .post-avatar { width: 46px; height: 46px; font-size: 13px; }
@@ -1134,7 +1390,13 @@ button {
 .audience-poll .post-media-grid-split-document { grid-template-columns: 1fr; gap: 12px; }
 .audience-poll .post-media-grid-split-document .post-media { width: 100%; height: auto; max-height: none; }
 .audience-poll .post-meta { font-size: 12px; }
-.audience-poll .post-actions { font-size: 17px; }
+.audience-poll .post-action,
+.audience-poll .post-action-icon { font-size: 14px; }
+.audience-poll .post-action svg,
+.audience-poll .post-action-icon svg { width: 17px; height: 17px; }
+.audience-poll .post-time,
+.audience-poll .post-more { font-size: 13px; }
+.audience-poll .post-spark { width: 15px; height: 15px; }
 .audience-candidates { display: grid; gap: 14px; margin-top: 20px; }
 .audience-candidates .candidate-card { width: 100%; min-height: 0; padding: 18px; border-radius: 14px; cursor: pointer; }
 .audience-candidates .candidate-card:disabled { cursor: default; }

@@ -13,6 +13,8 @@ export const polls = [
       avatarImage: `${base}media/inevitable-west-avatar.jpg`,
       sourceUrl: 'https://x.com/Inevitablewest/status/1891443393684774979',
       text: 'German schools are holding mock elections. The AfD are winning every single one by a massive majority.\n\nThe kids are going to be just fine.',
+      timeAgo: '17h',
+      engagement: { replies: '428', reposts: '1.2K', likes: '8.6K', views: '312K' },
       images: [
         {
           src: `${base}media/afd-juniorwahl-parties.jpg`,
@@ -55,6 +57,9 @@ export const polls = [
       avatarImage: `${base}media/legitimate-targets-avatar.jpg`,
       sourceUrl: 'https://x.com/LegitTargets/status/1862791177592050074',
       text: 'BREAKING: German AfD Party says they will LEAVE the EU if they win February elections.',
+      timeAgo: '3d',
+      engagement: { replies: '156', reposts: '890', likes: '4.2K', views: '198K' },
+      zoomable: false,
       images: [
         {
           src: `${base}media/afd-eu-weidel.jpg`,
@@ -94,9 +99,12 @@ export const polls = [
       author: 'Shia Visuals', handle: '@ShiaVisuals', avatar: 'SV',
       avatarImage: `${base}media/shia-visuals-avatar.jpg`,
       text: 'May Allah protect him.',
+      timeAgo: '6h',
+      engagement: { replies: '92', reposts: '340', likes: '2.8K', views: '145K' },
+      zoomable: false,
       image: `${base}media/khamenei.png`,
       imageAlt: 'Ali Khamenei wearing a black turban and looking downward.',
-      meta: 'Post reproduced for the live vote',
+      meta: 'Feb 28, 2026',
     },
     candidates: [
       {

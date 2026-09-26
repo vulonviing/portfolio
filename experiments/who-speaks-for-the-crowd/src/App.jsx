@@ -2,32 +2,109 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import {
-  closePoll, downloadExport, downloadRawExport, getState, openPoll, reopenPoll, resetRun, submitVote,
+  closePoll, downloadExport, downloadRawExport, getState, joinRun, openPoll, reopenPoll, resetRun, submitVote,
 } from './api.js';
 import { hasNextSlideStep, nextSlideStep, previousSlideStep } from './deck-model.js';
 import { NativeSlide } from './native-slides.jsx';
 import { createParticipantId, resultRows } from './poll-model.js';
 import { pollKeys, pollsByKey } from './polls.js';
+import { PostCard } from './post-card.jsx';
 import { slides } from './slides.js';
 
 const clamp = (value) => Math.min(slides.length - 1, Math.max(0, value));
 const initialPhases = () => Object.fromEntries(pollKeys.map((key) => [key, 'tweet']));
+const POLL_COUNTDOWN_SECONDS = 40;
 
 function slideFromHash() {
   const parsed = Number.parseInt(window.location.hash.slice(1), 10);
   return Number.isFinite(parsed) ? clamp(parsed - 1) : 0;
 }
 
+function useCountdown(active, seconds) {
+  const [remaining, setRemaining] = useState(seconds);
+  const startRef = useRef(null);
+
+  useEffect(() => {
+    if (!active) {
+      startRef.current = null;
+      return undefined;
+    }
+    startRef.current = Date.now();
+    const tick = () => {
+      const elapsed = (Date.now() - startRef.current) / 1000;
+      setRemaining(Math.max(0, Math.ceil(seconds - elapsed)));
+    };
+    tick();
+    const interval = window.setInterval(tick, 250);
+    return () => window.clearInterval(interval);
+  }, [active, seconds]);
+
+  return remaining;
+}
+
+const COUNTDOWN_RADIUS = 42;
+const COUNTDOWN_CIRCUMFERENCE = 2 * Math.PI * COUNTDOWN_RADIUS;
+
+function CountdownRing({ remaining, total, compact = false, large = false }) {
+  const pct = Math.max(0, Math.min(1, remaining / total));
+  const urgent = remaining <= 5;
+  return (
+    <div className={`countdown-ring ${compact ? 'countdown-ring-compact' : ''} ${large ? 'countdown-ring-large' : ''} ${urgent ? 'countdown-ring-urgent' : ''}`} aria-live="polite">
+      <svg viewBox="0 0 100 100">
+        <circle className="countdown-ring-track" cx="50" cy="50" r={COUNTDOWN_RADIUS} />
+        <circle
+          className="countdown-ring-progress"
+          cx="50" cy="50" r={COUNTDOWN_RADIUS}
+          strokeDasharray={COUNTDOWN_CIRCUMFERENCE}
+          strokeDashoffset={COUNTDOWN_CIRCUMFERENCE * (1 - pct)}
+        />
+      </svg>
+      <span className="countdown-ring-value">{remaining}</span>
+    </div>
+  );
+}
+
+function QrLightbox({ audienceUrl, onClose }) {
+  useEffect(() => {
+    document.body.dataset.lightboxOpen = 'true';
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('keydown', closeOnEscape);
+      delete document.body.dataset.lightboxOpen;
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div className="qr-lightbox" role="dialog" aria-modal="true" aria-label="Enlarged QR code" onClick={onClose}>
+      <div className="qr-lightbox-card" onClick={(event) => event.stopPropagation()}>
+        <QRCodeSVG value={audienceUrl} size={560} level="M" />
+        <button type="button" className="qr-lightbox-close" onClick={onClose} aria-label="Close">×</button>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 function VoteQr({ audienceUrl, large = false, compact = false, label = 'Scan once.' }) {
+  const [expanded, setExpanded] = useState(false);
   return (
     <div className={`vote-qr ${large ? 'vote-qr-large' : ''} ${compact ? 'vote-qr-compact' : ''}`}>
-      <div className="vote-qr-code" role="img" aria-label="QR code for the live audience vote">
+      <button
+        type="button"
+        className="vote-qr-code"
+        onClick={() => setExpanded(true)}
+        aria-label="Enlarge QR code for the live audience vote"
+      >
         <QRCodeSVG value={audienceUrl} size={256} level="M" />
-      </div>
+      </button>
       <div className="vote-qr-copy">
         <strong>{label}</strong>
         <span>Keep this page open.</span>
       </div>
+      {expanded && <QrLightbox audienceUrl={audienceUrl} onClose={() => setExpanded(false)} />}
     </div>
   );
 }
@@ -93,94 +170,26 @@ function CoverSlide({ audienceUrl, number }) {
   );
 }
 
-function JoinSlide({ audienceUrl, number }) {
+function JoinedCount({ count, compact = false }) {
+  if (count == null) return null;
+  return (
+    <div className={`joined-count ${compact ? 'joined-count-compact' : ''}`}>
+      <span className="joined-count-dot" aria-hidden="true" />
+      <strong>{count}</strong> {count === 1 ? 'person' : 'people'} joined
+    </div>
+  );
+}
+
+function JoinSlide({ audienceUrl, number, state }) {
   return (
     <div className="join-slide">
       <span className="opening-slide-number">{String(number).padStart(2, '0')}</span>
       <span className="join-eyebrow">LIVE AUDIENCE VOTE</span>
       <h1>YOU’RE PART OF THE CROWD</h1>
+      <JoinedCount count={state?.joinedCount} />
       <VoteQr audienceUrl={audienceUrl} large label="Scan now." />
       <p>The first question will appear automatically.</p>
     </div>
-  );
-}
-
-function ImageLightbox({ item, onClose }) {
-  const [zoom, setZoom] = useState(1);
-
-  useEffect(() => {
-    const closeOnEscape = (event) => {
-      if (event.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', closeOnEscape);
-    return () => document.removeEventListener('keydown', closeOnEscape);
-  }, [onClose]);
-
-  return createPortal(
-    <div className="image-lightbox" role="dialog" aria-modal="true" aria-label="Expanded post image" onClick={onClose}>
-      <div className="image-lightbox-toolbar" onClick={(event) => event.stopPropagation()}>
-        <button type="button" onClick={() => setZoom((value) => Math.max(1, value - 0.5))} disabled={zoom === 1} aria-label="Zoom out">−</button>
-        <output aria-live="polite">{Math.round(zoom * 100)}%</output>
-        <button type="button" onClick={() => setZoom((value) => Math.min(3, value + 0.5))} disabled={zoom === 3} aria-label="Zoom in">+</button>
-        <button type="button" className="image-lightbox-close" onClick={onClose} aria-label="Close expanded image">×</button>
-      </div>
-      <div className="image-lightbox-viewport" onClick={(event) => event.stopPropagation()}>
-        <img
-          src={item.zoomSrc || item.src}
-          alt={item.alt}
-          draggable="false"
-          style={zoom === 1
-            ? { width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '100%' }
-            : { width: 'auto', height: `${zoom * 86}dvh`, maxWidth: 'none', maxHeight: 'none' }}
-          onDoubleClick={() => setZoom((value) => (value === 1 ? 2 : 1))}
-        />
-      </div>
-      <span className="image-lightbox-hint">Double-click or use + / − to zoom · Esc to close</span>
-    </div>,
-    document.body,
-  );
-}
-
-function PostCard({ post, compact = false }) {
-  const [expandedMedia, setExpandedMedia] = useState(null);
-  const media = post.images || (post.image ? [{ src: post.image, alt: post.imageAlt }] : []);
-  const hasMedia = media.length > 0;
-  const isSplitDocument = media.length > 1 && media.every((item) => item.splitDocument);
-  return (
-    <article className={`post-card ${compact ? 'post-card-compact' : ''} ${hasMedia ? 'post-card-with-media' : ''}`}>
-      <header className="post-author">
-        {post.avatarImage ? (
-          <img className="post-avatar post-avatar-image" src={post.avatarImage} alt="" draggable="false" />
-        ) : (
-          <span className="post-avatar" aria-hidden="true">{post.avatar}</span>
-        )}
-        <div className="post-identity">
-          <strong>{post.author}{post.verified && <span className="post-verified" aria-label="Verified account">✓</span>}</strong>
-          <span>{post.handle}</span>
-        </div>
-        <span className="post-more" aria-hidden="true">•••</span>
-      </header>
-      <p className="post-text">{post.text}</p>
-      {hasMedia && (
-        <div className={`post-media-grid ${media.length > 1 ? 'post-media-grid-multiple' : 'post-media-grid-single'} ${isSplitDocument ? 'post-media-grid-split-document' : ''}`}>
-          {media.map((item) => (
-            <button
-              className={`post-media-button ${item.prominent ? 'post-media-button-prominent' : ''}`}
-              type="button"
-              onClick={() => setExpandedMedia(item)}
-              aria-label={`Enlarge image: ${item.alt}`}
-              key={item.src}
-            >
-              <img className="post-media" src={item.src} alt={item.alt} draggable="false" />
-              <span className="post-media-zoom" aria-hidden="true">⌕</span>
-            </button>
-          ))}
-        </div>
-      )}
-      {post.meta && <div className="post-meta">{post.meta}</div>}
-      <div className="post-actions" aria-hidden="true"><span>○</span><span>↻</span><span>♡</span><span>⌁</span></div>
-      {expandedMedia && <ImageLightbox item={expandedMedia} onClose={() => setExpandedMedia(null)} />}
-    </article>
   );
 }
 
@@ -236,6 +245,9 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
   const showVoting = phase === 'live' || phase === 'closed' || phase === 'reveal';
   const closed = phase === 'closed' || phase === 'reveal';
   const showReveal = phase === 'reveal';
+  const votingOpen = phase === 'live';
+  const countdown = useCountdown(votingOpen, POLL_COUNTDOWN_SECONDS);
+  const actualCandidate = poll.candidates.find((candidate) => candidate.reveal?.tone === 'actual');
   return (
     <div className={`poll-slide poll-phase-${phase}`}>
       <div className="poll-heading">
@@ -243,7 +255,15 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
           <div><span>{poll.eyebrow}</span><span>{String(number).padStart(2, '0')}</span></div>
           <h1>{phase === 'tweet' ? 'Read the post first.' : poll.title}</h1>
         </div>
-        <VoteQr audienceUrl={audienceUrl} compact label="JOIN" />
+        {votingOpen && (
+          <div className="poll-countdown-center">
+            <CountdownRing remaining={countdown} total={POLL_COUNTDOWN_SECONDS} large />
+          </div>
+        )}
+        <div className="poll-heading-aside">
+          <JoinedCount count={state?.joinedCount} compact />
+          <VoteQr audienceUrl={audienceUrl} compact label="JOIN" />
+        </div>
       </div>
       <div className="poll-content">
         {!showCandidates ? (
@@ -251,7 +271,17 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
         ) : (
           <>
             <div className="poll-source">
-              <PostCard post={poll.post} compact />
+              <PostCard
+                post={poll.post}
+                compact
+                className={poll.key === 'case-great-wall' && showReveal ? 'post-card-compact-tight' : ''}
+                note={showReveal && actualCandidate ? (
+                  <>
+                    {actualCandidate.text}
+                    {actualCandidate.reveal.detail && <span className="post-note-source">{actualCandidate.reveal.detail}</span>}
+                  </>
+                ) : undefined}
+              />
             </div>
           <div className="poll-main">
             <div className="poll-live-header" aria-live="polite">
@@ -326,8 +356,6 @@ function PresentationApp() {
   const [busy, setBusy] = useState(false);
   const localMode = useRef(new Set());
   const hideTimer = useRef(null);
-  const pointerStart = useRef(null);
-  const swipeHandled = useRef(false);
   const wheelLocked = useRef(false);
 
   const slide = slides[current];
@@ -439,7 +467,7 @@ function PresentationApp() {
 
   useEffect(() => {
     const handleKey = (event) => {
-      if (settingsOpen) return;
+      if (settingsOpen || document.body.dataset.lightboxOpen) return;
       if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(event.key)) { event.preventDefault(); next(); }
       else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(event.key)) { event.preventDefault(); previous(); }
       else if (event.key === 'Home') { event.preventDefault(); goTo(0); }
@@ -449,7 +477,7 @@ function PresentationApp() {
       showControls();
     };
     const handleWheel = (event) => {
-      if (settingsOpen || Math.abs(event.deltaY) < 28 || wheelLocked.current) return;
+      if (settingsOpen || document.body.dataset.lightboxOpen || Math.abs(event.deltaY) < 28 || wheelLocked.current) return;
       event.preventDefault();
       wheelLocked.current = true;
       if (event.deltaY > 0) next(); else previous();
@@ -474,22 +502,6 @@ function PresentationApp() {
     hideTimer.current = window.setTimeout(() => setControlsVisible(false), 2200);
     return () => window.clearTimeout(hideTimer.current);
   }, []);
-  const handlePointerDown = (event) => {
-    swipeHandled.current = false;
-    pointerStart.current = { x: event.clientX, y: event.clientY };
-  };
-  const handlePointerUp = (event) => {
-    if (!pointerStart.current) return;
-    const deltaX = event.clientX - pointerStart.current.x;
-    const deltaY = event.clientY - pointerStart.current.y;
-    pointerStart.current = null;
-    if (Math.abs(deltaX) > 55 && Math.abs(deltaX) > Math.abs(deltaY)) {
-      swipeHandled.current = true;
-      if (deltaX < 0) next(); else previous();
-      window.setTimeout(() => { swipeHandled.current = false; }, 0);
-    }
-  };
-
   const handleReset = async () => {
     try {
       const state = await resetRun();
@@ -521,16 +533,14 @@ function PresentationApp() {
 
   const progress = ((current + 1) / slides.length) * 100;
   return (
-    <main className={`deck ${controlsVisible ? 'controls-visible' : ''}`} onPointerMove={showControls} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>
+    <main className={`deck ${controlsVisible ? 'controls-visible' : ''}`} onPointerMove={showControls}>
       <div className="ambient ambient-blue" aria-hidden="true" /><div className="ambient ambient-coral" aria-hidden="true" />
       <section className="slide-stage" aria-label={`Slide ${current + 1} of ${slides.length}`}>
         {slide.type === 'cover' && <CoverSlide audienceUrl={audienceUrl} number={current + 1} />}
-        {slide.type === 'join' && <JoinSlide audienceUrl={audienceUrl} number={current + 1} />}
+        {slide.type === 'join' && <JoinSlide audienceUrl={audienceUrl} number={current + 1} state={remoteState} />}
         {slide.type === 'poll' && <PollSlide poll={poll} phase={phase} state={remoteState} audienceUrl={audienceUrl} warning={warning} number={current + 1} />}
         {slide.type === 'native' && <NativeSlide slideKey={slide.nativeKey} number={current + 1} step={slideStep} />}
       </section>
-      <button className="click-zone click-zone-left" type="button" onClick={() => !swipeHandled.current && previous()} disabled={current === 0 && (!poll || phase === 'tweet')} aria-label="Previous step" />
-      <button className="click-zone click-zone-right" type="button" onClick={() => !swipeHandled.current && next()} disabled={current === slides.length - 1} aria-label="Next step" />
       <div className="progress-track" aria-hidden="true"><div className="progress-fill" style={{ width: `${progress}%` }} /></div>
       <nav className="deck-controls" aria-label="Presentation controls">
         <button type="button" onClick={previous} aria-label="Previous step"><span aria-hidden="true">‹</span></button>
@@ -576,6 +586,12 @@ function AudienceApp() {
       window.clearInterval(timer);
     };
   }, [refresh]);
+  const joinedRunId = useRef('');
+  useEffect(() => {
+    if (!state?.runId || joinedRunId.current === state.runId) return;
+    joinedRunId.current = state.runId;
+    joinRun({ runId: state.runId, participantId }).catch(() => { joinedRunId.current = ''; });
+  }, [state?.runId, participantId]);
   const vote = async (choice) => {
     if (!state?.runId || !state?.pollKey || state.phase !== 'open' || submitting) return;
     setSubmitting(true);
@@ -590,6 +606,8 @@ function AudienceApp() {
     } finally { setSubmitting(false); }
   };
   const poll = state?.pollKey ? pollsByKey[state.pollKey] : null;
+  const votingOpen = state?.phase === 'open';
+  const countdown = useCountdown(votingOpen, POLL_COUNTDOWN_SECONDS);
   return (
     <main className="audience-app">
       <header className="audience-header">
@@ -600,7 +618,10 @@ function AudienceApp() {
         <section className="audience-waiting"><div className="waiting-mark" aria-hidden="true">A · B · C</div><h1>Keep this page open.</h1><p>{message}</p></section>
       ) : (
         <section className="audience-poll">
-          <div className="audience-round">ROUND {poll.round} OF 3 · {state.phase === 'open' ? 'VOTING OPEN' : 'VOTING CLOSED'}</div>
+          <div className="audience-round">
+            <span>ROUND {poll.round} OF 3 · {votingOpen ? 'VOTING OPEN' : 'VOTING CLOSED'}</span>
+            {votingOpen && <CountdownRing remaining={countdown} total={POLL_COUNTDOWN_SECONDS} compact />}
+          </div>
           <h1>{poll.title}</h1>
           <PostCard post={poll.post} compact />
           <div className="audience-candidates">
