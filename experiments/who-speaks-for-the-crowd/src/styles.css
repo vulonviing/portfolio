@@ -339,11 +339,11 @@ button {
 .cover-qr-card {
   position: absolute;
   z-index: 2;
-  top: 30%;
-  left: 43%;
+  top: 23%;
+  left: 35%;
   display: grid;
-  width: 14.2cqw;
-  min-height: 30cqh;
+  width: 18.5cqw;
+  min-height: 42cqh;
   place-items: center;
   gap: 1.1cqh;
   padding: 2.3cqh 1.25cqw 1.8cqh;
@@ -355,13 +355,13 @@ button {
 
 .cover-qr-card svg {
   display: block;
-  width: 18cqh;
-  height: 18cqh;
+  width: 28cqh;
+  height: 28cqh;
 }
 
 .cover-qr-card strong {
   color: #4f9cf9;
-  font-size: 1.18cqh;
+  font-size: 1.42cqh;
   letter-spacing: 0.09em;
 }
 
@@ -440,8 +440,8 @@ button {
 }
 
 .vote-qr-large .vote-qr-code {
-  width: 34cqh;
-  height: 34cqh;
+  width: 44cqh;
+  height: 44cqh;
   padding: 1.3cqh;
 }
 
@@ -541,31 +541,83 @@ button {
   align-content: center;
 }
 
-.tweet-crop {
-  position: relative;
-  width: min(41cqw, 68cqh * var(--crop-aspect));
-  max-height: 67cqh;
-  aspect-ratio: var(--crop-aspect);
-  margin: 0;
-  overflow: hidden;
+.post-card {
+  width: min(48cqw, 82cqh);
+  padding: 2.4cqh 1.55cqw 1.5cqh;
   border: 1px solid #e2e5e8;
-  border-radius: 1.2cqh;
+  border-radius: 2cqh;
+  color: #16181c;
   background: #fff;
   box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12);
 }
 
-.tweet-crop img {
-  position: absolute;
-  top: var(--image-top);
-  left: var(--image-left);
-  width: var(--image-width);
-  height: var(--image-height);
-  max-width: none;
+.post-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75cqw;
+}
+
+.post-avatar {
+  display: grid;
+  width: 5.8cqh;
+  height: 5.8cqh;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 1.55cqh;
+  font-weight: 850;
+  background: linear-gradient(145deg, #202228, #59616c);
+}
+
+.post-identity {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2cqh;
+}
+
+.post-identity strong { font-size: 1.75cqh; }
+.post-identity > span { color: #69717c; font-size: 1.4cqh; }
+.post-verified { display: inline-grid; width: 1.7cqh; height: 1.7cqh; margin-left: 0.35cqw; place-items: center; border-radius: 50%; color: #fff; font-size: 1.05cqh; background: #1d9bf0; }
+.post-more { margin-left: auto; color: #69717c; font-size: 1.55cqh; letter-spacing: 0.08em; }
+
+.post-text {
+  margin: 2.2cqh 0 1.8cqh;
+  font-size: 3.3cqh;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+}
+
+.post-media {
+  display: block;
+  width: 100%;
+  max-height: 45cqh;
+  object-fit: cover;
+  border: 1px solid #d9dde1;
+  border-radius: 1.4cqh;
+}
+
+.post-meta {
+  margin-top: 1.4cqh;
+  color: #69717c;
+  font-size: 1.25cqh;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.25cqh;
+  padding-top: 1.15cqh;
+  border-top: 1px solid #e7e9eb;
+  color: #69717c;
+  font-size: 1.75cqh;
 }
 
 .poll-phase-candidates .poll-content,
 .poll-phase-live .poll-content,
-.poll-phase-closed .poll-content {
+.poll-phase-closed .poll-content,
+.poll-phase-reveal .poll-content {
   grid-template-columns: 29% 1fr;
   gap: 3.3cqw;
   align-items: stretch;
@@ -573,15 +625,25 @@ button {
 
 .poll-phase-candidates .poll-source,
 .poll-phase-live .poll-source,
-.poll-phase-closed .poll-source {
+.poll-phase-closed .poll-source,
+.poll-phase-reveal .poll-source {
   align-content: center;
   gap: 2.2cqh;
 }
 
-.poll-slide .tweet-crop-compact {
+.poll-slide .post-card-compact {
   width: 100%;
-  max-height: 45cqh;
+  padding: 1.7cqh 1.05cqw 1.15cqh;
+  border-radius: 1.4cqh;
 }
+
+.poll-slide .post-card-compact .post-avatar { width: 4.2cqh; height: 4.2cqh; font-size: 1.15cqh; }
+.poll-slide .post-card-compact .post-identity strong { font-size: 1.3cqh; }
+.poll-slide .post-card-compact .post-identity > span { font-size: 1.12cqh; }
+.poll-slide .post-card-compact .post-text { margin: 1.35cqh 0 1.15cqh; font-size: 2.15cqh; }
+.poll-slide .post-card-compact .post-media { max-height: 29cqh; }
+.poll-slide .post-card-compact .post-meta { margin-top: 0.85cqh; font-size: 1.02cqh; }
+.poll-slide .post-card-compact .post-actions { margin-top: 0.75cqh; padding-top: 0.7cqh; font-size: 1.3cqh; }
 
 .poll-main {
   display: grid;
@@ -592,7 +654,8 @@ button {
 }
 
 .poll-phase-live .poll-main,
-.poll-phase-closed .poll-main {
+.poll-phase-closed .poll-main,
+.poll-phase-reveal .poll-main {
   grid-template-rows: 7.3cqh minmax(0, 1fr);
 }
 
@@ -617,11 +680,6 @@ button {
   text-align: left;
   background: #fff;
   box-shadow: 0 0.8cqh 2.4cqh rgba(26, 31, 40, 0.07);
-}
-
-.candidate-illustrative {
-  border-style: dashed;
-  background: #fbfbf9;
 }
 
 .candidate-topline {
@@ -697,12 +755,31 @@ button {
   line-height: 1.28;
 }
 
-.candidate-presentation small {
+.candidate-explanation {
+  display: flex;
+  max-height: 0;
+  flex-direction: column;
+  gap: 0.22cqh;
   overflow: hidden;
-  margin-top: auto;
-  font-size: 1.02cqh;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  opacity: 0;
+  transition: max-height 220ms ease, opacity 180ms ease;
+}
+
+.candidate-explanation-visible {
+  max-height: 4.8cqh;
+  opacity: 1;
+}
+
+.candidate-explanation strong {
+  font-size: 1.05cqh;
+  letter-spacing: 0.055em;
+}
+
+.candidate-explanation span {
+  overflow: hidden;
+  color: #69717c;
+  font-size: 0.98cqh;
+  line-height: 1.25;
 }
 
 .candidate-result {
@@ -752,6 +829,29 @@ button {
 .candidate-winner .candidate-result-fill {
   background: #22b88b;
 }
+
+.candidate-reveal-supported,
+.candidate-reveal-actual {
+  border-color: #22b88b;
+  box-shadow: 0 0 0 1px #22b88b, 0 0.8cqh 2.4cqh rgba(26, 31, 40, 0.07);
+}
+
+.candidate-reveal-supported .candidate-letter,
+.candidate-reveal-supported .candidate-result-fill,
+.candidate-reveal-actual .candidate-letter,
+.candidate-reveal-actual .candidate-result-fill { background: #22b88b; }
+.candidate-reveal-supported .candidate-explanation strong,
+.candidate-reveal-actual .candidate-explanation strong { color: #168366; }
+
+.candidate-reveal-false { border-color: #ff625d; background: #fff9f8; }
+.candidate-reveal-false .candidate-letter,
+.candidate-reveal-false .candidate-result-fill { background: #ff625d; }
+.candidate-reveal-false .candidate-explanation strong { color: #c4433f; }
+
+.candidate-reveal-context { border-color: #e3a92f; background: #fffdf7; }
+.candidate-reveal-context .candidate-letter,
+.candidate-reveal-context .candidate-result-fill { background: #e3a92f; }
+.candidate-reveal-context .candidate-explanation strong { color: #9c7012; }
 
 .poll-live-header {
   display: flex;
@@ -882,7 +982,14 @@ button {
 .audience-poll { width: min(680px, 100%); margin: 0 auto; padding: 26px 18px max(36px, env(safe-area-inset-bottom)); }
 .audience-round { font-size: 11px; }
 .audience-poll > h1 { margin: 7px 0 18px; font-size: clamp(28px, 8vw, 42px); line-height: 1.05; letter-spacing: -0.04em; }
-.audience-poll .tweet-crop { width: 100%; max-height: none; border-radius: 14px; box-shadow: 0 12px 40px rgba(26, 31, 40, 0.12); }
+.audience-poll .post-card { width: 100%; padding: 18px; border-radius: 14px; box-shadow: 0 12px 40px rgba(26, 31, 40, 0.12); }
+.audience-poll .post-avatar { width: 46px; height: 46px; font-size: 13px; }
+.audience-poll .post-identity strong { font-size: 15px; }
+.audience-poll .post-identity > span { font-size: 13px; }
+.audience-poll .post-text { margin: 17px 0 14px; font-size: 21px; line-height: 1.28; }
+.audience-poll .post-media { max-height: none; border-radius: 12px; }
+.audience-poll .post-meta { font-size: 12px; }
+.audience-poll .post-actions { font-size: 17px; }
 .audience-candidates { display: grid; gap: 14px; margin-top: 20px; }
 .audience-candidates .candidate-card { width: 100%; min-height: 0; padding: 18px; border-radius: 14px; cursor: pointer; }
 .audience-candidates .candidate-card:disabled { cursor: default; }

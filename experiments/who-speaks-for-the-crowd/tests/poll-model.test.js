@@ -6,9 +6,11 @@ test('poll phases advance in presentation order', () => {
   assert.equal(nextPollPhase('tweet'), 'candidates');
   assert.equal(nextPollPhase('candidates'), 'live');
   assert.equal(nextPollPhase('live'), 'closed');
-  assert.equal(nextPollPhase('closed'), 'closed');
+  assert.equal(nextPollPhase('closed'), 'reveal');
+  assert.equal(nextPollPhase('reveal'), 'reveal');
   assert.equal(previousPollPhase('candidates'), 'tweet');
   assert.equal(previousPollPhase('live'), 'closed');
+  assert.equal(previousPollPhase('reveal'), 'closed');
 });
 
 test('result rows calculate percentages and ties', () => {

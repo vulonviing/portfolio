@@ -93,29 +93,33 @@ function JoinSlide({ audienceUrl, number }) {
   );
 }
 
-function CroppedTweet({ poll, compact = false }) {
-  const { x, y, width, height } = poll.crop;
-  const style = {
-    '--crop-aspect': `${(16 * width) / (9 * height)}`,
-    '--image-width': `${10000 / width}%`,
-    '--image-height': `${10000 / height}%`,
-    '--image-left': `${(-x / width) * 100}%`,
-    '--image-top': `${(-y / height) * 100}%`,
-  };
+function PostCard({ post, compact = false }) {
   return (
-    <figure className={`tweet-crop ${compact ? 'tweet-crop-compact' : ''}`} style={style}>
-      <img src={poll.tweetImage} alt={poll.tweetAlt} draggable="false" />
-    </figure>
+    <article className={`post-card ${compact ? 'post-card-compact' : ''} ${post.image ? 'post-card-with-media' : ''}`}>
+      <header className="post-author">
+        <span className="post-avatar" aria-hidden="true">{post.avatar}</span>
+        <div className="post-identity">
+          <strong>{post.author}{post.verified && <span className="post-verified" aria-label="Verified account">✓</span>}</strong>
+          <span>{post.handle}</span>
+        </div>
+        <span className="post-more" aria-hidden="true">•••</span>
+      </header>
+      <p className="post-text">{post.text}</p>
+      {post.image && <img className="post-media" src={post.image} alt={post.imageAlt} draggable="false" />}
+      <div className="post-meta">{post.meta}</div>
+      <div className="post-actions" aria-hidden="true"><span>○</span><span>↻</span><span>♡</span><span>⌁</span></div>
+    </article>
   );
 }
 
-function CandidateCard({ candidate, selected = false, interactive = false, onSelect, presentation = false, result, showResult = false, closed = false }) {
+function CandidateCard({ candidate, selected = false, interactive = false, onSelect, presentation = false, result, showResult = false, showReveal = false, closed = false }) {
   const Tag = interactive ? 'button' : 'article';
-  const winner = closed && result?.winner;
+  const winner = closed && result?.winner && !showReveal;
   const resultText = result ? `${result.percentage.toFixed(0)}% · ${result.count}` : '0% · 0';
+  const revealTone = showReveal ? candidate.reveal?.tone : '';
   return (
     <Tag
-      className={`candidate-card ${presentation ? 'candidate-presentation' : ''} ${candidate.illustrative ? 'candidate-illustrative' : ''} ${selected ? 'candidate-selected' : ''} ${winner ? 'candidate-winner' : ''}`}
+      className={`candidate-card ${presentation ? 'candidate-presentation' : ''} ${selected ? 'candidate-selected' : ''} ${winner ? 'candidate-winner' : ''} ${revealTone ? `candidate-reveal-${revealTone}` : ''}`}
       type={interactive ? 'button' : undefined}
       onClick={interactive ? () => onSelect(candidate.id) : undefined}
       aria-pressed={interactive ? selected : undefined}
@@ -126,7 +130,10 @@ function CandidateCard({ candidate, selected = false, interactive = false, onSel
           <div className="candidate-body">
             <span className="candidate-badge">{candidate.badge}</span>
             <p>{candidate.text}</p>
-            <small>{candidate.source}</small>
+            <div className={`candidate-explanation ${showReveal ? 'candidate-explanation-visible' : ''}`} aria-hidden={!showReveal}>
+              <strong>{candidate.reveal?.label}</strong>
+              <span>{candidate.reveal?.detail}</span>
+            </div>
             <div className={`candidate-result ${showResult ? 'candidate-result-visible' : ''}`} aria-hidden={!showResult}>
               <div className="candidate-result-track">
                 <div className="candidate-result-fill" style={{ width: `${result?.percentage || 0}%` }} />
@@ -142,7 +149,6 @@ function CandidateCard({ candidate, selected = false, interactive = false, onSel
             <span className="candidate-badge">{candidate.badge}</span>
           </div>
           <p>{candidate.text}</p>
-          <small>{candidate.source}</small>
           {interactive && <span className="candidate-action">{selected ? 'Selected' : `Vote ${candidate.id}`}</span>}
         </>
       )}
@@ -155,8 +161,9 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
   const rows = resultRows(poll.candidates, counts);
   const total = rows.reduce((sum, row) => sum + row.count, 0);
   const showCandidates = phase !== 'tweet';
-  const showVoting = phase === 'live' || phase === 'closed';
-  const closed = phase === 'closed';
+  const showVoting = phase === 'live' || phase === 'closed' || phase === 'reveal';
+  const closed = phase === 'closed' || phase === 'reveal';
+  const showReveal = phase === 'reveal';
   return (
     <div className={`poll-slide poll-phase-${phase}`}>
       <div className="poll-heading">
@@ -167,12 +174,12 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
         {!showCandidates ? (
           <>
             <div className="poll-stage-qr"><VoteQr audienceUrl={audienceUrl} compact label="JOIN" /></div>
-            <div className="poll-source poll-source-feature"><CroppedTweet poll={poll} /></div>
+            <div className="poll-source poll-source-feature"><PostCard post={poll.post} /></div>
           </>
         ) : (
           <>
             <div className="poll-source">
-              <CroppedTweet poll={poll} compact />
+              <PostCard post={poll.post} compact />
             </div>
           <div className="poll-main">
             <div className="poll-live-header" aria-live="polite">
@@ -191,6 +198,7 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
                   presentation
                   result={rows[index]}
                   showResult={showVoting}
+                  showReveal={showReveal}
                   closed={closed}
                   key={candidate.id}
                 />
@@ -201,7 +209,7 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
         )}
       </div>
       <footer className="poll-footer">
-        <span>Illustrative candidates will be replaced with sourced Community Notes.</span>
+        <span>{showReveal ? 'What sounds convincing is not always what is supported.' : 'Choose the note that should appear below this post.'}</span>
         {warning && <strong className="poll-warning">{warning}</strong>}
       </footer>
     </div>
@@ -332,6 +340,7 @@ function PresentationApp() {
       }
       return;
     }
+    if (phase === 'closed') { setPollPhase(poll.key, 'reveal'); return; }
     goTo(current + 1);
   }, [busy, current, goTo, phase, poll, setPollPhase, slide, slideStep]);
 
@@ -343,6 +352,7 @@ function PresentationApp() {
       } else goTo(current - 1);
       return;
     }
+    if (phase === 'reveal') { setPollPhase(poll.key, 'closed'); return; }
     if (phase === 'tweet' || phase === 'closed') { goTo(current - 1); return; }
     if (phase === 'candidates') { setPollPhase(poll.key, 'tweet'); return; }
     if (phase === 'live') await next();
@@ -521,7 +531,7 @@ function AudienceApp() {
         <section className="audience-poll">
           <div className="audience-round">ROUND {poll.round} OF 3 · {state.phase === 'open' ? 'VOTING OPEN' : 'VOTING CLOSED'}</div>
           <h1>{poll.title}</h1>
-          <CroppedTweet poll={poll} compact />
+          <PostCard post={poll.post} compact />
           <div className="audience-candidates">
             {poll.candidates.map((candidate) => <CandidateCard candidate={candidate} selected={selected === candidate.id} interactive={state.phase === 'open' && !submitting} onSelect={vote} key={candidate.id} />)}
           </div>

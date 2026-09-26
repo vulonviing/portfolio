@@ -1,4 +1,4 @@
-export const pollPhases = ['tweet', 'candidates', 'live', 'closed'];
+export const pollPhases = ['tweet', 'candidates', 'live', 'closed', 'reveal'];
 
 export function nextPollPhase(phase) {
   const index = pollPhases.indexOf(phase);
@@ -8,6 +8,7 @@ export function nextPollPhase(phase) {
 export function previousPollPhase(phase) {
   if (phase === 'candidates') return 'tweet';
   if (phase === 'live') return 'closed';
+  if (phase === 'reveal') return 'closed';
   return phase;
 }
 
