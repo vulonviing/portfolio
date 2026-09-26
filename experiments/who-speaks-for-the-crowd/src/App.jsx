@@ -592,6 +592,10 @@ function AudienceApp() {
     joinedRunId.current = state.runId;
     joinRun({ runId: state.runId, participantId }).catch(() => { joinedRunId.current = ''; });
   }, [state?.runId, participantId]);
+  useEffect(() => {
+    if (!state?.pollKey) return;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [state?.pollKey]);
   const vote = async (choice) => {
     if (!state?.runId || !state?.pollKey || state.phase !== 'open' || submitting) return;
     setSubmitting(true);
@@ -612,15 +616,23 @@ function AudienceApp() {
     <main className="audience-app">
       <header className="audience-header">
         <div className="audience-brand"><span>WHO SPEAKS</span><strong>FOR THE CROWD?</strong></div>
-        <span className={`connection-dot connection-${connection}`}>{connection}</span>
+        <div className="audience-header-status">
+          {votingOpen && <CountdownRing remaining={countdown} total={POLL_COUNTDOWN_SECONDS} compact />}
+          <span className={`connection-dot connection-${connection}`}>{connection}</span>
+        </div>
       </header>
       {!poll ? (
         <section className="audience-waiting"><div className="waiting-mark" aria-hidden="true">A · B · C</div><h1>Keep this page open.</h1><p>{message}</p></section>
+      ) : state.phase === 'closed' ? (
+        <section className="audience-waiting">
+          <div className="waiting-mark" aria-hidden="true">↑</div>
+          <h1>Look up!</h1>
+          <p>Round {poll.round} is closed. Watch the big screen for what happens next.</p>
+        </section>
       ) : (
         <section className="audience-poll">
           <div className="audience-round">
-            <span>ROUND {poll.round} OF 3 · {votingOpen ? 'VOTING OPEN' : 'VOTING CLOSED'}</span>
-            {votingOpen && <CountdownRing remaining={countdown} total={POLL_COUNTDOWN_SECONDS} compact />}
+            <span>ROUND {poll.round} OF 3 · VOTING OPEN</span>
           </div>
           <h1>{poll.title}</h1>
           <PostCard post={poll.post} compact />

@@ -11,11 +11,17 @@ function clampZoom(value) {
   return Math.min(LIGHTBOX_MAX_ZOOM, Math.max(LIGHTBOX_MIN_ZOOM, value));
 }
 
+function pointerDistance(a, b) {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
 function ImageLightbox({ items, onClose }) {
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef(null);
+  const pointersRef = useRef(new Map());
+  const pinchRef = useRef(null);
 
   const applyZoom = useCallback((nextZoom) => {
     const clamped = clampZoom(nextZoom);
@@ -49,6 +55,15 @@ function ImageLightbox({ items, onClose }) {
 
   const handlePointerDown = (event) => {
     event.currentTarget.setPointerCapture(event.pointerId);
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pointersRef.current.size === 2) {
+      const [a, b] = [...pointersRef.current.values()];
+      pinchRef.current = { startDistance: pointerDistance(a, b) || 1, startZoom: zoom };
+      dragRef.current = null;
+      setIsDragging(true);
+      return;
+    }
+    if (pointersRef.current.size > 2) return;
     setIsDragging(true);
     dragRef.current = {
       startX: event.clientX,
@@ -60,6 +75,16 @@ function ImageLightbox({ items, onClose }) {
   };
 
   const handlePointerMove = (event) => {
+    if (!pointersRef.current.has(event.pointerId)) return;
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    if (pinchRef.current && pointersRef.current.size === 2) {
+      const [a, b] = [...pointersRef.current.values()];
+      const distance = pointerDistance(a, b) || 1;
+      applyZoom(pinchRef.current.startZoom * (distance / pinchRef.current.startDistance));
+      return;
+    }
+
     const drag = dragRef.current;
     if (!drag) return;
     const dx = event.clientX - drag.startX;
@@ -71,12 +96,19 @@ function ImageLightbox({ items, onClose }) {
   };
 
   const handlePointerUp = (event) => {
-    const drag = dragRef.current;
-    dragRef.current = null;
-    setIsDragging(false);
+    const wasPinching = Boolean(pinchRef.current);
+    pointersRef.current.delete(event.pointerId);
     if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
+    if (pointersRef.current.size < 2) pinchRef.current = null;
+    setIsDragging(pointersRef.current.size > 0);
+    if (wasPinching || pointersRef.current.size > 0) {
+      dragRef.current = null;
+      return;
+    }
+    const drag = dragRef.current;
+    dragRef.current = null;
     if (!drag || drag.moved) return;
     applyZoom(zoom === LIGHTBOX_MIN_ZOOM ? LIGHTBOX_CLICK_ZOOM : LIGHTBOX_MIN_ZOOM);
   };
@@ -91,7 +123,6 @@ function ImageLightbox({ items, onClose }) {
       </div>
       <div
         className={`image-lightbox-viewport ${zoom > LIGHTBOX_MIN_ZOOM ? 'image-lightbox-viewport-zoomed' : ''}`}
-        onClick={(event) => event.stopPropagation()}
         onWheel={handleWheel}
       >
         <div
@@ -100,6 +131,7 @@ function ImageLightbox({ items, onClose }) {
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             transition: isDragging ? 'none' : 'transform 160ms ease',
           }}
+          onClick={(event) => event.stopPropagation()}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -110,7 +142,7 @@ function ImageLightbox({ items, onClose }) {
           ))}
         </div>
       </div>
-      <span className="image-lightbox-hint">Click or pinch to zoom · drag to pan · Esc to close</span>
+      <span className="image-lightbox-hint">Tap the photo or pinch to zoom · tap the background to close</span>
     </div>,
     document.body,
   );

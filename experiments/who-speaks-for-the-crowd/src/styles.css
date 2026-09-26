@@ -349,27 +349,35 @@ button {
 .joined-count {
   display: flex;
   align-items: center;
-  gap: 0.6cqw;
+  gap: 0.8cqw;
   margin-bottom: 2.6cqh;
   color: #6d737d;
-  font-size: 1.65cqh;
+  font-size: 2.3cqh;
+  white-space: nowrap;
 }
 
 .joined-count strong {
   color: #202228;
+  font-size: 1.15em;
   font-variant-numeric: tabular-nums;
 }
 
 .joined-count-dot {
-  width: 0.85cqh;
-  height: 0.85cqh;
+  flex: 0 0 auto;
+  width: 1.1cqh;
+  height: 1.1cqh;
   border-radius: 50%;
   background: #22b88b;
+  box-shadow: 0 0 0 0.35cqh rgba(34, 184, 139, 0.18);
 }
 
 .joined-count-compact {
   margin-bottom: 0;
-  font-size: 1.2cqh;
+  padding: 1cqh 1.4cqw;
+  border: 1px solid #cdeee0;
+  border-radius: 999px;
+  background: #eafaf3;
+  font-size: 2.1cqh;
 }
 
 .vote-qr {
@@ -1332,7 +1340,7 @@ button {
 
 .audience-header {
   position: sticky;
-  z-index: 2;
+  z-index: 50;
   top: 0;
   display: flex;
   align-items: center;
@@ -1344,6 +1352,7 @@ button {
 }
 
 .audience-brand { display: flex; flex-direction: column; font-size: 12px; line-height: 1.05; letter-spacing: 0.035em; }
+.audience-header-status { display: flex; align-items: center; gap: 10px; }
 .connection-dot { display: flex; align-items: center; gap: 6px; color: #69717c; font-size: 11px; text-transform: uppercase; }
 .connection-dot::before { width: 8px; height: 8px; border-radius: 50%; background: #e3a92f; content: ''; }
 .connection-online::before { background: #22b88b; }
@@ -1397,6 +1406,8 @@ button {
 .audience-poll .post-time,
 .audience-poll .post-more { font-size: 13px; }
 .audience-poll .post-spark { width: 15px; height: 15px; }
+.audience-poll .post-actions { justify-content: space-between; }
+.audience-poll .post-actions-extra { margin-left: 0; }
 .audience-candidates { display: grid; gap: 14px; margin-top: 20px; }
 .audience-candidates .candidate-card { width: 100%; min-height: 0; padding: 18px; border-radius: 14px; cursor: pointer; }
 .audience-candidates .candidate-card:disabled { cursor: default; }

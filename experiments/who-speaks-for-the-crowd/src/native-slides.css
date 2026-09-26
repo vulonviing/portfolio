@@ -220,6 +220,8 @@
 /* 07 · puzzle */
 .puzzle-layout { position: absolute; inset: 0; display: grid; grid-template-columns: 55% 1fr; align-items: center; gap: 6cqw; }
 .puzzle-layout .post-card { width: 100%; }
+.puzzle-layout .post-actions { justify-content: space-between; }
+.puzzle-layout .post-actions-extra { margin-left: 0; }
 .puzzle-results { display: grid; grid-template-rows: 18cqh 16cqh 1fr; align-items: center; justify-items: center; padding-top: 3cqh; }
 .approval-number { display: grid; justify-items: center; gap: 1.5cqh; }
 .approval-number strong { color: var(--native-green); font-size: 8.5cqh; line-height: 1; }
