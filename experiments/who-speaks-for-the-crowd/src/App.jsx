@@ -3,6 +3,8 @@ import { QRCodeSVG } from 'qrcode.react';
 import {
   closePoll, downloadExport, downloadRawExport, getState, openPoll, reopenPoll, resetRun, submitVote,
 } from './api.js';
+import { hasNextSlideStep, nextSlideStep, previousSlideStep } from './deck-model.js';
+import { NativeSlide } from './native-slides.jsx';
 import { createParticipantId, resultRows } from './poll-model.js';
 import { pollKeys, pollsByKey } from './polls.js';
 import { slides } from './slides.js';
@@ -13,6 +15,82 @@ const initialPhases = () => Object.fromEntries(pollKeys.map((key) => [key, 'twee
 function slideFromHash() {
   const parsed = Number.parseInt(window.location.hash.slice(1), 10);
   return Number.isFinite(parsed) ? clamp(parsed - 1) : 0;
+}
+
+function VoteQr({ audienceUrl, large = false, compact = false, label = 'Scan once.' }) {
+  return (
+    <div className={`vote-qr ${large ? 'vote-qr-large' : ''} ${compact ? 'vote-qr-compact' : ''}`}>
+      <div className="vote-qr-code" role="img" aria-label="QR code for the live audience vote">
+        <QRCodeSVG value={audienceUrl} size={256} level="M" />
+      </div>
+      <div className="vote-qr-copy">
+        <strong>{label}</strong>
+        <span>Keep this page open.</span>
+      </div>
+    </div>
+  );
+}
+
+function NetworkArtwork({ audienceUrl }) {
+  const dots = Array.from({ length: 25 }, (_, index) => index);
+  return (
+    <div className="network-artwork" aria-label="Two groups connecting to a shared note">
+      <div className="network-dots network-dots-blue" aria-hidden="true">
+        {dots.map((dot) => <span key={`blue-${dot}`} />)}
+      </div>
+      <svg className="network-lines" viewBox="0 0 100 100" aria-hidden="true">
+        <g className="network-lines-blue">
+          <line x1="24" y1="28" x2="43" y2="40" />
+          <line x1="24" y1="36" x2="43" y2="45" />
+          <line x1="24" y1="44" x2="43" y2="50" />
+          <line x1="24" y1="52" x2="43" y2="55" />
+        </g>
+        <g className="network-lines-coral">
+          <line x1="64" y1="52" x2="79" y2="67" />
+          <line x1="64" y1="57" x2="79" y2="75" />
+          <line x1="64" y1="62" x2="79" y2="83" />
+          <line x1="64" y1="67" x2="79" y2="91" />
+        </g>
+      </svg>
+      <div className="cover-qr-card">
+        <div role="img" aria-label="QR code for the live audience vote">
+          <QRCodeSVG value={audienceUrl} size={220} level="M" />
+        </div>
+        <strong>JOIN THE LIVE VOTE</strong>
+      </div>
+      <div className="network-dots network-dots-coral" aria-hidden="true">
+        {dots.map((dot) => <span key={`coral-${dot}`} />)}
+      </div>
+    </div>
+  );
+}
+
+function CoverSlide({ audienceUrl, number }) {
+  return (
+    <div className="cover-slide">
+      <span className="opening-slide-number">{String(number).padStart(2, '0')}</span>
+      <section className="cover-copy">
+        <h1>WHO SPEAKS<br />FOR THE CROWD?</h1>
+        <div className="cover-meta">
+          <strong>Emrecan Ulu / Jingyao Shi</strong>
+          <span>SEDS Data Science Slam · 1 October 2026</span>
+        </div>
+      </section>
+      <NetworkArtwork audienceUrl={audienceUrl} />
+    </div>
+  );
+}
+
+function JoinSlide({ audienceUrl, number }) {
+  return (
+    <div className="join-slide">
+      <span className="opening-slide-number">{String(number).padStart(2, '0')}</span>
+      <span className="join-eyebrow">LIVE AUDIENCE VOTE</span>
+      <h1>YOU’RE PART OF THE CROWD</h1>
+      <VoteQr audienceUrl={audienceUrl} large label="Scan now." />
+      <p>The first question will appear automatically.</p>
+    </div>
+  );
 }
 
 function CroppedTweet({ poll, compact = false }) {
@@ -31,78 +109,95 @@ function CroppedTweet({ poll, compact = false }) {
   );
 }
 
-function CandidateCard({ candidate, selected = false, interactive = false, onSelect }) {
+function CandidateCard({ candidate, selected = false, interactive = false, onSelect, presentation = false, result, showResult = false, closed = false }) {
   const Tag = interactive ? 'button' : 'article';
+  const winner = closed && result?.winner;
+  const resultText = result ? `${result.percentage.toFixed(0)}% · ${result.count}` : '0% · 0';
   return (
     <Tag
-      className={`candidate-card ${candidate.illustrative ? 'candidate-illustrative' : ''} ${selected ? 'candidate-selected' : ''}`}
+      className={`candidate-card ${presentation ? 'candidate-presentation' : ''} ${candidate.illustrative ? 'candidate-illustrative' : ''} ${selected ? 'candidate-selected' : ''} ${winner ? 'candidate-winner' : ''}`}
       type={interactive ? 'button' : undefined}
       onClick={interactive ? () => onSelect(candidate.id) : undefined}
       aria-pressed={interactive ? selected : undefined}
     >
-      <div className="candidate-topline">
-        <strong className="candidate-letter">{candidate.id}</strong>
-        <span className="candidate-badge">{candidate.badge}</span>
-      </div>
-      <p>{candidate.text}</p>
-      <small>{candidate.source}</small>
-      {interactive && <span className="candidate-action">{selected ? 'Selected' : `Vote ${candidate.id}`}</span>}
+      {presentation ? (
+        <>
+          <strong className="candidate-letter">{candidate.id}</strong>
+          <div className="candidate-body">
+            <span className="candidate-badge">{candidate.badge}</span>
+            <p>{candidate.text}</p>
+            <small>{candidate.source}</small>
+            <div className={`candidate-result ${showResult ? 'candidate-result-visible' : ''}`} aria-hidden={!showResult}>
+              <div className="candidate-result-track">
+                <div className="candidate-result-fill" style={{ width: `${result?.percentage || 0}%` }} />
+              </div>
+              <strong>{resultText}</strong>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="candidate-topline">
+            <strong className="candidate-letter">{candidate.id}</strong>
+            <span className="candidate-badge">{candidate.badge}</span>
+          </div>
+          <p>{candidate.text}</p>
+          <small>{candidate.source}</small>
+          {interactive && <span className="candidate-action">{selected ? 'Selected' : `Vote ${candidate.id}`}</span>}
+        </>
+      )}
     </Tag>
   );
 }
 
-function Results({ poll, counts, closed }) {
+function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
+  const counts = state?.pollKey === poll.key ? state.counts : {};
   const rows = resultRows(poll.candidates, counts);
   const total = rows.reduce((sum, row) => sum + row.count, 0);
-  return (
-    <section className={`results-panel ${closed ? 'results-closed' : ''}`} aria-live="polite">
-      <header>
-        <span className={`status-pill ${closed ? 'status-closed' : 'status-open'}`}>
-          {closed ? 'VOTING CLOSED' : 'VOTING OPEN'}
-        </span>
-        <strong>{total} {total === 1 ? 'vote' : 'votes'}</strong>
-      </header>
-      <div className="result-bars">
-        {rows.map((row) => (
-          <div className={`result-row ${closed && row.winner ? 'result-winner' : ''}`} key={row.id}>
-            <span className="result-letter">{row.id}</span>
-            <div className="result-track"><div className="result-fill" style={{ width: `${row.percentage}%` }} /></div>
-            <strong>{row.percentage.toFixed(0)}%</strong>
-            <small>{row.count}</small>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function PollSlide({ poll, phase, state, audienceUrl, warning }) {
-  const counts = state?.pollKey === poll.key ? state.counts : {};
   const showCandidates = phase !== 'tweet';
   const showVoting = phase === 'live' || phase === 'closed';
+  const closed = phase === 'closed';
   return (
     <div className={`poll-slide poll-phase-${phase}`}>
       <div className="poll-heading">
-        <span>{poll.eyebrow}</span>
+        <div><span>{poll.eyebrow}</span><span>{String(number).padStart(2, '0')}</span></div>
         <h1>{phase === 'tweet' ? 'Read the post first.' : poll.title}</h1>
       </div>
       <div className="poll-content">
-        <div className="poll-source">
-          <CroppedTweet poll={poll} compact={showCandidates} />
-          {showVoting && (
-            <div className="qr-panel">
-              <div className="qr-code"><QRCodeSVG value={audienceUrl} size={112} level="M" /></div>
-              <div><strong>Scan once.</strong><span>Your phone follows all three rounds.</span></div>
+        {!showCandidates ? (
+          <>
+            <div className="poll-stage-qr"><VoteQr audienceUrl={audienceUrl} compact label="JOIN" /></div>
+            <div className="poll-source poll-source-feature"><CroppedTweet poll={poll} /></div>
+          </>
+        ) : (
+          <>
+            <div className="poll-source">
+              <CroppedTweet poll={poll} compact />
             </div>
-          )}
-        </div>
-        {showCandidates && (
           <div className="poll-main">
-            <div className="candidate-grid">
-              {poll.candidates.map((candidate) => <CandidateCard candidate={candidate} key={candidate.id} />)}
+            <div className="poll-live-header" aria-live="polite">
+              <div className={`poll-live-status ${showVoting ? 'poll-live-status-visible' : ''}`}>
+                <span className={`status-pill ${closed ? 'status-closed' : 'status-open'}`}>
+                  {closed ? 'VOTING CLOSED' : 'VOTING OPEN'}
+                </span>
+                <strong>{total} {total === 1 ? 'vote' : 'votes'}</strong>
+              </div>
+              <VoteQr audienceUrl={audienceUrl} compact label="JOIN" />
             </div>
-            {showVoting && <Results poll={poll} counts={counts} closed={phase === 'closed'} />}
+            <div className="candidate-grid">
+              {poll.candidates.map((candidate, index) => (
+                <CandidateCard
+                  candidate={candidate}
+                  presentation
+                  result={rows[index]}
+                  showResult={showVoting}
+                  closed={closed}
+                  key={candidate.id}
+                />
+              ))}
+            </div>
           </div>
+          </>
         )}
       </div>
       <footer className="poll-footer">
@@ -142,6 +237,7 @@ function PresenterPanel({ open, onClose, state, currentPoll, onReset, onReopen, 
 function PresentationApp() {
   const [current, setCurrent] = useState(slideFromHash);
   const [phases, setPhases] = useState(initialPhases);
+  const [slideSteps, setSlideSteps] = useState({});
   const [remoteState, setRemoteState] = useState(null);
   const [warning, setWarning] = useState('');
   const [controlsVisible, setControlsVisible] = useState(true);
@@ -158,6 +254,7 @@ function PresentationApp() {
   const slide = slides[current];
   const poll = slide.type === 'poll' ? pollsByKey[slide.pollKey] : null;
   const phase = poll ? phases[poll.key] : null;
+  const slideStep = slideSteps[slide.id] || 0;
   const audienceUrl = useMemo(() => {
     const url = new URL(import.meta.env.BASE_URL, window.location.origin);
     url.searchParams.set('audience', '1');
@@ -197,7 +294,12 @@ function PresentationApp() {
 
   const next = useCallback(async () => {
     if (busy) return;
-    if (!poll) { goTo(current + 1); return; }
+    if (!poll) {
+      if (slide.type === 'native' && hasNextSlideStep(slideStep, slide.steps)) {
+        setSlideSteps((previous) => ({ ...previous, [slide.id]: nextSlideStep(slideStep, slide.steps) }));
+      } else goTo(current + 1);
+      return;
+    }
     if (phase === 'tweet') { setPollPhase(poll.key, 'candidates'); return; }
     if (phase === 'candidates') {
       setWarning('');
@@ -231,14 +333,20 @@ function PresentationApp() {
       return;
     }
     goTo(current + 1);
-  }, [busy, current, goTo, phase, poll, setPollPhase]);
+  }, [busy, current, goTo, phase, poll, setPollPhase, slide, slideStep]);
 
   const previous = useCallback(async () => {
     if (busy) return;
-    if (!poll || phase === 'tweet' || phase === 'closed') { goTo(current - 1); return; }
+    if (!poll) {
+      if (slide.type === 'native' && slideStep > 0) {
+        setSlideSteps((previousSteps) => ({ ...previousSteps, [slide.id]: previousSlideStep(slideStep) }));
+      } else goTo(current - 1);
+      return;
+    }
+    if (phase === 'tweet' || phase === 'closed') { goTo(current - 1); return; }
     if (phase === 'candidates') { setPollPhase(poll.key, 'tweet'); return; }
     if (phase === 'live') await next();
-  }, [busy, current, goTo, next, phase, poll, setPollPhase]);
+  }, [busy, current, goTo, next, phase, poll, setPollPhase, slide, slideStep]);
   const toggleFullscreen = useCallback(async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
@@ -285,12 +393,6 @@ function PresentationApp() {
     hideTimer.current = window.setTimeout(() => setControlsVisible(false), 2200);
     return () => window.clearTimeout(hideTimer.current);
   }, []);
-  useEffect(() => {
-    [slides[current - 1], slides[current + 1]].filter((item) => item?.type === 'image').forEach((item) => {
-      const image = new Image(); image.src = item.src;
-    });
-  }, [current]);
-
   const handlePointerDown = (event) => {
     swipeHandled.current = false;
     pointerStart.current = { x: event.clientX, y: event.clientY };
@@ -312,6 +414,7 @@ function PresentationApp() {
       const state = await resetRun();
       setRemoteState(state);
       setPhases(initialPhases());
+      setSlideSteps({});
       localMode.current.clear();
       setPresenterMessage('Fresh run started. The fixed QR is ready.');
     } catch (error) { setPresenterMessage(error.message); }
@@ -340,9 +443,10 @@ function PresentationApp() {
     <main className={`deck ${controlsVisible ? 'controls-visible' : ''}`} onPointerMove={showControls} onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>
       <div className="ambient ambient-blue" aria-hidden="true" /><div className="ambient ambient-coral" aria-hidden="true" />
       <section className="slide-stage" aria-label={`Slide ${current + 1} of ${slides.length}`}>
-        {slide.type === 'image'
-          ? <img key={slide.id} className="slide-image" src={slide.src} alt={slide.title} draggable="false" />
-          : <PollSlide poll={poll} phase={phase} state={remoteState} audienceUrl={audienceUrl} warning={warning} />}
+        {slide.type === 'cover' && <CoverSlide audienceUrl={audienceUrl} number={current + 1} />}
+        {slide.type === 'join' && <JoinSlide audienceUrl={audienceUrl} number={current + 1} />}
+        {slide.type === 'poll' && <PollSlide poll={poll} phase={phase} state={remoteState} audienceUrl={audienceUrl} warning={warning} number={current + 1} />}
+        {slide.type === 'native' && <NativeSlide slideKey={slide.nativeKey} number={current + 1} step={slideStep} />}
       </section>
       <button className="click-zone click-zone-left" type="button" onClick={() => !swipeHandled.current && previous()} disabled={current === 0 && (!poll || phase === 'tweet')} aria-label="Previous step" />
       <button className="click-zone click-zone-right" type="button" onClick={() => !swipeHandled.current && next()} disabled={current === slides.length - 1} aria-label="Next step" />
