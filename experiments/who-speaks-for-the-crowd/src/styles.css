@@ -570,6 +570,11 @@ button {
   background: linear-gradient(145deg, #202228, #59616c);
 }
 
+.post-avatar-image {
+  object-fit: cover;
+  background: #eff1f3;
+}
+
 .post-identity {
   display: flex;
   min-width: 0;
@@ -593,9 +598,91 @@ button {
   display: block;
   width: 100%;
   max-height: 45cqh;
-  object-fit: cover;
+  object-fit: contain;
   border: 1px solid #d9dde1;
   border-radius: 1.4cqh;
+}
+
+.post-media-button {
+  position: relative;
+  z-index: 3;
+  display: block;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 1.4cqh;
+  background: transparent;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.post-media-button:focus-visible {
+  outline: 0.35cqh solid #1d9bf0;
+  outline-offset: 0.35cqh;
+}
+
+.post-media-button-prominent {
+  width: fit-content;
+  max-width: 100%;
+  justify-self: center;
+}
+
+.post-media-button-prominent .post-media {
+  width: auto;
+  max-width: 100%;
+  height: 48cqh;
+  max-height: none;
+}
+
+.post-media-zoom {
+  position: absolute;
+  right: 1cqh;
+  bottom: 1cqh;
+  display: grid;
+  width: 3.7cqh;
+  height: 3.7cqh;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 2.25cqh;
+  line-height: 1;
+  background: rgba(8, 9, 12, 0.72);
+  box-shadow: 0 0.5cqh 1.6cqh rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+.post-media-grid {
+  display: grid;
+  gap: 0.45cqw;
+}
+
+.post-media-grid-multiple {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.post-media-grid-multiple .post-media {
+  height: 31cqh;
+  object-fit: cover;
+}
+
+.post-media-grid-split-document {
+  grid-template-columns: 0.86fr 1.14fr;
+  align-items: stretch;
+}
+
+.post-media-grid-split-document .post-media-button {
+  display: grid;
+  place-items: center;
+  background: #ecebe7;
+}
+
+.post-media-grid-split-document .post-media {
+  height: 36cqh;
+  max-height: none;
+  border: 0;
+  border-radius: 0;
+  object-fit: contain;
 }
 
 .post-meta {
@@ -642,6 +729,9 @@ button {
 .poll-slide .post-card-compact .post-identity > span { font-size: 1.12cqh; }
 .poll-slide .post-card-compact .post-text { margin: 1.35cqh 0 1.15cqh; font-size: 2.15cqh; }
 .poll-slide .post-card-compact .post-media { max-height: 29cqh; }
+.poll-slide .post-card-compact .post-media-button-prominent .post-media { height: 37cqh; max-height: none; }
+.poll-slide .post-card-compact .post-media-grid-multiple .post-media { height: 14cqh; }
+.poll-slide .post-card-compact .post-media-grid-split-document .post-media { height: 22cqh; max-height: none; }
 .poll-slide .post-card-compact .post-meta { margin-top: 0.85cqh; font-size: 1.02cqh; }
 .poll-slide .post-card-compact .post-actions { margin-top: 0.75cqh; padding-top: 0.7cqh; font-size: 1.3cqh; }
 
@@ -937,6 +1027,69 @@ button {
 .presenter-actions button:disabled { opacity: 0.38; cursor: default; }
 .presenter-message { min-height: 1.3em; margin: 16px 0 0; color: #aeb4bd; font-size: 13px; }
 
+/* Expandable post images */
+.image-lightbox {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  color: #fff;
+  background: rgba(5, 6, 8, 0.94);
+  backdrop-filter: blur(18px);
+}
+
+.image-lightbox-toolbar {
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.image-lightbox-toolbar button,
+.image-lightbox-toolbar output {
+  display: grid;
+  min-width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 22px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.image-lightbox-toolbar button { cursor: pointer; }
+.image-lightbox-toolbar button:disabled { opacity: 0.35; cursor: default; }
+.image-lightbox-toolbar output { min-width: 70px; padding: 0 12px; font-size: 13px; font-weight: 800; }
+.image-lightbox-toolbar .image-lightbox-close { position: absolute; right: max(16px, env(safe-area-inset-right)); }
+
+.image-lightbox-viewport {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-x pan-y;
+}
+
+.image-lightbox-viewport img {
+  display: block;
+  width: auto;
+  max-width: none;
+  margin: 0 auto;
+  object-fit: contain;
+  transition: height 160ms ease;
+}
+
+.image-lightbox-hint {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 12px;
+  text-align: center;
+}
+
 /* Audience phone */
 .audience-app {
   position: fixed;
@@ -988,6 +1141,10 @@ button {
 .audience-poll .post-identity > span { font-size: 13px; }
 .audience-poll .post-text { margin: 17px 0 14px; font-size: 21px; line-height: 1.28; }
 .audience-poll .post-media { max-height: none; border-radius: 12px; }
+.audience-poll .post-media-button-prominent { width: 100%; }
+.audience-poll .post-media-button-prominent .post-media { width: 100%; height: auto; max-height: none; }
+.audience-poll .post-media-grid-split-document { grid-template-columns: 1fr; gap: 12px; }
+.audience-poll .post-media-grid-split-document .post-media { width: 100%; height: auto; max-height: none; }
 .audience-poll .post-meta { font-size: 12px; }
 .audience-poll .post-actions { font-size: 17px; }
 .audience-candidates { display: grid; gap: 14px; margin-top: 20px; }

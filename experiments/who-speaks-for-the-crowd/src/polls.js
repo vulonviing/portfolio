@@ -1,4 +1,4 @@
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env?.BASE_URL || '/who-speaks-for-the-crowd/';
 
 export const pollKeys = ['case-great-wall', 'case-oxford', 'case-khamenei'];
 
@@ -9,25 +9,39 @@ export const polls = [
     eyebrow: 'AUDIENCE VOTE 1 OF 3',
     title: 'Which note should be shown?',
     post: {
-      author: 'Space Facts', handle: '@space_demo', avatar: 'SF',
-      text: 'The Great Wall of China is visible from the Moon with the naked eye.',
-      meta: 'Demo post',
+      author: 'Inevitable West', handle: '@Inevitablewest', avatar: 'IW', verified: true,
+      avatarImage: `${base}media/inevitable-west-avatar.jpg`,
+      sourceUrl: 'https://x.com/Inevitablewest/status/1891443393684774979',
+      text: 'German schools are holding mock elections. The AfD are winning every single one by a massive majority.\n\nThe kids are going to be just fine.',
+      images: [
+        {
+          src: `${base}media/afd-juniorwahl-parties.jpg`,
+          alt: 'Close-up of the Juniorwahl party list showing the AfD at 63.49 percent, followed by the CDU at 14.29 percent.',
+          splitDocument: true,
+        },
+        {
+          src: `${base}media/afd-juniorwahl-pie-chart.jpg`,
+          alt: 'Close-up of the Juniorwahl second-vote pie chart.',
+          splitDocument: true,
+        },
+      ],
+      meta: 'Feb 17, 2025',
     },
     candidates: [
       {
         id: 'A', badge: 'Candidate note',
-        text: 'It becomes visible at sunrise, when the wall casts a long shadow.',
-        reveal: { tone: 'false', label: 'FABRICATED FOR THIS DEMO', detail: 'No reliable source supports this explanation.' },
+        text: 'The AfD did not win “every single one by a massive majority.” Instead, they placed fourth with 15.5%. This was the result of the U18 federal election, in which nearly 170,000 young people participated.',
+        reveal: { tone: 'actual', label: 'ACTUAL COMMUNITY NOTE', detail: 'Community Note 1891720468169720267', sourceUrl: 'https://x.com/i/birdwatch/n/1891720468169720267' },
       },
       {
         id: 'B', badge: 'Candidate note',
-        text: 'NASA says the wall is not visible from the Moon and is difficult to see even from low Earth orbit.',
-        reveal: { tone: 'supported', label: 'SUPPORTED', detail: 'NASA · Great Wall image article', sourceUrl: 'https://www.nasa.gov/image-article/great-wall/' },
+        text: 'This image shows the nationwide Juniorwahl result. The AfD won 63.49% of the youth vote across Germany.',
+        reveal: { tone: 'false', label: 'PLAUSIBLE, BUT INVENTED', detail: 'The image reports one school in Pirna, not a nationwide result.' },
       },
       {
         id: 'C', badge: 'Candidate note',
-        text: 'Apollo astronauts reported seeing it without magnification.',
-        reveal: { tone: 'false', label: 'FABRICATED FOR THIS DEMO', detail: 'Apollo reports do not support this claim.' },
+        text: 'Juniorwahl and U18 elections are educational projects; their results do not count toward the official Bundestag election.',
+        reveal: { tone: 'context', label: 'TRUE, BUT NOT RELEVANT', detail: 'Accurate context that does not test the post’s nationwide claim.' },
       },
     ],
   },
@@ -37,25 +51,37 @@ export const polls = [
     eyebrow: 'AUDIENCE VOTE 2 OF 3',
     title: 'Which note should be shown?',
     post: {
-      author: 'History Facts', handle: '@history_demo', avatar: 'HF',
-      text: 'Oxford University is older than the Aztec Empire.',
-      meta: 'Demo post',
+      author: 'Legitimate Targets', handle: '@LegitTargets', avatar: 'LT', verified: true,
+      avatarImage: `${base}media/legitimate-targets-avatar.jpg`,
+      sourceUrl: 'https://x.com/LegitTargets/status/1862791177592050074',
+      text: 'BREAKING: German AfD Party says they will LEAVE the EU if they win February elections.',
+      images: [
+        {
+          src: `${base}media/afd-eu-weidel.jpg`,
+          alt: 'Portrait of AfD co-leader Alice Weidel.',
+        },
+        {
+          src: `${base}media/afd-eu-flag.jpg`,
+          alt: 'European Union flag covered by a red prohibition symbol.',
+        },
+      ],
+      meta: 'Nov 30, 2024',
     },
     candidates: [
       {
         id: 'A', badge: 'Candidate note',
-        text: 'Teaching existed at Oxford by 1096. The Aztec Empire formed in 1428.',
-        reveal: { tone: 'supported', label: 'SUPPORTED & RELEVANT', detail: 'University of Oxford · The Met', sourceUrl: 'https://www.ox.ac.uk/about/the-university/history' },
+        text: 'The AfD program calls for an immediate German exit from both the EU and the euro if the party enters government. No public referendum is proposed.',
+        reveal: { tone: 'false', label: 'PLAUSIBLE, BUT INVENTED', detail: 'The real proposal includes a public vote rather than an automatic exit.' },
       },
       {
         id: 'B', badge: 'Candidate note',
-        text: 'Oxford began in 1167. The Aztec Empire began with Tenochtitlan in 1325.',
-        reveal: { tone: 'false', label: 'PLAUSIBLE, BUT WRONG', detail: '1167 marks rapid growth; 1325 refers to the city, not the empire.' },
+        text: 'The AfD announced that if they win the election, they plan to let the people decide through a vote whether Germany should remain in the EU.',
+        reveal: { tone: 'actual', label: 'ACTUAL COMMUNITY NOTE', detail: 'Community Note 1862981658447905254', sourceUrl: 'https://x.com/i/birdwatch/n/1862981658447905254' },
       },
       {
         id: 'C', badge: 'Candidate note',
-        text: 'The Aztec Empire ended in 1521 after Spanish forces captured Tenochtitlan.',
-        reveal: { tone: 'context', label: 'TRUE, BUT NOT RELEVANT', detail: 'Accurate context that does not resolve the comparison.', sourceUrl: 'https://www.metmuseum.org/exhibitions/listings/2018/golden-kingdoms/exhibition-galleries' },
+        text: 'The AfD proposes leaving the eurozone but remaining in the European Union, similar to Denmark. The post confuses EU and euro membership.',
+        reveal: { tone: 'false', label: 'PLAUSIBLE, BUT INVENTED', detail: 'The proposal discusses EU membership, not only the common currency.' },
       },
     ],
   },
@@ -65,7 +91,8 @@ export const polls = [
     eyebrow: 'AUDIENCE VOTE 3 OF 3',
     title: 'Which note should be shown?',
     post: {
-      author: 'Shia Visuals', handle: '@ShiaVisuals', avatar: 'SV', verified: true,
+      author: 'Shia Visuals', handle: '@ShiaVisuals', avatar: 'SV',
+      avatarImage: `${base}media/shia-visuals-avatar.jpg`,
       text: 'May Allah protect him.',
       image: `${base}media/khamenei.png`,
       imageAlt: 'Ali Khamenei wearing a black turban and looking downward.',

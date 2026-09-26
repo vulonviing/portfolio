@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   closePoll, downloadExport, downloadRawExport, getState, openPoll, reopenPoll, resetRun, submitVote,
@@ -93,11 +94,55 @@ function JoinSlide({ audienceUrl, number }) {
   );
 }
 
+function ImageLightbox({ item, onClose }) {
+  const [zoom, setZoom] = useState(1);
+
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [onClose]);
+
+  return createPortal(
+    <div className="image-lightbox" role="dialog" aria-modal="true" aria-label="Expanded post image" onClick={onClose}>
+      <div className="image-lightbox-toolbar" onClick={(event) => event.stopPropagation()}>
+        <button type="button" onClick={() => setZoom((value) => Math.max(1, value - 0.5))} disabled={zoom === 1} aria-label="Zoom out">−</button>
+        <output aria-live="polite">{Math.round(zoom * 100)}%</output>
+        <button type="button" onClick={() => setZoom((value) => Math.min(3, value + 0.5))} disabled={zoom === 3} aria-label="Zoom in">+</button>
+        <button type="button" className="image-lightbox-close" onClick={onClose} aria-label="Close expanded image">×</button>
+      </div>
+      <div className="image-lightbox-viewport" onClick={(event) => event.stopPropagation()}>
+        <img
+          src={item.zoomSrc || item.src}
+          alt={item.alt}
+          draggable="false"
+          style={zoom === 1
+            ? { width: 'auto', height: 'auto', maxWidth: '100%', maxHeight: '100%' }
+            : { width: 'auto', height: `${zoom * 86}dvh`, maxWidth: 'none', maxHeight: 'none' }}
+          onDoubleClick={() => setZoom((value) => (value === 1 ? 2 : 1))}
+        />
+      </div>
+      <span className="image-lightbox-hint">Double-click or use + / − to zoom · Esc to close</span>
+    </div>,
+    document.body,
+  );
+}
+
 function PostCard({ post, compact = false }) {
+  const [expandedMedia, setExpandedMedia] = useState(null);
+  const media = post.images || (post.image ? [{ src: post.image, alt: post.imageAlt }] : []);
+  const hasMedia = media.length > 0;
+  const isSplitDocument = media.length > 1 && media.every((item) => item.splitDocument);
   return (
-    <article className={`post-card ${compact ? 'post-card-compact' : ''} ${post.image ? 'post-card-with-media' : ''}`}>
+    <article className={`post-card ${compact ? 'post-card-compact' : ''} ${hasMedia ? 'post-card-with-media' : ''}`}>
       <header className="post-author">
-        <span className="post-avatar" aria-hidden="true">{post.avatar}</span>
+        {post.avatarImage ? (
+          <img className="post-avatar post-avatar-image" src={post.avatarImage} alt="" draggable="false" />
+        ) : (
+          <span className="post-avatar" aria-hidden="true">{post.avatar}</span>
+        )}
         <div className="post-identity">
           <strong>{post.author}{post.verified && <span className="post-verified" aria-label="Verified account">✓</span>}</strong>
           <span>{post.handle}</span>
@@ -105,9 +150,25 @@ function PostCard({ post, compact = false }) {
         <span className="post-more" aria-hidden="true">•••</span>
       </header>
       <p className="post-text">{post.text}</p>
-      {post.image && <img className="post-media" src={post.image} alt={post.imageAlt} draggable="false" />}
-      <div className="post-meta">{post.meta}</div>
+      {hasMedia && (
+        <div className={`post-media-grid ${media.length > 1 ? 'post-media-grid-multiple' : 'post-media-grid-single'} ${isSplitDocument ? 'post-media-grid-split-document' : ''}`}>
+          {media.map((item) => (
+            <button
+              className={`post-media-button ${item.prominent ? 'post-media-button-prominent' : ''}`}
+              type="button"
+              onClick={() => setExpandedMedia(item)}
+              aria-label={`Enlarge image: ${item.alt}`}
+              key={item.src}
+            >
+              <img className="post-media" src={item.src} alt={item.alt} draggable="false" />
+              <span className="post-media-zoom" aria-hidden="true">⌕</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {post.meta && <div className="post-meta">{post.meta}</div>}
       <div className="post-actions" aria-hidden="true"><span>○</span><span>↻</span><span>♡</span><span>⌁</span></div>
+      {expandedMedia && <ImageLightbox item={expandedMedia} onClose={() => setExpandedMedia(null)} />}
     </article>
   );
 }
