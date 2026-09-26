@@ -8,7 +8,7 @@ function Reveal({ show, className = '', children }) {
   return <div className={`native-reveal ${show ? 'native-reveal-visible' : ''} ${className}`}>{children}</div>;
 }
 
-function SlideFrame({ number, eyebrow, title, footer = 'Ulu & Shi · Cross-Constituency Aggregation', className = '', children }) {
+function SlideFrame({ number, eyebrow, title, className = '', children }) {
   return (
     <article className={`native-slide ${className}`}>
       <header className="native-header">
@@ -17,7 +17,7 @@ function SlideFrame({ number, eyebrow, title, footer = 'Ulu & Shi · Cross-Const
       </header>
       <h1 className="native-title">{title}</h1>
       <div className="native-canvas">{children}</div>
-      {footer && <footer className="native-footer">{footer}</footer>}
+      <footer className="native-footer" />
     </article>
   );
 }
@@ -130,7 +130,7 @@ function InfluenceRow() {
 
 function ApprovalPuzzleSlide({ number, step }) {
   return (
-    <SlideFrame number={number} eyebrow="THE PUZZLE" title="95.1% said helpful. X still did not display it." footer="Raw-chicken case · paper/main.tex">
+    <SlideFrame number={number} eyebrow="THE PUZZLE" title="95.1% said helpful. X still did not display it.">
       <div className="puzzle-layout">
         <PostCard
           post={rawChickenPost}
@@ -190,7 +190,7 @@ function DominanceDiagram() {
 
 function AgreementSlide({ number }) {
   return (
-    <SlideFrame number={number} eyebrow="HOW X WORKS" title="X already looks for unlikely agreement." footer="Rater-dominance schematic · paper/main.tex">
+    <SlideFrame number={number} eyebrow="HOW X WORKS" title="X already looks for unlikely agreement.">
       <div className="agreement-layout">
         <div className="agreement-grid">
           <section><span className="agreement-label agreement-coral">AMIGO</span><div className="support-visual"><Person tone="coral" /><CheckMark /><div className="support-note support-note-coral"><Person tone="coral" /></div></div><strong className="agreement-coral">Predictable support</strong></section>
@@ -204,7 +204,7 @@ function AgreementSlide({ number }) {
 
 function GapSlide({ number, step }) {
   return (
-    <SlideFrame number={number} eyebrow="THE ANSWER" title="A hyperactive minority held the note back." footer="Raw-chicken case · paper/main.tex">
+    <SlideFrame number={number} eyebrow="THE ANSWER" title="A hyperactive minority held the note back.">
       <div className="puzzle-layout puzzle-layout-dominance">
         <PostCard
           post={rawChickenPost}
@@ -250,7 +250,7 @@ function CountryFlag({ country }) {
 
 function CcaProposalSlide({ number }) {
   return (
-    <SlideFrame number={number} eyebrow="OUR PROPOSAL" title="What do we propose? CCA." footer="Institutional inspiration and implementation · paper/main.tex">
+    <SlideFrame number={number} eyebrow="OUR PROPOSAL" title="What do we propose? CCA.">
       <div className="cca-proposal-layout">
         <div className="cca-proposal-name">
           <strong>CCA</strong>
@@ -291,7 +291,7 @@ function ConstituenciesSlide({ number }) {
 
 function TopicSignaturesSlide({ number }) {
   return (
-    <SlideFrame number={number} eyebrow="CHECKING THE CLUSTERS" title="Which cluster agrees more depends on the topic." footer="Topic signatures · paper/main.tex · figures/script_figures/cn-topic-signatures.png">
+    <SlideFrame number={number} eyebrow="CHECKING THE CLUSTERS" title="Which cluster agrees more depends on the topic.">
       <div className="topic-evidence-layout">
         <div className="topic-evidence-main">
           <figure className="topic-evidence-figure">
@@ -311,7 +311,7 @@ function TopicSignaturesSlide({ number }) {
 
 function CampApprovalSlide({ number }) {
   return (
-    <SlideFrame number={number} eyebrow="CCA" title="Each cluster gets its own approval rate." footer="Method B vote-profile reassignment · paper/main.tex">
+    <SlideFrame number={number} eyebrow="CCA" title="Each cluster gets its own approval rate.">
       <div className="camp-approval-layout">
         <div className="camp-side camp-side-blue"><strong className="camp-size">107,734 raters</strong><DotGrid tone="blue" count={32} columns={8} /><span>CLUSTER A: pA</span></div>
         <FlowArrow tone="blue" />
@@ -363,7 +363,7 @@ function SoftVetoSlide({ number, step }) {
 
 function VisibilityResultsSlide({ number, step }) {
   return (
-    <SlideFrame number={number} eyebrow="RESULTS" title="A different rule changes who is heard." footer="Selection overlap · tests/RESULTS.md · data/processed/selection_log.parquet">
+    <SlideFrame number={number} eyebrow="RESULTS" title="A different rule changes who is heard.">
       <div className="results-flow">
         <div className="results-line">
           <Reveal show={step >= 0} className="result-root"><strong>44,722</strong><span>posts</span></Reveal>
@@ -456,7 +456,7 @@ const yarmoukPost = {
 
 function YarmoukSlide({ number, step }) {
   return (
-    <SlideFrame number={number} eyebrow="CASE: YARMOUK / MU’TAH" title="3,000 soldiers. But which battle?" footer="Original post and Community Notes · paper/long-version/main_long.tex">
+    <SlideFrame number={number} eyebrow="CASE: YARMOUK / MU’TAH" title="3,000 soldiers. But which battle?">
       <div className="battle-layout">
         <PostCard post={yarmoukPost} className="battle-post" />
         <div className="battle-notes">

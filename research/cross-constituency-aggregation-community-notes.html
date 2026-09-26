@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>Cross-Constituency Aggregation for Community Notes — Emrecan Ulu</title>
+  <meta name="description" content="A voting-based aggregation rule for Community Notes that asks each behavioral constituency to support a note, rather than letting one large group dominate the score." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="Cross-Constituency Aggregation for Community Notes, research by Emrecan Ulu, Community Notes, Spectral Clustering, Voting, LLM Review" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/research/cross-constituency-aggregation-community-notes.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="Cross-Constituency Aggregation for Community Notes — Emrecan Ulu" />
+  <meta property="og:description" content="A voting-based aggregation rule for Community Notes that asks each behavioral constituency to support a note, rather than letting one large group dominate the score." />
+  <meta property="og:url" content="https://emrecanulu.com/research/cross-constituency-aggregation-community-notes.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Cross-Constituency Aggregation for Community Notes — Emrecan Ulu" />
+  <meta name="twitter:description" content="A voting-based aggregation rule for Community Notes that asks each behavioral constituency to support a note, rather than letting one large group dominate the score." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "headline": "Cross-Constituency Aggregation for Community Notes",
+  "description": "A voting-based aggregation rule for Community Notes that asks each behavioral constituency to support a note, rather than letting one large group dominate the score.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/research/cross-constituency-aggregation-community-notes.html",
+  "url": "https://emrecanulu.com/research/cross-constituency-aggregation-community-notes.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "Community Notes",
+    "Spectral Clustering",
+    "Voting",
+    "LLM Review"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="research">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+            <li><a href="/resonance.html" rel="nofollow" data-nav="resonance">Resonance</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/research.html">Research</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Research · 2026</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>Cross-Constituency Aggregation for Community Notes</h1>
+<p><strong>Emrecan Ulu and Jingyao Shi · University of Konstanz</strong></p>
+<p>Community Notes lets people add context to posts on X, but a note appears only when enough raters agree that it is helpful. Our work asks a different question: what if agreement had to extend across groups of people who usually vote differently?</p>
+<p>Cross-Constituency Aggregation (CCA) finds those groups from co-rating behavior, without assigning them political identities. It then scores each note using the geometric mean of approval across groups. Strong support in one group cannot simply compensate for rejection in another.</p>
+<p>In our analysis of 44,722 posts, CCA qualifies 20,405 notes. Of those, 13,655 were not displayed by X. An independent language-model review found that 8,558 of these candidate notes held up on sourcing and quality. That review examined the note text and visible source pointer; it did <strong>not</strong> open links or verify that the cited sources supported the claims. These results show how a different aggregation rule changes visibility decisions, not that every qualified note is true or that X intentionally suppressed any note.</p>
+<p>The <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes">paper and reproducible implementation</a> include the method, figures, tests, and instructions for checking the reported results.</p>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>

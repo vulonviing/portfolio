@@ -254,7 +254,6 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
         )}
       </div>
       <footer className="poll-footer">
-        <span>{showReveal ? 'What sounds convincing is not always what is supported.' : 'Choose the note that should appear below this post.'}</span>
         {warning && <strong className="poll-warning">{warning}</strong>}
       </footer>
     </div>
@@ -555,6 +554,9 @@ function PresentationApp() {
         {slide.type === 'join' && <JoinSlide audienceUrl={audienceUrl} number={current + 1} state={remoteState} />}
         {slide.type === 'poll' && <PollSlide poll={poll} phase={phase} state={remoteState} audienceUrl={audienceUrl} warning={warning} number={current + 1} />}
         {slide.type === 'native' && <NativeSlide slideKey={slide.nativeKey} number={current + 1} step={slideStep} />}
+        <a className="slide-research-link" href="https://emrecanulu.com/research/cross-constituency-aggregation-community-notes.html" target="_blank" rel="noopener noreferrer">
+          emrecanulu.com/research/cross-constituency-aggregation-community-notes.html
+        </a>
       </section>
       <div className="progress-track" aria-hidden="true"><div className="progress-fill" style={{ width: `${progress}%` }} /></div>
       <nav className="deck-controls" aria-label="Presentation controls">

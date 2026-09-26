@@ -1,5 +1,13 @@
 [
   {
+    "slug": "cross-constituency-aggregation-community-notes",
+    "title": "Cross-Constituency Aggregation for Community Notes",
+    "date": "2026",
+    "excerpt": "A voting-based aggregation rule for Community Notes that asks each behavioral constituency to support a note, rather than letting one large group dominate the score.",
+    "tags": ["Community Notes", "Spectral Clustering", "Voting", "LLM Review"],
+    "repo": "https://github.com/vulonviing/cross-constituency-aggregation-community-notes"
+  },
+  {
     "slug": "social-intuition-vectors",
     "title": "Warmth & Competence in LLM Hiring",
     "date": "2026",
