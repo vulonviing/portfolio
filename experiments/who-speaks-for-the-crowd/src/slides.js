@@ -15,8 +15,7 @@ const researchSlides = [
 ];
 
 export const slides = [
-  { id: 'cover', type: 'cover', title: 'Who Speaks for the Crowd?' },
-  { id: 'join', type: 'join', title: "You're part of the crowd" },
+  { id: 'join', type: 'join', title: 'Who Speaks for the Crowd?' },
   ...polls.map((poll) => ({
     id: `poll-${poll.key}`,
     type: 'poll',

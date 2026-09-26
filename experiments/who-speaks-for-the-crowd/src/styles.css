@@ -206,7 +206,6 @@ button {
 }
 
 /* Native opening slides */
-.cover-slide,
 .join-slide {
   position: relative;
   width: 100%;
@@ -226,97 +225,23 @@ button {
   font-weight: 700;
 }
 
-.cover-slide {
-  display: grid;
-  grid-template-columns: 47% 53%;
-  align-items: center;
-  padding: 9.5cqh 5.6cqw;
-}
-
-.cover-copy {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 4.5cqh 0 18.5cqh;
-}
-
-.cover-copy h1 {
-  margin: 0;
-  font-size: 7.1cqh;
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-}
-
-.cover-meta {
+.join-meta {
+  position: absolute;
+  top: 4.7cqh;
+  left: 4.5cqw;
   display: flex;
   flex-direction: column;
-  gap: 1.7cqh;
+  gap: 0.5cqh;
 }
 
-.cover-meta strong {
+.join-meta strong {
   color: #4f9cf9;
-  font-size: 2.85cqh;
+  font-size: 1.55cqh;
 }
 
-.cover-meta span {
+.join-meta span {
   color: #6d737d;
-  font-size: 1.9cqh;
-}
-
-.network-artwork {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.network-lines {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.network-dots-blue circle { fill: #4f9cf9; }
-.network-dots-coral circle { fill: #ff625d; }
-
-.network-lines-blue,
-.network-lines-coral {
-  fill: none;
-  stroke-width: 0.35;
-}
-
-.network-lines-blue { stroke: #4f9cf9; }
-.network-lines-coral { stroke: #ff625d; }
-
-.cover-qr-card {
-  position: absolute;
-  z-index: 2;
-  top: 20%;
-  left: 25%;
-  display: grid;
-  width: 22cqw;
-  min-height: 47cqh;
-  place-items: center;
-  gap: 1.1cqh;
-  padding: 2.3cqh 1.25cqw 1.8cqh;
-  border: 1px solid #d7dbe0;
-  border-radius: 2.2cqh;
-  background: #fff;
-  box-shadow: 0 1.2cqh 3.2cqh rgba(26, 31, 40, 0.13);
-}
-
-.cover-qr-card svg {
-  display: block;
-  width: 33cqh;
-  height: 33cqh;
-}
-
-.cover-qr-card strong {
-  color: #4f9cf9;
-  font-size: 1.42cqh;
-  letter-spacing: 0.09em;
+  font-size: 1.3cqh;
 }
 
 .join-slide {
@@ -1418,7 +1343,7 @@ button {
 .candidate-action { align-self: start; margin-top: 14px; padding: 8px 12px; border-radius: 999px; color: #fff; font-size: 12px; font-weight: 800; background: #202228; }
 .candidate-selected { border-color: #22b88b; box-shadow: 0 0 0 2px #22b88b; }
 .candidate-selected .candidate-letter, .candidate-selected .candidate-action { background: #22b88b; }
-.audience-message { position: sticky; bottom: 12px; margin: 20px 0 0; padding: 13px 15px; border: 1px solid #d9dcde; border-radius: 12px; color: #4e555e; font-size: 13px; line-height: 1.4; background: rgba(255, 255, 255, 0.94); box-shadow: 0 8px 28px rgba(26, 31, 40, 0.1); backdrop-filter: blur(12px); }
+.audience-message { position: sticky; z-index: 40; bottom: 12px; margin: 20px 0 0; padding: 13px 15px; border: 1px solid #d9dcde; border-radius: 12px; color: #4e555e; font-size: 13px; line-height: 1.4; background: rgba(255, 255, 255, 0.94); box-shadow: 0 8px 28px rgba(26, 31, 40, 0.1); backdrop-filter: blur(12px); }
 
 @keyframes slide-arrive {
   from {

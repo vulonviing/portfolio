@@ -109,67 +109,6 @@ function VoteQr({ audienceUrl, large = false, compact = false, label = 'Scan onc
   );
 }
 
-const BLUE_COLS = [3, 7.5, 12, 16.5, 21];
-const BLUE_ROWS = [14, 20, 26, 32, 38];
-const CORAL_COLS = [79, 83.5, 88, 92.5, 97];
-const CORAL_ROWS = [50, 57, 64, 71, 78];
-const CARD_LEFT = 25;
-const CARD_RIGHT = 47;
-const BLUE_LINE_ENDS = [27, 31, 35, 39, 43];
-const CORAL_LINE_STARTS = [30, 38, 46, 54, 60];
-
-function NetworkArtwork({ audienceUrl }) {
-  const blueDots = BLUE_ROWS.flatMap((y) => BLUE_COLS.map((x) => ({ x, y })));
-  const coralDots = CORAL_ROWS.flatMap((y) => CORAL_COLS.map((x) => ({ x, y })));
-  const blueLinkX = BLUE_COLS[3];
-  const coralLinkX = CORAL_COLS[1];
-
-  return (
-    <div className="network-artwork" aria-label="Two groups connecting to a shared note">
-      <svg className="network-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <g className="network-dots-blue">
-          {blueDots.map((dot, index) => <circle key={`blue-${index}`} cx={dot.x} cy={dot.y} r="0.85" />)}
-        </g>
-        <g className="network-dots-coral">
-          {coralDots.map((dot, index) => <circle key={`coral-${index}`} cx={dot.x} cy={dot.y} r="0.85" />)}
-        </g>
-        <g className="network-lines-blue">
-          {BLUE_ROWS.map((y, index) => (
-            <line key={`blue-line-${index}`} x1={blueLinkX} y1={y} x2={CARD_LEFT + 6} y2={BLUE_LINE_ENDS[index]} />
-          ))}
-        </g>
-        <g className="network-lines-coral">
-          {CORAL_ROWS.map((y, index) => (
-            <line key={`coral-line-${index}`} x1={CARD_RIGHT - 6} y1={CORAL_LINE_STARTS[index]} x2={coralLinkX} y2={y} />
-          ))}
-        </g>
-      </svg>
-      <div className="cover-qr-card">
-        <div role="img" aria-label="QR code for the live audience vote">
-          <QRCodeSVG value={audienceUrl} size={280} level="M" />
-        </div>
-        <strong>JOIN THE LIVE VOTE</strong>
-      </div>
-    </div>
-  );
-}
-
-function CoverSlide({ audienceUrl, number }) {
-  return (
-    <div className="cover-slide">
-      <span className="opening-slide-number">{String(number).padStart(2, '0')}</span>
-      <section className="cover-copy">
-        <h1>WHO SPEAKS<br />FOR THE CROWD?</h1>
-        <div className="cover-meta">
-          <strong>Emrecan Ulu / Jingyao Shi</strong>
-          <span>SEDS Data Science Slam · 1 October 2026</span>
-        </div>
-      </section>
-      <NetworkArtwork audienceUrl={audienceUrl} />
-    </div>
-  );
-}
-
 function JoinedCount({ count, compact = false }) {
   if (count == null) return null;
   return (
@@ -184,11 +123,15 @@ function JoinSlide({ audienceUrl, number, state }) {
   return (
     <div className="join-slide">
       <span className="opening-slide-number">{String(number).padStart(2, '0')}</span>
-      <span className="join-eyebrow">LIVE AUDIENCE VOTE</span>
-      <h1>YOU’RE PART OF THE CROWD</h1>
+      <div className="join-meta">
+        <strong>Emrecan Ulu / Jingyao Shi</strong>
+        <span>SEDS Data Science Slam · 1 October 2026</span>
+      </div>
+      <span className="join-eyebrow">INTERACTIVE PRESENTATION</span>
+      <h1>WHO SPEAKS<br />FOR THE CROWD?</h1>
       <JoinedCount count={state?.joinedCount} />
       <VoteQr audienceUrl={audienceUrl} large label="Scan now." />
-      <p>The first question will appear automatically.</p>
+      <p>Please join before we start — this talk is interactive, and you’ll vote live from your phone throughout.</p>
     </div>
   );
 }
@@ -536,7 +479,6 @@ function PresentationApp() {
     <main className={`deck ${controlsVisible ? 'controls-visible' : ''}`} onPointerMove={showControls}>
       <div className="ambient ambient-blue" aria-hidden="true" /><div className="ambient ambient-coral" aria-hidden="true" />
       <section className="slide-stage" aria-label={`Slide ${current + 1} of ${slides.length}`}>
-        {slide.type === 'cover' && <CoverSlide audienceUrl={audienceUrl} number={current + 1} />}
         {slide.type === 'join' && <JoinSlide audienceUrl={audienceUrl} number={current + 1} state={remoteState} />}
         {slide.type === 'poll' && <PollSlide poll={poll} phase={phase} state={remoteState} audienceUrl={audienceUrl} warning={warning} number={current + 1} />}
         {slide.type === 'native' && <NativeSlide slideKey={slide.nativeKey} number={current + 1} step={slideStep} />}
