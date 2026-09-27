@@ -68,29 +68,34 @@ function ArchetypeCard({ tone, headline, detail, show = true }) {
 const khameneiPost = pollsByKey['case-khamenei'].post;
 
 function DecisionFlowSlide({ number, step = 0 }) {
+  const showTweet = step >= 3;
+  const mainContent = (
+    <>
+      <div className="archetype-grid">
+        <ArchetypeCard tone="green" headline="On-topic. Accurate." detail="The note that should win." show={step >= 1} />
+        <ArchetypeCard tone="amber" headline="Sounds right. Isn’t." detail="Same tone and style — wrong or irrelevant information." show={step >= 2} />
+        <ArchetypeCard tone="coral" headline="Troll note." detail="Doesn’t even try to be true." show={step >= 3} />
+      </div>
+      <div className="archetype-vote">
+        <div className="archetype-vote-people"><Person tone="blue" /><Person tone="coral" /></div>
+        <span className="archetype-vote-arrow" aria-hidden="true" />
+        <strong className="archetype-summary">Congratulations. You are now the algorithm.</strong>
+      </div>
+    </>
+  );
+
   return (
     <SlideFrame number={number} eyebrow="WHAT IS COMMUNITY NOTES?" title="Not every candidate note is trying to help.">
-      <div className="archetype-layout">
-        <div className="archetype-top">
-          {step >= 4 && (
-            <div className="archetype-tweet">
-              <PostCard post={khameneiPost} className="archetype-tweet-post" />
-            </div>
-          )}
-          <div className="archetype-grid">
-            <ArchetypeCard tone="green" headline="On-topic. Accurate." detail="The note that should win." show={step >= 1} />
-            <ArchetypeCard tone="amber" headline="Sounds right. Isn’t." detail="Same tone and style — wrong or irrelevant information." show={step >= 2} />
-            <ArchetypeCard tone="coral" headline="Troll note." detail="Doesn’t even try to be true." show={step >= 3} />
+      {showTweet ? (
+        <div className="archetype-layout archetype-layout-split">
+          <div className="archetype-tweet-col">
+            <PostCard post={khameneiPost} className="archetype-tweet-post" />
           </div>
+          <div className="archetype-main-col">{mainContent}</div>
         </div>
-        {step >= 4 && (
-          <div className="archetype-vote">
-            <div className="archetype-vote-people"><Person tone="blue" /><Person tone="coral" /></div>
-            <span className="archetype-vote-arrow" aria-hidden="true" />
-            <strong className="archetype-summary">Congratulations. You are now the algorithm.</strong>
-          </div>
-        )}
-      </div>
+      ) : (
+        <div className="archetype-layout">{mainContent}</div>
+      )}
     </SlideFrame>
   );
 }
@@ -126,50 +131,54 @@ function GoldfishExampleSlide({ number, step = 0, audienceUrl }) {
     <SlideFrame number={number} eyebrow="COMMUNITY NOTES 101" title="A wrong tweet. A note that fixes it.">
       <div className="example-layout">
         <article className="post-card post-card-with-media">
-          {showTweetBody && (
-            <>
-              <header className="post-author">
-                <img className="post-avatar post-avatar-image" src={goldfishPost.avatarImage} alt="" draggable="false" />
-                <div className="post-identity">
-                  <strong>{goldfishPost.author}</strong>
-                  <span>{goldfishPost.handle}</span>
-                </div>
-                <div className="post-header-meta" aria-hidden="true">
-                  <span className="post-time">· {goldfishPost.timeAgo}</span>
-                  <span className="post-spark"><img src={`${base}media/grok-logo.png`} alt="" draggable="false" /></span>
-                  <span className="post-more">•••</span>
-                </div>
-              </header>
-              <p className="post-text">{goldfishPost.text}</p>
-              {showSmallPhoto && (
-                <div className="post-media-grid post-media-grid-single">
-                  <span className="post-media-static">
-                    <img className="post-media" src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
-                  </span>
-                </div>
-              )}
-              <div className="post-actions" aria-hidden="true">
-                <div className="post-actions-group">
-                  <span className="post-action"><PostIcon name="comment" />{goldfishPost.engagement.replies}</span>
-                  <span className="post-action"><PostIcon name="repost" />{goldfishPost.engagement.reposts}</span>
-                  <span className="post-action"><PostIcon name="heart" />{goldfishPost.engagement.likes}</span>
-                  <span className="post-action"><PostIcon name="views" />{goldfishPost.engagement.views}</span>
-                </div>
-                <div className="post-actions-extra">
-                  <span className="post-action-icon"><PostIcon name="bookmark" /></span>
-                  <span className="post-action-icon"><PostIcon name="share" /></span>
-                </div>
+          <div className="goldfish-flex-top">
+            {showTweetBody && (
+              <>
+                <header className="post-author">
+                  <img className="post-avatar post-avatar-image" src={goldfishPost.avatarImage} alt="" draggable="false" />
+                  <div className="post-identity">
+                    <strong>{goldfishPost.author}</strong>
+                    <span>{goldfishPost.handle}</span>
+                  </div>
+                  <div className="post-header-meta" aria-hidden="true">
+                    <span className="post-time">· {goldfishPost.timeAgo}</span>
+                    <span className="post-spark"><img src={`${base}media/grok-logo.png`} alt="" draggable="false" /></span>
+                    <span className="post-more">•••</span>
+                  </div>
+                </header>
+                <p className="post-text">{goldfishPost.text}</p>
+              </>
+            )}
+            {showSmallPhoto && (
+              <div className="post-media-grid post-media-grid-single">
+                <span className="post-media-static">
+                  <img className="post-media" src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
+                </span>
               </div>
-            </>
-          )}
-          {showBigPhotoInNoteSlot && (
-            <div className="goldfish-big-photo">
-              <img src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
-            </div>
-          )}
-          {showBigPhotoAsBody && (
-            <div className="goldfish-big-photo goldfish-big-photo-top">
-              <img src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
+            )}
+            {showBigPhotoInNoteSlot && (
+              <div className="goldfish-big-photo">
+                <img src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
+              </div>
+            )}
+            {showBigPhotoAsBody && (
+              <div className="goldfish-big-photo goldfish-big-photo-top">
+                <img src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
+              </div>
+            )}
+          </div>
+          {showTweetBody && (
+            <div className="post-actions" aria-hidden="true">
+              <div className="post-actions-group">
+                <span className="post-action"><PostIcon name="comment" />{goldfishPost.engagement.replies}</span>
+                <span className="post-action"><PostIcon name="repost" />{goldfishPost.engagement.reposts}</span>
+                <span className="post-action"><PostIcon name="heart" />{goldfishPost.engagement.likes}</span>
+                <span className="post-action"><PostIcon name="views" />{goldfishPost.engagement.views}</span>
+              </div>
+              <div className="post-actions-extra">
+                <span className="post-action-icon"><PostIcon name="bookmark" /></span>
+                <span className="post-action-icon"><PostIcon name="share" /></span>
+              </div>
             </div>
           )}
           {showNote && (

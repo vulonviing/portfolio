@@ -162,15 +162,17 @@
   gap: 8cqh;
 }
 
-.archetype-top {
-  display: flex;
-  flex-direction: column;
-  gap: 3.2cqh;
-  width: 100%;
+.archetype-layout-split {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  align-items: center;
+  gap: 4.5cqw;
 }
 
-.archetype-tweet { display: flex; justify-content: center; width: 100%; }
-.archetype-tweet-post { width: min(40cqw, 42cqh); padding: 1.7cqh 1.5cqw; }
+.archetype-tweet-col { display: flex; justify-content: center; }
+.archetype-main-col { display: flex; flex-direction: column; justify-content: center; gap: 5cqh; width: 100%; }
+
+.archetype-tweet-post { width: min(38cqw, 46cqh); padding: 1.7cqh 1.5cqw; }
 .archetype-tweet-post .post-avatar { width: 4.6cqh; height: 4.6cqh; }
 .archetype-tweet-post .post-identity strong { font-size: 1.55cqh; }
 .archetype-tweet-post .post-identity > span,
@@ -189,6 +191,15 @@
   width: 100%;
   grid-template-columns: repeat(3, 1fr);
 }
+
+.archetype-layout-split .archetype-grid { gap: 1.4cqw; }
+.archetype-layout-split .archetype-card { padding: 0 1.2cqw; gap: 1.3cqh; }
+.archetype-layout-split .archetype-card > strong { font-size: 2.5cqh; }
+.archetype-layout-split .archetype-card > p { font-size: 1.5cqh; }
+.archetype-layout-split .archetype-eyebrow { font-size: 1.3cqh; }
+.archetype-layout-split .archetype-vote-people { transform: scale(1.05); }
+.archetype-layout-split .archetype-vote-arrow { height: 5cqh; }
+.archetype-layout-split .archetype-summary { font-size: 2.9cqh; }
 
 .archetype-card {
   display: grid;
@@ -243,15 +254,15 @@
 
 /* 06b · goldfish example */
 .example-layout { position: absolute; inset: 2.4cqh 0 0; display: grid; grid-template-columns: 55% 1fr; align-items: stretch; gap: 5cqw; overflow: hidden; }
-.example-layout .post-card { display: flex; flex-direction: column; justify-content: space-between; width: 100%; padding: 2.4cqh 1.7cqw 1.7cqh; }
+.example-layout .post-card { display: flex; flex-direction: column; width: 100%; padding: 2.4cqh 1.7cqw 1.7cqh; }
 .example-layout .post-media { height: 30cqh; max-height: none; object-fit: cover; object-position: center; }
 .example-layout .post-note { margin-top: 1.6cqh; padding: 1.5cqh 1.3cqw; }
 .example-layout .post-note p { font-size: 1.85cqh; line-height: 1.4; }
 .example-layout .post-actions-extra { margin-left: auto; }
-.goldfish-big-photo { margin-top: 1.6cqh; }
-.goldfish-big-photo img { display: block; width: 100%; height: 32cqh; border: 1px solid #d9dde1; border-radius: 1.4cqh; object-fit: cover; object-position: center; }
+.goldfish-flex-top { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.goldfish-big-photo { display: flex; flex: 1; min-height: 0; margin-top: 1.6cqh; }
+.goldfish-big-photo img { display: block; width: 100%; height: 100%; border: 1px solid #d9dde1; border-radius: 1.4cqh; object-fit: cover; object-position: center; }
 .goldfish-big-photo-top { margin-top: 0; }
-.goldfish-big-photo-top img { height: 48cqh; }
 .example-qr-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.4cqh; text-align: center; }
 .example-qr-panel > p { margin: 0; max-width: 20cqw; color: var(--native-muted); font-size: 1.6cqh; line-height: 1.4; }
 

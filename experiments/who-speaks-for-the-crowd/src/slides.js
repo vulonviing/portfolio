@@ -1,7 +1,7 @@
 import { polls } from './polls.js';
 
 const researchSlides = [
-  { key: 'community-notes', title: 'One note. One decision.', steps: 5 },
+  { key: 'community-notes', title: 'One note. One decision.', steps: 4 },
   { key: 'approval-puzzle', title: '95.1% said helpful. X still did not display it.', steps: 3 },
   { key: 'unlikely-agreement', title: 'X already looks for unlikely agreement.', steps: 1 },
   { key: 'implicit-electorate', title: 'A hyperactive minority held the note back.', steps: 2 },
