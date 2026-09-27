@@ -274,6 +274,7 @@ function PresentationApp() {
   const [busy, setBusy] = useState(false);
   const [presenterPaired, setPresenterPaired] = useState(false);
   const [vpsConnection, setVpsConnection] = useState('connecting');
+  const [connectionAttempt, setConnectionAttempt] = useState(0);
   const hideTimer = useRef(null);
   const wheelLocked = useRef(false);
   const observedRunId = useRef(undefined);
@@ -291,7 +292,11 @@ function PresentationApp() {
     return url.toString();
   }, []);
 
-  useEffect(() => connectVotingApi(setVpsConnection), []);
+  useEffect(() => connectVotingApi(setVpsConnection), [connectionAttempt]);
+  const refreshConnection = useCallback(() => {
+    setVpsConnection('connecting');
+    setConnectionAttempt((value) => value + 1);
+  }, []);
 
   const showControls = useCallback(() => {
     setControlsVisible(true);
@@ -505,9 +510,18 @@ function PresentationApp() {
       </nav>
       <div className={`vps-connection vps-connection-${vpsConnection}`} role="status" aria-live="polite">
         <span className="vps-connection-dot" aria-hidden="true" />
-        {vpsConnection === 'connected'
-          ? (canControlVoting ? 'Connected · Control ready' : 'Connected · Control not paired')
-          : vpsConnection === 'connecting' ? 'Connecting to voting API…' : 'Cannot connect to voting API'}
+        <span className="vps-connection-label">
+          {vpsConnection === 'connected'
+            ? (canControlVoting ? 'Connected · Control ready' : 'Connected · Control not paired')
+            : vpsConnection === 'connecting' ? 'Connecting to voting API…' : 'Cannot connect to voting API'}
+        </span>
+        <button
+          type="button"
+          className="vps-connection-refresh"
+          onClick={refreshConnection}
+          disabled={vpsConnection === 'connecting'}
+          aria-label="Refresh connection status"
+        >⟳</button>
       </div>
       <p className="keyboard-hint" aria-hidden="true">← → navigate · {canControlVoting ? 'LIVE VPS CONTROL CONNECTED' : 'OPEN FROM MANAGEMENT PANEL TO CONTROL VOTING'} · F fullscreen</p>
     </main>
