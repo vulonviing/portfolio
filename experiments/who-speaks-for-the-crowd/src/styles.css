@@ -1182,6 +1182,10 @@ button {
   align-items: end;
   justify-content: space-between;
   gap: 1cqw;
+  /* Clears the always-visible research-link text anchored to the same
+     bottom edge of the slide (bottom: 2.4cqh) -- a long poll-warning line
+     used to print directly on top of it. */
+  margin-bottom: 3.6cqh;
   border-top: 1px solid #e2e4e7;
   color: #7b8189;
   font-size: 1.1cqh;
