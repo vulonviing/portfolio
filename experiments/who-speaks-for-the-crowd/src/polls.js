@@ -102,7 +102,7 @@ export const polls = [
       timeAgo: '6h',
       engagement: { replies: '92', reposts: '340', likes: '2.8K', views: '145K' },
       zoomable: false,
-      image: `${base}media/khamenei.png`,
+      image: `${base}media/khamenei.jpg`,
       imageAlt: 'Ali Khamenei wearing a black turban and looking downward.',
       meta: 'Feb 28, 2026',
     },
