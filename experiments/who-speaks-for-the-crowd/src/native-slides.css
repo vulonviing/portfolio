@@ -172,25 +172,25 @@
 }
 
 .archetype-tweet-post {
-  width: min(34cqw, 44cqh);
-  padding: 1.9cqh 1.7cqw;
-  box-shadow: 0 2.4cqh 6cqh rgba(22, 24, 28, 0.32);
+  width: min(47cqw, 62cqh);
+  padding: 2.4cqh 2.1cqw;
+  box-shadow: 0 2.8cqh 7cqh rgba(22, 24, 28, 0.34);
 }
-.archetype-tweet-post .post-avatar { width: 4.8cqh; height: 4.8cqh; }
-.archetype-tweet-post .post-identity strong { font-size: 1.65cqh; }
+.archetype-tweet-post .post-avatar { width: 6.2cqh; height: 6.2cqh; }
+.archetype-tweet-post .post-identity strong { font-size: 2.1cqh; }
 .archetype-tweet-post .post-identity > span,
-.archetype-tweet-post .post-time { font-size: 1.4cqh; }
-.archetype-tweet-post .post-text { margin: 1.4cqh 0; font-size: 2.2cqh; line-height: 1.25; }
-.archetype-tweet-post .post-media { height: 17cqh; }
-.archetype-tweet-post .post-meta { font-size: 1.2cqh; }
-.archetype-tweet-post .post-actions { margin-top: 0.9cqh; padding-top: 0.9cqh; }
+.archetype-tweet-post .post-time { font-size: 1.75cqh; }
+.archetype-tweet-post .post-text { margin: 1.8cqh 0; font-size: 2.85cqh; line-height: 1.25; }
+.archetype-tweet-post .post-media { height: 24cqh; }
+.archetype-tweet-post .post-meta { font-size: 1.5cqh; }
+.archetype-tweet-post .post-actions { margin-top: 1.15cqh; padding-top: 1.15cqh; }
 .archetype-tweet-post .post-action,
-.archetype-tweet-post .post-action-icon { font-size: 1.2cqh; }
+.archetype-tweet-post .post-action-icon { font-size: 1.55cqh; }
 .archetype-tweet-post .post-action svg,
-.archetype-tweet-post .post-action-icon svg { width: 1.4cqh; height: 1.4cqh; }
-.archetype-tweet-post .post-note { margin-top: 1.3cqh; padding: 1.3cqh 1.2cqw; }
-.archetype-tweet-post .post-note-head strong { font-size: 1.5cqh; }
-.archetype-tweet-post .post-note p { font-size: 1.75cqh; }
+.archetype-tweet-post .post-action-icon svg { width: 1.85cqh; height: 1.85cqh; }
+.archetype-tweet-post .post-note { margin-top: 1.7cqh; padding: 1.7cqh 1.5cqw; }
+.archetype-tweet-post .post-note-head strong { font-size: 1.9cqh; }
+.archetype-tweet-post .post-note p { font-size: 2.25cqh; }
 
 .archetype-grid {
   display: grid;
