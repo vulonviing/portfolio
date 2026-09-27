@@ -425,14 +425,17 @@ function SoftVetoSlide({ number, step }) {
       <div className="soft-veto-layout">
         <div className="soft-veto-tweet-shell">
           <PostCard post={muskWindowsExample.post} className="soft-veto-post" />
-          <CandidateCommunityNote candidate={oneSidedNote} show={step >= 1} tone="fail" />
-          <CandidateCommunityNote candidate={balancedNote} show={step >= 2} tone="pass" />
         </div>
         <div className="soft-veto-explainer">
           <span>GEOMETRIC MEAN</span>
           <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
           <p>Multiply approvals; take square root.</p>
         </div>
+        {/* Each note sits in the same grid row as the result it leads to
+            (DOM order = row order below), so the connecting arrow always
+            lands on the right box regardless of how tall the card or the
+            note text is -- they used to drift apart independently. */}
+        <CandidateCommunityNote candidate={oneSidedNote} show={step >= 1} tone="fail" />
         <Reveal show={step >= 1} className="veto-result veto-result-fail">
           <span>IF APPROVAL IS ONE-SIDED</span>
           <div className="veto-result-columns">
@@ -440,6 +443,7 @@ function SoftVetoSlide({ number, step }) {
             <div className="veto-result-col veto-result-alt"><strong>(84% + 22%) / 2 = 0.53</strong><b>plain average would pass</b></div>
           </div>
         </Reveal>
+        <CandidateCommunityNote candidate={balancedNote} show={step >= 2} tone="pass" />
         <Reveal show={step >= 2} className="veto-result veto-result-pass">
           <span>IF BOTH CLUSTERS APPROVE</span>
           <div className="veto-result-columns">
