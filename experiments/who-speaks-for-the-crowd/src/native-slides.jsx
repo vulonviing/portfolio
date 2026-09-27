@@ -136,7 +136,7 @@ const muskWindowsExample = {
     author: 'Elon Musk',
     handle: '@elonmusk',
     verified: true,
-    avatarImage: `${base}media/elonmusk-avatar.jpg`,
+    avatarImage: `${base}media/elonmusk-avatar-v2.jpg`,
     sourceUrl: 'https://x.com/elonmusk/status/1761881852833419771',
     text: 'Just bought a new PC and it won’t let me use it unless I create a Microsoft account. This is messed up.',
     timeAgo: '2y',
