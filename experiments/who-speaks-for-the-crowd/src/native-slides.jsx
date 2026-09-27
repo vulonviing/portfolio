@@ -440,7 +440,7 @@ function SoftVetoSlide({ number, step }) {
           <span>IF APPROVAL IS ONE-SIDED</span>
           <div className="veto-result-columns">
             <div className="veto-result-col"><strong>√(84% × 22%) ≈ 0.43</strong><b>FAIL · below 0.5</b></div>
-            <div className="veto-result-col veto-result-alt"><strong>(84% + 22%) / 2 = 0.53</strong><b>plain average would pass</b></div>
+            <div className="veto-result-col veto-result-alt"><strong>(84% + 22%) / 2 = 0.53</strong><b>plain average pass</b></div>
           </div>
         </Reveal>
         <CandidateCommunityNote candidate={balancedNote} show={step >= 2} tone="pass" />
