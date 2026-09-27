@@ -2,14 +2,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import {
-  closePoll, downloadExport, downloadRawExport, getState, getVotingHealth, joinRun, openPoll, reopenPoll, resetRun, startVotingService, stopVotingService, submitVote,
+  closePoll, getState, joinRun, openPoll, submitVote,
 } from './api.js';
 import { hasNextSlideStep, nextSlideStep, previousSlideStep } from './deck-model.js';
 import { NativeSlide } from './native-slides.jsx';
 import { createParticipantId, resultRows } from './poll-model.js';
 import { pollKeys, pollsByKey } from './polls.js';
-import { nextHealthCheckDelayMs, nextRefreshCooldownMs } from './preflight-timing.js';
+import { nextHealthCheckDelayMs } from './preflight-timing.js';
 import { PostCard } from './post-card.jsx';
+import { createPresenterBridge } from './presenter-bridge.js';
 import { slides } from './slides.js';
 
 const clamp = (value) => Math.min(slides.length - 1, Math.max(0, value));
@@ -116,7 +117,7 @@ function JoinedCount({ count, compact = false }) {
   return (
     <div className={`joined-count ${compact ? 'joined-count-compact' : ''}`}>
       <span className="joined-count-dot" aria-hidden="true" />
-      <strong>{count}</strong> {count === 1 ? 'person' : 'people'} joined
+      <strong>{count}</strong> {count === 1 ? 'join' : 'joins'} this run
     </div>
   );
 }
@@ -188,9 +189,9 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
   const total = rows.reduce((sum, row) => sum + row.count, 0);
   const showCandidates = phase !== 'tweet';
   const showVoting = phase === 'live' || phase === 'closed' || phase === 'reveal';
-  const closed = phase === 'closed' || phase === 'reveal';
+  const votingOpen = phase === 'live' && state?.pollKey === poll.key && state.phase === 'open';
+  const closed = phase === 'closed' || phase === 'reveal' || (phase === 'live' && !votingOpen);
   const showReveal = phase === 'reveal';
-  const votingOpen = phase === 'live';
   const countdown = useCountdown(votingOpen, POLL_COUNTDOWN_SECONDS);
   const actualCandidate = poll.candidates.find((candidate) => candidate.reveal?.tone === 'actual');
   return (
@@ -261,111 +262,6 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
   );
 }
 
-function PresenterPanel({ open, onClose, state, currentPoll, onOnline, onReset, onReopen, onExport, onRawExport, onStartService, onStopService, message }) {
-  const [healthStatus, setHealthStatus] = useState('checking');
-  const [refreshNonce, setRefreshNonce] = useState(0);
-  const [refreshLocked, setRefreshLocked] = useState(false);
-  const [actionBusy, setActionBusy] = useState(false);
-  const cooldownTimer = useRef(null);
-
-  useEffect(() => {
-    if (!open) return undefined;
-    let cancelled = false;
-    let nextTimer;
-    let timeout;
-    let controller;
-    const check = async () => {
-      setHealthStatus((previous) => previous === 'online' ? previous : 'checking');
-      controller = new AbortController();
-      timeout = window.setTimeout(() => controller.abort(), 4000);
-      try {
-        await getVotingHealth(controller.signal);
-        const nextState = await onOnline(controller.signal);
-        if (!cancelled) setHealthStatus(nextState ? 'online' : 'offline');
-      } catch {
-        if (!cancelled) setHealthStatus('offline');
-      } finally {
-        window.clearTimeout(timeout);
-        if (!cancelled) nextTimer = window.setTimeout(check, nextHealthCheckDelayMs());
-      }
-    };
-    const firstTimer = window.setTimeout(check, 0);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(firstTimer);
-      window.clearTimeout(nextTimer);
-      window.clearTimeout(timeout);
-      controller?.abort();
-    };
-  }, [open, refreshNonce, onOnline]);
-
-  useEffect(() => () => window.clearTimeout(cooldownTimer.current), []);
-
-  const refreshNow = () => {
-    if (refreshLocked) return;
-    setRefreshLocked(true);
-    setHealthStatus('checking');
-    setRefreshNonce((previous) => previous + 1);
-    window.clearTimeout(cooldownTimer.current);
-    cooldownTimer.current = window.setTimeout(() => setRefreshLocked(false), nextRefreshCooldownMs());
-  };
-  const runAction = async (action) => {
-    if (healthStatus !== 'online' || actionBusy) return;
-    setActionBusy(true);
-    try {
-      await getVotingHealth(AbortSignal.timeout(4000));
-      await action();
-    } catch {
-      setHealthStatus('offline');
-    } finally {
-      setActionBusy(false);
-    }
-  };
-  const runServiceAction = async (action) => {
-    if (actionBusy) return;
-    setActionBusy(true);
-    try {
-      await action();
-      setRefreshNonce((previous) => previous + 1);
-    } finally {
-      setActionBusy(false);
-    }
-  };
-  if (!open) return null;
-  const online = healthStatus === 'online';
-  const visibleState = online ? state : null;
-  return (
-    <div className="presenter-backdrop" role="presentation" onMouseDown={onClose}>
-      <section className="presenter-panel" role="dialog" aria-modal="true" aria-label="Presenter controls" onMouseDown={(event) => event.stopPropagation()}>
-        <header>
-          <div><span>PRESENTER CONTROL</span><h2>Live voting preflight</h2></div>
-          <button type="button" onClick={onClose} aria-label="Close presenter controls">×</button>
-        </header>
-        <div className="presenter-status">
-          <span>Voting API</span><strong className={`presenter-health-${healthStatus}`}>{healthStatus}</strong>
-          <span>Run</span><strong>{visibleState?.runId ? 'ready' : 'not started'}</strong>
-          <span>API phase</span><strong>{visibleState?.phase || 'offline'}</strong>
-          <span>Current poll</span><strong>{visibleState?.pollKey || 'none'}</strong>
-        </div>
-        <div className="presenter-actions">
-          <button type="button" onClick={() => runServiceAction(onStartService)} disabled={healthStatus === 'online' || actionBusy}>Start voting API</button>
-          <button type="button" onClick={() => runServiceAction(onStopService)} disabled={actionBusy}>Stop voting API</button>
-          <button type="button" className="action-primary" onClick={() => runAction(onReset)} disabled={!online || actionBusy}>Start fresh run</button>
-          <button type="button" onClick={() => runAction(onReopen)} disabled={!online || actionBusy || !currentPoll}>Reopen current poll</button>
-          <button type="button" onClick={() => runAction(onExport)} disabled={!online || actionBusy}>Download results CSV</button>
-          <button type="button" onClick={() => runAction(onRawExport)} disabled={!online || actionBusy}>Download raw archive</button>
-        </div>
-        <div className="presenter-footer">
-          <p className={`presenter-message ${healthStatus === 'offline' ? 'presenter-message-error' : ''}`} role="status">
-            {healthStatus === 'offline' ? 'Voting is offline. Activate voting on the VPS before starting.' : healthStatus === 'checking' ? 'Checking the VPS voting service…' : message || 'Voting API is online.'}
-          </p>
-          <button type="button" className="presenter-refresh" onClick={refreshNow} disabled={refreshLocked} aria-label="Refresh voting API status">Refresh</button>
-        </div>
-      </section>
-    </div>
-  );
-}
-
 function PresentationApp() {
   const [current, setCurrent] = useState(slideFromHash);
   const [phases, setPhases] = useState(initialPhases);
@@ -374,15 +270,17 @@ function PresentationApp() {
   const [warning, setWarning] = useState('');
   const [controlsVisible, setControlsVisible] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [presenterMessage, setPresenterMessage] = useState('');
   const [busy, setBusy] = useState(false);
+  const [presenterPaired, setPresenterPaired] = useState(false);
   const hideTimer = useRef(null);
   const wheelLocked = useRef(false);
+  const observedRunId = useRef(undefined);
+  const presenterBridge = useRef(null);
 
   const slide = slides[current];
   const poll = slide.type === 'poll' ? pollsByKey[slide.pollKey] : null;
   const phase = poll ? phases[poll.key] : null;
+  const canControlVoting = OPERATOR_BUILD || presenterPaired;
   const slideStep = slideSteps[slide.id] || 0;
   const audienceUrl = useMemo(() => {
     const url = new URL('https://emrecanulu.com/who-speaks-for-the-crowd/');
@@ -413,9 +311,40 @@ function PresentationApp() {
     }
   }, []);
 
+  useEffect(() => {
+    if (OPERATOR_BUILD) return undefined;
+    const bridge = createPresenterBridge(window, setPresenterPaired);
+    presenterBridge.current = bridge;
+    bridge.start();
+    return () => {
+      bridge.stop();
+      presenterBridge.current = null;
+    };
+  }, []);
+
+  const changeVoting = useCallback((action, pollKey) => {
+    if (OPERATOR_BUILD) return action === 'open' ? openPoll(pollKey) : closePoll(pollKey);
+    return presenterBridge.current?.command(action, pollKey)
+      || Promise.reject(new Error('Open the live presentation from the local management panel'));
+  }, []);
+
+  useEffect(() => {
+    if (!canControlVoting || !remoteState?.runId) return;
+    if (observedRunId.current === undefined) {
+      observedRunId.current = remoteState.runId;
+      return;
+    }
+    if (observedRunId.current !== remoteState.runId) {
+      observedRunId.current = remoteState.runId;
+      setPhases(initialPhases());
+      setSlideSteps({});
+      goTo(0);
+      setWarning('');
+    }
+  }, [canControlVoting, goTo, remoteState?.runId]);
+
   const livePolling = Boolean(poll && phase === 'live');
   useEffect(() => {
-    if (settingsOpen && !livePolling) return undefined;
     let cancelled = false;
     let timer;
     const check = async () => {
@@ -424,7 +353,7 @@ function PresentationApp() {
     };
     check();
     return () => { cancelled = true; window.clearTimeout(timer); };
-  }, [refreshState, settingsOpen, livePolling]);
+  }, [refreshState, livePolling]);
 
   const next = useCallback(async () => {
     if (busy) return;
@@ -436,11 +365,15 @@ function PresentationApp() {
     }
     if (phase === 'tweet') { setPollPhase(poll.key, 'candidates'); return; }
     if (phase === 'candidates') {
-      if (!OPERATOR_BUILD) { setPollPhase(poll.key, 'live'); return; }
+      if (!canControlVoting) {
+        setWarning('Open this presentation from the local management panel to control live voting.');
+        return;
+      }
       setWarning('');
       setBusy(true);
       try {
-        const state = await openPoll(poll.key);
+        const state = await changeVoting('open', poll.key);
+        if (state?.pollKey !== poll.key || state.phase !== 'open') throw new Error('VPS did not confirm the round is open');
         setRemoteState(state);
         setPollPhase(poll.key, 'live');
       } catch (error) {
@@ -451,10 +384,14 @@ function PresentationApp() {
       return;
     }
     if (phase === 'live') {
-      if (!OPERATOR_BUILD) { setPollPhase(poll.key, 'closed'); return; }
+      if (!canControlVoting) {
+        setWarning('Presenter connection lost. Reopen the presentation from the local management panel.');
+        return;
+      }
       setBusy(true);
       try {
-        const state = await closePoll(poll.key);
+        const state = await changeVoting('close', poll.key);
+        if (state?.pollKey !== poll.key || state.phase !== 'closed') throw new Error('VPS did not confirm the round is closed');
         setRemoteState(state);
         setWarning('');
         setPollPhase(poll.key, 'closed');
@@ -467,7 +404,7 @@ function PresentationApp() {
     }
     if (phase === 'closed') { setPollPhase(poll.key, 'reveal'); return; }
     goTo(current + 1);
-  }, [busy, current, goTo, phase, poll, setPollPhase, slide, slideStep]);
+  }, [busy, canControlVoting, changeVoting, current, goTo, phase, poll, setPollPhase, slide, slideStep]);
 
   const previous = useCallback(async () => {
     if (busy) return;
@@ -493,17 +430,16 @@ function PresentationApp() {
 
   useEffect(() => {
     const handleKey = (event) => {
-      if (settingsOpen || document.body.dataset.lightboxOpen) return;
+      if (document.body.dataset.lightboxOpen) return;
       if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(event.key)) { event.preventDefault(); next(); }
       else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(event.key)) { event.preventDefault(); previous(); }
       else if (event.key === 'Home') { event.preventDefault(); goTo(0); }
       else if (event.key === 'End') { event.preventDefault(); goTo(slides.length - 1); }
       else if (event.key.toLowerCase() === 'f') { event.preventDefault(); toggleFullscreen(); }
-      else if (OPERATOR_BUILD && event.key.toLowerCase() === 'p') { event.preventDefault(); setSettingsOpen(true); }
       showControls();
     };
     const handleWheel = (event) => {
-      if (settingsOpen || document.body.dataset.lightboxOpen || Math.abs(event.deltaY) < 28 || wheelLocked.current) return;
+      if (document.body.dataset.lightboxOpen || Math.abs(event.deltaY) < 28 || wheelLocked.current) return;
       event.preventDefault();
       wheelLocked.current = true;
       if (event.deltaY > 0) next(); else previous();
@@ -522,55 +458,12 @@ function PresentationApp() {
       window.removeEventListener('hashchange', handleHash);
       document.removeEventListener('fullscreenchange', handleFullscreen);
     };
-  }, [goTo, next, previous, settingsOpen, showControls, toggleFullscreen]);
+  }, [goTo, next, previous, showControls, toggleFullscreen]);
 
   useEffect(() => {
     hideTimer.current = window.setTimeout(() => setControlsVisible(false), 2200);
     return () => window.clearTimeout(hideTimer.current);
   }, []);
-  const handleReset = async () => {
-    if (remoteState?.runId && !window.confirm('Start a new run? Download the current results CSV first.')) return;
-    try {
-      const state = await resetRun();
-      setRemoteState(state);
-      setPhases(initialPhases());
-      setSlideSteps({});
-      goTo(0);
-      setPresenterMessage('Fresh run started. The fixed QR is ready.');
-    } catch (error) { setPresenterMessage(error.message); }
-  };
-  const handleReopen = async () => {
-    if (!poll) return;
-    try {
-      const state = await reopenPoll(poll.key);
-      setRemoteState(state);
-      setPollPhase(poll.key, 'live');
-      setPresenterMessage(`${poll.key} reopened.`);
-    } catch (error) { setPresenterMessage(error.message); }
-  };
-  const handleExport = async () => {
-    try { await downloadExport(); setPresenterMessage('CSV downloaded.'); }
-    catch (error) { setPresenterMessage(error.message); }
-  };
-  const handleRawExport = async () => {
-    try { await downloadRawExport(); setPresenterMessage('Raw vote CSV downloaded.'); }
-    catch (error) { setPresenterMessage(error.message); }
-  };
-  const handleStartService = async () => {
-    try {
-      await startVotingService();
-      await refreshState();
-      setPresenterMessage('Voting API is online. Start a fresh run when ready.');
-    } catch (error) { setPresenterMessage(error.message); }
-  };
-  const handleStopService = async () => {
-    try {
-      await stopVotingService();
-      setRemoteState(null);
-      setPresenterMessage('Voting API is offline. The run data remains on the VPS.');
-    } catch (error) { setPresenterMessage(error.message); }
-  };
-
   const progress = ((current + 1) / slides.length) * 100;
   return (
     <main className={`deck ${controlsVisible ? 'controls-visible' : ''}`} onPointerMove={showControls}>
@@ -589,11 +482,9 @@ function PresentationApp() {
         <output aria-live="polite"><strong>{String(current + 1).padStart(2, '0')}</strong><span>/</span><span>{slides.length}</span></output>
         <button type="button" onClick={next} disabled={busy} aria-label="Next step"><span aria-hidden="true">›</span></button>
         <span className="control-divider" aria-hidden="true" />
-        {OPERATOR_BUILD && <button type="button" onClick={() => setSettingsOpen(true)} aria-label="Presenter controls"><span className="settings-mark" aria-hidden="true">⚙</span></button>}
         <button type="button" onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}><span className="fullscreen-mark" aria-hidden="true">{isFullscreen ? '×' : '⛶'}</span></button>
       </nav>
-      <p className="keyboard-hint" aria-hidden="true">{OPERATOR_BUILD ? '← → navigate · P preflight · F fullscreen' : '← → navigate · F fullscreen'}</p>
-      {OPERATOR_BUILD && settingsOpen && <PresenterPanel open onClose={() => setSettingsOpen(false)} state={remoteState} currentPoll={poll} onOnline={refreshState} onReset={handleReset} onReopen={handleReopen} onExport={handleExport} onRawExport={handleRawExport} onStartService={handleStartService} onStopService={handleStopService} message={presenterMessage} />}
+      <p className="keyboard-hint" aria-hidden="true">← → navigate · {canControlVoting ? 'LIVE VPS CONTROL CONNECTED' : 'OPEN FROM MANAGEMENT PANEL TO CONTROL VOTING'} · F fullscreen</p>
     </main>
   );
 }
