@@ -1,5 +1,4 @@
 import { PostCard } from './post-card.jsx';
-import { polls } from './polls.js';
 import { VoteQr } from './vote-qr.jsx';
 
 const base = import.meta.env?.BASE_URL || '/who-speaks-for-the-crowd/';
@@ -128,7 +127,35 @@ const rawChickenPost = {
   engagement: { replies: '12', reposts: '34', likes: '210', views: '8.4K' },
   meta: 'Mar 14, 2024',
 };
-const weidelExample = polls.find((poll) => poll.key === 'case-oxford');
+// Real tweet, real Community Note (Feb 2024) -- a teaching example for the
+// camp-approval/soft-veto math, not one of the three actual voting cases.
+// Candidate A (the rejected, dismissive one) is written for this talk, not
+// an archived note; candidate B is the real note, kept verbatim.
+const muskWindowsExample = {
+  post: {
+    author: 'Elon Musk',
+    handle: '@elonmusk',
+    verified: true,
+    avatarImage: `${base}media/elonmusk-avatar.jpg`,
+    sourceUrl: 'https://x.com/elonmusk/status/1761881852833419771',
+    text: 'Just bought a new PC and it won’t let me use it unless I create a Microsoft account. This is messed up.',
+    timeAgo: '2y',
+    engagement: { replies: '8.9K', reposts: '2.1K', likes: '74K', views: '18M' },
+    meta: 'Feb 25, 2024',
+  },
+  candidates: [
+    {
+      id: 'A',
+      text: 'Sir, this is a laptop, not a moon landing. Millions of people click “skip” every day — maybe ask an intern.',
+      reveal: { detail: 'Illustrative, written for this talk — not an archived note' },
+    },
+    {
+      id: 'B',
+      text: 'It is still possible to set up the latest version of Windows without a Microsoft account.',
+      reveal: { detail: 'Real Community Note, Feb 2024. Musk called it “failing”; it held up anyway.' },
+    },
+  ],
+};
 
 function InfluenceGroup({ tone, label, force, strength, figures }) {
   return (
@@ -369,7 +396,7 @@ function CampApprovalSlide({ number }) {
             <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
             <p>(the balance point both clusters can accept on this note)</p>
           </div>
-          <PostCard post={weidelExample.post} className="camp-example-post" />
+          <PostCard post={muskWindowsExample.post} className="camp-example-post" />
         </div>
         <FlowArrow tone="coral" className="camp-arrow-inward" />
         <div className="camp-side camp-side-coral"><strong className="camp-size">92,266 raters</strong><DotGrid tone="coral" count={32} columns={8} /><span>CLUSTER B: pB</span></div>
@@ -391,13 +418,13 @@ function CandidateCommunityNote({ candidate, show, tone }) {
 }
 
 function SoftVetoSlide({ number, step }) {
-  const oneSidedNote = weidelExample.candidates.find((candidate) => candidate.id === 'A');
-  const balancedNote = weidelExample.candidates.find((candidate) => candidate.id === 'B');
+  const oneSidedNote = muskWindowsExample.candidates.find((candidate) => candidate.id === 'A');
+  const balancedNote = muskWindowsExample.candidates.find((candidate) => candidate.id === 'B');
   return (
     <SlideFrame number={number} eyebrow="CCA" title="Enthusiasm cannot buy consent.">
       <div className="soft-veto-layout">
         <div className="soft-veto-tweet-shell">
-          <PostCard post={weidelExample.post} className="soft-veto-post" />
+          <PostCard post={muskWindowsExample.post} className="soft-veto-post" />
           <CandidateCommunityNote candidate={oneSidedNote} show={step >= 1} tone="fail" />
           <CandidateCommunityNote candidate={balancedNote} show={step >= 2} tone="pass" />
         </div>
