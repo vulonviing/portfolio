@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
-import { getState, joinRun, submitVote } from './api.js';
+import {
+  getState, joinRun, reportClosed, submitVote,
+} from './api.js';
 import { hasNextSlideStep, nextSlideStep, previousSlideStep } from './deck-model.js';
 import { NativeSlide } from './native-slides.jsx';
 import { createParticipantId, resultRows } from './poll-model.js';
@@ -512,9 +514,11 @@ function AudienceApp() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('Connecting to the room…');
   const participantId = useMemo(() => createParticipantId(localStorage), []);
+  const stateRef = useRef(null);
   const refresh = useCallback(async () => {
     try {
-      const nextState = await getState();
+      const nextState = await getState(undefined, participantId);
+      stateRef.current = nextState;
       setState(nextState);
       setConnection('online');
       const selectionKey = nextState.runId && nextState.pollKey ? `science-slam-selection:${nextState.runId}:${nextState.pollKey}` : '';
@@ -526,7 +530,7 @@ function AudienceApp() {
       setConnection('offline');
       setMessage('Voting is offline right now. Keep this page open and it will reconnect.');
     }
-  }, []);
+  }, [participantId]);
   useEffect(() => {
     const immediate = window.setTimeout(refresh, 0);
     const timer = window.setInterval(refresh, 1500);
@@ -541,6 +545,20 @@ function AudienceApp() {
     joinedRunId.current = state.runId;
     joinRun({ runId: state.runId, participantId }).catch(() => { joinedRunId.current = ''; });
   }, [state?.runId, participantId]);
+  useEffect(() => {
+    // pagehide (not beforeunload/visibilitychange) fires on an actual close
+    // or navigation away, including on mobile Safari, and not on a mere
+    // screen lock or app switch -- those just go quiet in the heartbeat
+    // above instead, which the operator panel reads as "away," not "closed."
+    // event.persisted means the page went into bfcache and may come back,
+    // so that case sends nothing.
+    const handlePageHide = (event) => {
+      const runId = stateRef.current?.runId;
+      if (!event.persisted && runId) reportClosed({ runId, participantId });
+    };
+    window.addEventListener('pagehide', handlePageHide);
+    return () => window.removeEventListener('pagehide', handlePageHide);
+  }, [participantId]);
   useEffect(() => {
     if (!state?.pollKey) return;
     window.scrollTo({ top: 0, behavior: 'smooth' });

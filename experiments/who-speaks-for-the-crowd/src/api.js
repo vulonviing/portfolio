@@ -36,7 +36,13 @@ async function request(path, options = {}, base = apiBase) {
   return response.json();
 }
 
-export const getState = (signal) => request('/v1/state', { signal });
+// participantId is only ever sent by the audience route's own recurring poll:
+// it piggy-backs this existing request as a liveness heartbeat instead of
+// adding a separate periodic call. The presenter route never passes one.
+export const getState = (signal, participantId) => request(
+  participantId ? `/v1/state?participantId=${encodeURIComponent(participantId)}` : '/v1/state',
+  { signal },
+);
 
 export const submitVote = ({ runId, pollKey, choice, participantId }) => request('/v1/vote', {
   method: 'PUT',
@@ -47,3 +53,12 @@ export const joinRun = ({ runId, participantId }) => request('/v1/join', {
   method: 'PUT',
   body: JSON.stringify({ runId, participantId }),
 });
+
+// Best-effort, fire-and-forget: sendBeacon works during page unload when a
+// normal fetch would be cancelled. Not periodic -- fires at most once, when
+// the tab is actually being closed or navigated away from (not merely
+// backgrounded or locked; see reportClosedOnUnload below).
+export function reportClosed({ runId, participantId }) {
+  const body = new Blob([JSON.stringify({ runId, participantId })], { type: 'application/json' });
+  navigator.sendBeacon?.(`${apiBase}/v1/presence/closed`, body);
+}
