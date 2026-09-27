@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
-import {
-  closePoll, getState, joinRun, openPoll, submitVote,
-} from './api.js';
+import { getState, joinRun, submitVote } from './api.js';
 import { hasNextSlideStep, nextSlideStep, previousSlideStep } from './deck-model.js';
 import { NativeSlide } from './native-slides.jsx';
 import { createParticipantId, resultRows } from './poll-model.js';
@@ -17,7 +15,6 @@ import { connectVotingApi } from './voting-connection.js';
 const clamp = (value) => Math.min(slides.length - 1, Math.max(0, value));
 const initialPhases = () => Object.fromEntries(pollKeys.map((key) => [key, 'tweet']));
 const POLL_COUNTDOWN_SECONDS = 40;
-const OPERATOR_BUILD = import.meta.env.MODE === 'operator';
 
 function slideFromHash() {
   const parsed = Number.parseInt(window.location.hash.slice(1), 10);
@@ -184,7 +181,7 @@ function CandidateCard({ candidate, selected = false, interactive = false, onSel
   );
 }
 
-function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
+function PollSlide({ poll, phase, state, audienceUrl, warning, number, votingKeyOff }) {
   const counts = state?.pollKey === poll.key ? state.counts : {};
   const rows = resultRows(poll.candidates, counts);
   const total = rows.reduce((sum, row) => sum + row.count, 0);
@@ -257,6 +254,7 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number }) {
         )}
       </div>
       <footer className="poll-footer">
+        {votingKeyOff && !showVoting && <strong className="poll-warning">Voting key is off — this round will be skipped.</strong>}
         {warning && <strong className="poll-warning">{warning}</strong>}
       </footer>
     </div>
@@ -282,7 +280,8 @@ function PresentationApp() {
   const slide = slides[current];
   const poll = slide.type === 'poll' ? pollsByKey[slide.pollKey] : null;
   const phase = poll ? phases[poll.key] : null;
-  const canControlVoting = OPERATOR_BUILD || presenterPaired;
+  const canControlVoting = presenterPaired;
+  const votingKeyOff = vpsConnection !== 'connected';
   const slideStep = slideSteps[slide.id] || 0;
   const audienceUrl = useMemo(() => {
     const url = new URL('https://emrecanulu.com/who-speaks-for-the-crowd/');
@@ -316,21 +315,27 @@ function PresentationApp() {
   }, []);
 
   useEffect(() => {
-    if (OPERATOR_BUILD) return undefined;
-    const bridge = createPresenterBridge(window, setPresenterPaired);
+    const bridge = createPresenterBridge(window, {
+      onPairChange: setPresenterPaired,
+      onReset: () => {
+        observedRunId.current = undefined;
+        setPhases(initialPhases());
+        setSlideSteps({});
+        goTo(0);
+        setWarning('');
+      },
+      onKeyChange: () => {},
+    });
     presenterBridge.current = bridge;
     bridge.start();
     return () => {
       bridge.stop();
       presenterBridge.current = null;
     };
-  }, []);
+  }, [goTo]);
 
-  const changeVoting = useCallback((action, pollKey) => {
-    if (OPERATOR_BUILD) return action === 'open' ? openPoll(pollKey) : closePoll(pollKey);
-    return presenterBridge.current?.command(action, pollKey)
-      || Promise.reject(new Error('Open the live presentation from the local management panel'));
-  }, []);
+  const changeVoting = useCallback((action, pollKey) => presenterBridge.current?.command(action, pollKey)
+    || Promise.reject(new Error('Open the live presentation from the local management panel')), []);
 
   useEffect(() => {
     if (!canControlVoting || !remoteState?.runId) return;
@@ -369,6 +374,7 @@ function PresentationApp() {
     }
     if (phase === 'tweet') { setPollPhase(poll.key, 'candidates'); return; }
     if (phase === 'candidates') {
+      if (votingKeyOff) { goTo(current + 1); return; }
       if (!canControlVoting) {
         setWarning('Open this presentation from the local management panel to control live voting.');
         return;
@@ -408,7 +414,7 @@ function PresentationApp() {
     }
     if (phase === 'closed') { setPollPhase(poll.key, 'reveal'); return; }
     goTo(current + 1);
-  }, [busy, canControlVoting, changeVoting, current, goTo, phase, poll, setPollPhase, slide, slideStep]);
+  }, [busy, canControlVoting, changeVoting, current, goTo, phase, poll, setPollPhase, slide, slideStep, votingKeyOff]);
 
   const previous = useCallback(async () => {
     if (busy) return;
@@ -474,7 +480,7 @@ function PresentationApp() {
       <div className="ambient ambient-blue" aria-hidden="true" /><div className="ambient ambient-coral" aria-hidden="true" />
       <section className="slide-stage" aria-label={`Slide ${current + 1} of ${slides.length}`}>
         {slide.type === 'join' && <JoinSlide audienceUrl={audienceUrl} number={current + 1} state={remoteState} />}
-        {slide.type === 'poll' && <PollSlide poll={poll} phase={phase} state={remoteState} audienceUrl={audienceUrl} warning={warning} number={current + 1} />}
+        {slide.type === 'poll' && <PollSlide poll={poll} phase={phase} state={remoteState} audienceUrl={audienceUrl} warning={warning} number={current + 1} votingKeyOff={votingKeyOff} />}
         {slide.type === 'native' && <NativeSlide slideKey={slide.nativeKey} number={current + 1} step={slideStep} />}
         <a className="slide-research-link" href="https://emrecanulu.com/research/cross-constituency-aggregation-community-notes.html" target="_blank" rel="noopener noreferrer">
           emrecanulu.com/research/cross-constituency-aggregation-community-notes.html
