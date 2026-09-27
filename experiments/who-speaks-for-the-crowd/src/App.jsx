@@ -483,7 +483,14 @@ function PresentationApp() {
       <section className="slide-stage" aria-label={`Slide ${current + 1} of ${slides.length}`}>
         {slide.type === 'join' && <JoinSlide audienceUrl={audienceUrl} number={current + 1} state={remoteState} />}
         {slide.type === 'poll' && <PollSlide poll={poll} phase={phase} state={remoteState} audienceUrl={audienceUrl} warning={warning} number={current + 1} votingKeyOff={votingKeyOff} />}
-        {slide.type === 'native' && <NativeSlide slideKey={slide.nativeKey} number={current + 1} step={slideStep} />}
+        {slide.type === 'native' && (
+          <NativeSlide
+            slideKey={slide.nativeKey}
+            number={current + 1}
+            step={slide.backup ? Number.MAX_SAFE_INTEGER : slideStep}
+            backup={slide.backup}
+          />
+        )}
         <a className="slide-research-link" href="https://emrecanulu.com/research/cross-constituency-aggregation-community-notes.html" target="_blank" rel="noopener noreferrer">
           emrecanulu.com/research/cross-constituency-aggregation-community-notes.html
         </a>

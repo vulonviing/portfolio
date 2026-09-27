@@ -99,11 +99,12 @@ function InfluenceGroup({ tone, label, force, strength, figures }) {
     <div className={`influence-group influence-group-${tone}`}>
       <div className="influence-group-label">
         <span className="influence-group-name">{label}</span>
-        <span className="influence-group-force" aria-label={`Force: ${force.toLowerCase()}`}>
+        <span className="influence-group-force" aria-label={`Force: ${force} out of 10`}>
           <span className="influence-force-meter" aria-hidden="true">
-            {[1, 2, 3].map((level) => <i className={level <= strength ? 'is-active' : ''} key={level} />)}
+            {dotRange(10).map((level) => <i className={level < strength ? 'is-active' : ''} key={level} />)}
           </span>
-          <span>FORCE: {force}</span>
+          <span>FORCE</span>
+          <span>{force} OUT OF 10</span>
         </span>
       </div>
       <div className="influence-group-figures">
@@ -121,9 +122,9 @@ function InfluenceGroup({ tone, label, force, strength, figures }) {
 function InfluenceRow() {
   return (
     <div className="influence-row" aria-label="A hyperactive minority outweighs a quiet, positive majority">
-      <InfluenceGroup tone="coral" label="AMIGO" force="LOW" strength={1} figures={['✓', '✓']} />
-      <InfluenceGroup tone="blue" label="NORMAL" force="NONE" strength={0} figures={['✓', '✓', '✓', '✓', '✓']} />
-      <InfluenceGroup tone="amber" label="STRONG VOTER" force="HIGH" strength={3} figures={['×', '×']} />
+      <InfluenceGroup tone="coral" label="AMIGO" force={2} strength={2} figures={['✓', '✓']} />
+      <InfluenceGroup tone="blue" label="NORMAL" force={5} strength={5} figures={['✓', '✓', '✓', '✓', '✓']} />
+      <InfluenceGroup tone="amber" label="STRONG VOTER" force={8} strength={8} figures={['×', '×']} />
     </div>
   );
 }
@@ -137,8 +138,11 @@ function ApprovalPuzzleSlide({ number, step }) {
           note={<>Raw chicken does not need to be washed before cooking. Washing poultry can spread bacterial contamination around the kitchen.<br />CDC · USDA</>}
         />
         <div className="puzzle-results">
-          <Reveal show={step >= 1} className="approval-number"><strong>95.1%</strong><span>overall approval</span></Reveal>
-          <Reveal show={step >= 2} className="nmr-status"><span>X STATUS</span><strong>NOT SHOWN</strong></Reveal>
+          <Reveal show={step >= 1} className="approval-number">
+            <strong>95.1%</strong>
+            <span>overall approval</span>
+            <b className="status-pill">Status: NOT SHOWN</b>
+          </Reveal>
           <Reveal show={step >= 2} className="puzzle-takeaway"><strong>High approval was not enough.</strong></Reveal>
         </div>
       </div>
@@ -213,9 +217,12 @@ function GapSlide({ number, step }) {
         <div className="puzzle-results">
           <Reveal show={step >= 1} className="approval-block">
             <InfluenceRow />
-            <div className="approval-number"><strong>95.1%</strong><span>overall approval</span></div>
+            <div className="approval-number">
+              <strong>95.1%</strong>
+              <span>overall approval</span>
+              <b className="status-pill">Status: NOT SHOWN</b>
+            </div>
           </Reveal>
-          <Reveal show={step >= 2} className="nmr-status"><span>X STATUS</span><strong>NOT SHOWN</strong></Reveal>
           <Reveal show={step >= 2} className="puzzle-takeaway"><strong>A few raters decided — not the room.</strong></Reveal>
         </div>
       </div>
@@ -264,7 +271,7 @@ function CcaProposalSlide({ number }) {
             <div><CountryFlag country="bosnia" /><b>BOSNIA</b><span>Constituent peoples</span></div>
             <div><CountryFlag country="northern-ireland" /><b>N. IRELAND</b><span>Parallel consent</span></div>
           </div>
-          <p>We borrow the decision logic, not the group identities.</p>
+          <p>We look for a middle ground that every group can accept.</p>
         </div>
         <div className="cca-commitments">
           <div className="cca-commitment cca-commitment-limit"><span>WHAT WE DO NOT PROMISE</span><strong>A drop-in replacement for X’s full algorithm.</strong></div>
@@ -281,17 +288,23 @@ function ConstituenciesSlide({ number }) {
       <div className="clustering-flow">
         <section><strong>RATINGS</strong><RatingsMatrix /></section><FlowArrow />
         <section><strong>CO-RATING GRAPH</strong><CoRatingGraph /></section><FlowArrow />
-        <section className="cluster-result"><strong>SPECTRAL CLUSTERING</strong><div className="cluster-dots"><DotGrid tone="blue" count={15} columns={5} /><DotGrid tone="amber" count={3} columns={2} /><DotGrid tone="coral" count={18} columns={6} /></div><b>k = 3</b></section>
+        <section className="cluster-result">
+          <strong>SPECTRAL CLUSTERING</strong>
+          <div className="cluster-dots">
+            <div className="cluster-dot-group"><b>107,734 raters</b><DotGrid tone="blue" count={16} columns={4} /></div>
+            <div className="cluster-dot-group"><b>92,266 raters</b><DotGrid tone="coral" count={16} columns={4} /></div>
+          </div>
+        </section>
       </div>
-      <div className="metrics-strip"><strong>100,000 notes</strong><strong>200,000 raters</strong><strong>107,734 / 92,266</strong></div>
+      <div className="metrics-strip"><strong>100,000 notes</strong><strong>200,000 raters</strong></div>
       <strong className="behavior-note">Behavior—not demographics or declared ideology.</strong>
     </SlideFrame>
   );
 }
 
-function TopicSignaturesSlide({ number }) {
+function TopicSignaturesSlide({ number, backup }) {
   return (
-    <SlideFrame number={number} eyebrow="CHECKING THE CLUSTERS" title="Which cluster agrees more depends on the topic.">
+    <SlideFrame number={number} eyebrow={`${backup ? 'BACKUP · ' : ''}CHECKING THE CLUSTERS`} title="Which cluster agrees more depends on the topic.">
       <div className="topic-evidence-layout">
         <div className="topic-evidence-main">
           <figure className="topic-evidence-figure">
@@ -301,7 +314,6 @@ function TopicSignaturesSlide({ number }) {
             <span>THE PATTERN</span>
             <strong>Not one strict cluster and one lenient cluster.</strong>
             <p>The higher-approval cluster changes with the topic.</p>
-            <div className="topic-third-cluster"><i aria-hidden="true" />Third cluster: 64 highly active raters were reassigned to the two larger clusters by their voting profiles.</div>
           </div>
         </div>
       </div>
@@ -316,8 +328,12 @@ function CampApprovalSlide({ number }) {
         <div className="camp-side camp-side-blue"><strong className="camp-size">107,734 raters</strong><DotGrid tone="blue" count={32} columns={8} /><span>CLUSTER A: pA</span></div>
         <FlowArrow tone="blue" />
         <div className="camp-example-center">
+          <div className="camp-approval-header">
+            <span>GEOMETRIC MEAN</span>
+            <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
+            <p>(the balance point both clusters can accept on this note)</p>
+          </div>
           <PostCard post={weidelExample.post} className="camp-example-post" />
-          <div className="camp-reassignment-note"><i aria-hidden="true" />Third cluster: 64 highly active raters reassigned by their voting profiles.</div>
         </div>
         <FlowArrow tone="coral" className="camp-arrow-inward" />
         <div className="camp-side camp-side-coral"><strong className="camp-size">92,266 raters</strong><DotGrid tone="coral" count={32} columns={8} /><span>CLUSTER B: pB</span></div>
@@ -354,16 +370,28 @@ function SoftVetoSlide({ number, step }) {
           <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
           <p>Multiply approvals; take square root.</p>
         </div>
-        <Reveal show={step >= 1} className="veto-result veto-result-fail"><span>IF APPROVAL IS ONE-SIDED</span><strong>√(90% × 20%) ≈ 0.42</strong><b>FAIL · below 0.5</b></Reveal>
-        <Reveal show={step >= 2} className="veto-result veto-result-pass"><span>IF BOTH CLUSTERS APPROVE</span><strong>√(70% × 68%) ≈ 0.69</strong><b>PASS · above 0.5</b></Reveal>
+        <Reveal show={step >= 1} className="veto-result veto-result-fail">
+          <span>IF APPROVAL IS ONE-SIDED</span>
+          <div className="veto-result-columns">
+            <div className="veto-result-col"><strong>√(90% × 20%) ≈ 0.42</strong><b>FAIL · below 0.5</b></div>
+            <div className="veto-result-col veto-result-alt"><strong>(90% + 20%) / 2 = 0.55</strong><b>plain average would pass</b></div>
+          </div>
+        </Reveal>
+        <Reveal show={step >= 2} className="veto-result veto-result-pass">
+          <span>IF BOTH CLUSTERS APPROVE</span>
+          <div className="veto-result-columns">
+            <div className="veto-result-col"><strong>√(70% × 68%) ≈ 0.69</strong><b>PASS · above 0.5</b></div>
+            <div className="veto-result-col veto-result-alt"><strong>(70% + 68%) / 2 = 0.69</strong><b>plain average agrees here</b></div>
+          </div>
+        </Reveal>
       </div>
     </SlideFrame>
   );
 }
 
-function VisibilityResultsSlide({ number, step }) {
+function VisibilityResultsSlide({ number, backup, step }) {
   return (
-    <SlideFrame number={number} eyebrow="RESULTS" title="A different rule changes who is heard.">
+    <SlideFrame number={number} eyebrow={`${backup ? 'BACKUP · ' : ''}RESULTS`} title="A different rule changes who is heard.">
       <div className="results-flow">
         <div className="results-line">
           <Reveal show={step >= 0} className="result-root"><strong>44,722</strong><span>posts</span></Reveal>
@@ -381,9 +409,37 @@ function VisibilityResultsSlide({ number, step }) {
   );
 }
 
-function TextReviewSlide({ number, step }) {
+function RescuePipelineSlide({ number, step }) {
   return (
-    <SlideFrame number={number} eyebrow="VALIDATION" title="An AI judge read all 13,655 candidate notes.">
+    <SlideFrame number={number} eyebrow="RESULTS" title="A different rule changes who is heard.">
+      <div className="pipeline-flow">
+        <div className="pipeline-line">
+          <div className="result-root"><strong>44,722</strong><span>posts</span></div>
+          <Reveal show={step >= 1} className="result-flow-arrow"><FlowArrow tone="green" /></Reveal>
+          <Reveal show={step >= 1} className="rescue-pool"><span>RESCUE POOL</span><strong>13,655</strong><b>not displayed by X<br />but CCA-qualified</b></Reveal>
+          <Reveal show={step >= 2} className="result-flow-arrow"><FlowArrow tone="green" /></Reveal>
+          <Reveal show={step >= 2} className="pipeline-review">
+            <div className="review-card review-card-compact">
+              <span className="review-ai-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m12 2 2.1 6.1L20 10l-5.9 1.9L12 18l-2.1-6.1L4 10l5.9-1.9L12 2Z" />
+                  <path d="m19 17 .7 1.3L21 19l-1.3.7L19 21l-.7-1.3L17 19l1.3-.7L19 17Z" />
+                </svg>
+              </span>
+              <strong>AI TEXT REVIEW</strong>
+              <b>Checks sourcing + quality</b>
+            </div>
+            <div className="review-number review-success"><strong>8,558</strong><span>held up · 62.7%</span></div>
+          </Reveal>
+        </div>
+      </div>
+    </SlideFrame>
+  );
+}
+
+function TextReviewSlide({ number, backup, step }) {
+  return (
+    <SlideFrame number={number} eyebrow={`${backup ? 'BACKUP · ' : ''}VALIDATION`} title="An AI judge read all 13,655 candidate notes.">
       <div className="review-flow">
         <div className="review-number"><strong>13,655</strong><span>candidate notes</span></div><FlowArrow />
         <div className="review-center">
@@ -501,13 +557,14 @@ const nativeSlideComponents = {
   'topic-signatures': TopicSignaturesSlide,
   'camp-approval': CampApprovalSlide,
   'soft-veto': SoftVetoSlide,
+  'rescue-pipeline': RescuePipelineSlide,
   'visibility-results': VisibilityResultsSlide,
   'text-review': TextReviewSlide,
   yarmouk: YarmoukSlide,
   closing: ClosingSlide,
 };
 
-export function NativeSlide({ slideKey, number, step }) {
+export function NativeSlide({ slideKey, number, step, backup }) {
   const Component = nativeSlideComponents[slideKey];
-  return Component ? <Component number={number} step={step} /> : null;
+  return Component ? <Component number={number} step={step} backup={backup} /> : null;
 }
