@@ -25,6 +25,9 @@ const backupSlides = [
 
 export const slides = [
   { id: 'join', type: 'join', title: 'Who Speaks for the Crowd?' },
+  {
+    id: 'goldfish-example', type: 'native', nativeKey: 'goldfish-example', title: 'A wrong tweet. A note that fixes it.', steps: 1,
+  },
   ...polls.map((poll) => ({
     id: `poll-${poll.key}`,
     type: 'poll',

@@ -1,5 +1,6 @@
 import { PostCard } from './post-card.jsx';
 import { polls } from './polls.js';
+import { VoteQr } from './vote-qr.jsx';
 
 const base = import.meta.env?.BASE_URL || '/who-speaks-for-the-crowd/';
 const dotRange = (count) => Array.from({ length: count }, (_, index) => index);
@@ -77,6 +78,39 @@ function DecisionFlowSlide({ number }) {
           <div className="archetype-vote-people"><Person tone="blue" /><Person tone="coral" /></div>
           <span className="archetype-vote-arrow" aria-hidden="true" />
           <strong className="archetype-summary">Congratulations. You are now the algorithm.</strong>
+        </div>
+      </div>
+    </SlideFrame>
+  );
+}
+
+const goldfishPost = {
+  author: 'Fun Fact Friday',
+  handle: '@dailyfunfacts',
+  text: 'Goldfish only have a 3-second memory. That’s why they’re happy swimming in a tiny bowl forever.',
+  timeAgo: '4h',
+  engagement: { replies: '89', reposts: '1.4K', likes: '9.2K', views: '210K' },
+  meta: 'Illustrative example',
+};
+
+function GoldfishExampleSlide({ number, audienceUrl }) {
+  return (
+    <SlideFrame number={number} eyebrow="COMMUNITY NOTES 101" title="A wrong tweet. A note that fixes it.">
+      <div className="example-layout">
+        <PostCard
+          post={goldfishPost}
+          note={(
+            <>
+              Goldfish can remember things for months, not seconds — they’ve been trained to recognize
+              colors, sounds, and feeding times. Small bowls are actually harmful to them.
+              <br />
+              University of Plymouth (2003)
+            </>
+          )}
+        />
+        <div className="example-qr-panel">
+          <VoteQr audienceUrl={audienceUrl} large label="Scan to join" />
+          <p>Keep your phone out — you’ll vote on real cases next.</p>
         </div>
       </div>
     </SlideFrame>
@@ -549,6 +583,7 @@ function ClosingSlide({ number }) {
 
 const nativeSlideComponents = {
   'community-notes': DecisionFlowSlide,
+  'goldfish-example': GoldfishExampleSlide,
   'approval-puzzle': ApprovalPuzzleSlide,
   'unlikely-agreement': AgreementSlide,
   'implicit-electorate': GapSlide,
@@ -564,7 +599,9 @@ const nativeSlideComponents = {
   closing: ClosingSlide,
 };
 
-export function NativeSlide({ slideKey, number, step, backup }) {
+export function NativeSlide({
+  slideKey, number, step, backup, audienceUrl,
+}) {
   const Component = nativeSlideComponents[slideKey];
-  return Component ? <Component number={number} step={step} backup={backup} /> : null;
+  return Component ? <Component number={number} step={step} backup={backup} audienceUrl={audienceUrl} /> : null;
 }

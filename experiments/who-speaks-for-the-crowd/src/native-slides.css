@@ -219,6 +219,12 @@
 
 .archetype-summary { font-size: 4.8cqh; text-align: center; }
 
+/* 06b · goldfish example */
+.example-layout { position: absolute; inset: 0; display: grid; grid-template-columns: 58% 1fr; align-items: center; gap: 5cqw; }
+.example-layout .post-card { width: 100%; }
+.example-qr-panel { display: grid; justify-items: center; gap: 2cqh; text-align: center; }
+.example-qr-panel > p { margin: 0; max-width: 20cqw; color: var(--native-muted); font-size: 1.5cqh; line-height: 1.35; }
+
 /* 07 · puzzle */
 .puzzle-layout { position: absolute; inset: 0; display: grid; grid-template-columns: 55% 1fr; align-items: center; gap: 6cqw; }
 .puzzle-layout .post-card { width: 100%; }
