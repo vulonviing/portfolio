@@ -87,7 +87,10 @@ function DecisionFlowSlide({ number }) {
 const goldfishPost = {
   author: 'Fun Fact Friday',
   handle: '@dailyfunfacts',
+  avatarImage: `${base}media/dailyfunfacts-avatar.jpg`,
   text: 'Goldfish only have a 3-second memory. That’s why they’re happy swimming in a tiny bowl forever.',
+  image: `${base}media/goldfish-tweet.jpg`,
+  imageAlt: 'A goldfish staring directly at the camera through its tank glass.',
   timeAgo: '4h',
   engagement: { replies: '89', reposts: '1.4K', likes: '9.2K', views: '210K' },
   meta: 'Illustrative example',
