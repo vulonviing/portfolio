@@ -204,7 +204,7 @@ button {
 .keyboard-hint {
   position: fixed;
   z-index: 5;
-  right: 22px;
+  left: 22px;
   bottom: 26px;
   margin: 0;
   color: rgba(255, 255, 255, 0.42);
@@ -213,6 +213,38 @@ button {
   opacity: 0;
   transition: opacity 180ms ease;
 }
+
+.vps-connection {
+  position: fixed;
+  z-index: 11;
+  right: 22px;
+  bottom: max(22px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(360px, 35vw);
+  padding: 10px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  color: #f7f7f4;
+  background: rgba(19, 22, 27, 0.88);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  backdrop-filter: blur(12px);
+}
+
+.vps-connection-dot {
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e3a92f;
+}
+
+.vps-connection-connected .vps-connection-dot { background: #22b88b; }
+.vps-connection-disconnected .vps-connection-dot { background: #ff625d; }
 
 .controls-visible .deck-controls {
   opacity: 1;

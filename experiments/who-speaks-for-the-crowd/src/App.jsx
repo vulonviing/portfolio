@@ -12,6 +12,7 @@ import { nextHealthCheckDelayMs } from './preflight-timing.js';
 import { PostCard } from './post-card.jsx';
 import { createPresenterBridge } from './presenter-bridge.js';
 import { slides } from './slides.js';
+import { connectVotingApi } from './voting-connection.js';
 
 const clamp = (value) => Math.min(slides.length - 1, Math.max(0, value));
 const initialPhases = () => Object.fromEntries(pollKeys.map((key) => [key, 'tweet']));
@@ -272,6 +273,7 @@ function PresentationApp() {
   const [isFullscreen, setIsFullscreen] = useState(Boolean(document.fullscreenElement));
   const [busy, setBusy] = useState(false);
   const [presenterPaired, setPresenterPaired] = useState(false);
+  const [vpsConnection, setVpsConnection] = useState('connecting');
   const hideTimer = useRef(null);
   const wheelLocked = useRef(false);
   const observedRunId = useRef(undefined);
@@ -287,6 +289,8 @@ function PresentationApp() {
     url.searchParams.set('audience', '1');
     return url.toString();
   }, []);
+
+  useEffect(() => connectVotingApi(setVpsConnection), []);
 
   const showControls = useCallback(() => {
     setControlsVisible(true);
@@ -484,6 +488,10 @@ function PresentationApp() {
         <span className="control-divider" aria-hidden="true" />
         <button type="button" onClick={toggleFullscreen} aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}><span className="fullscreen-mark" aria-hidden="true">{isFullscreen ? '×' : '⛶'}</span></button>
       </nav>
+      <div className={`vps-connection vps-connection-${vpsConnection}`} role="status" aria-live="polite">
+        <span className="vps-connection-dot" aria-hidden="true" />
+        {vpsConnection === 'connected' ? 'Connected' : vpsConnection === 'connecting' ? 'Connecting to voting API…' : 'Cannot connect to voting API'}
+      </div>
       <p className="keyboard-hint" aria-hidden="true">← → navigate · {canControlVoting ? 'LIVE VPS CONTROL CONNECTED' : 'OPEN FROM MANAGEMENT PANEL TO CONTROL VOTING'} · F fullscreen</p>
     </main>
   );
