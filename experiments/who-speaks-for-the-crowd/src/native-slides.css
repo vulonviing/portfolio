@@ -412,8 +412,8 @@
 .soft-veto-explainer > strong { font-size: 6cqh; white-space: nowrap; }
 .soft-veto-explainer sub { font-size: 0.55em; }
 .soft-veto-explainer p { margin: 0; color: var(--native-muted); font-size: 2.7cqh; font-weight: 700; }
-.veto-note { position: relative; display: grid; align-content: center; min-height: 11cqh; padding: 1.4cqh 1.5cqw; border: 1px solid #e2e5e8; border-top: 0; border-radius: 0; background: #f7f8f9; }
-.veto-note-pass { border-bottom-left-radius: 2cqh; border-bottom-right-radius: 2cqh; box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
+.veto-note { position: relative; display: grid; align-content: center; min-height: 11cqh; padding: 1.4cqh 1.5cqw; border: 1px solid #e2e5e8; border-top: 0; border-bottom: 0; border-radius: 0; background: #f7f8f9; }
+.veto-note-pass { border-bottom: 1px solid #e2e5e8; border-bottom-left-radius: 2cqh; border-bottom-right-radius: 2cqh; box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
 .veto-note::before { position: absolute; top: 50%; left: calc(100% + 0.4cqw); width: 1.8cqw; height: 0.4cqh; background: currentcolor; content: ''; transform: translateY(-50%); }
 .veto-note::after { position: absolute; top: 50%; left: calc(100% + 1.6cqw); width: 1.1cqh; height: 1.1cqh; border-top: 0.4cqh solid currentcolor; border-right: 0.4cqh solid currentcolor; content: ''; transform: translateY(-50%) rotate(45deg); }
 .veto-note .post-note-head { margin-bottom: 0.8cqh; color: var(--native-ink); }
