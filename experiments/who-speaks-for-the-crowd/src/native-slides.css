@@ -220,9 +220,9 @@
 .archetype-summary { font-size: 4.8cqh; text-align: center; }
 
 /* 06b · goldfish example */
-.example-layout { position: absolute; inset: 0; display: grid; grid-template-columns: 55% 1fr; align-items: stretch; gap: 5cqw; overflow: hidden; }
-.example-layout .post-card { display: flex; flex-direction: column; justify-content: center; width: 100%; padding: 2.4cqh 1.7cqw 1.7cqh; }
-.example-layout .post-media { height: 30cqh; max-height: none; object-fit: cover; object-position: center 35%; }
+.example-layout { position: absolute; inset: 2.4cqh 0 0; display: grid; grid-template-columns: 55% 1fr; align-items: stretch; gap: 5cqw; overflow: hidden; }
+.example-layout .post-card { display: flex; flex-direction: column; justify-content: space-between; width: 100%; padding: 2.4cqh 1.7cqw 1.7cqh; }
+.example-layout .post-media { height: 30cqh; max-height: none; object-fit: cover; object-position: center; }
 .example-layout .post-note { margin-top: 1.6cqh; padding: 1.5cqh 1.3cqw; }
 .example-layout .post-note p { font-size: 1.85cqh; line-height: 1.4; }
 .example-layout .post-actions-extra { margin-left: auto; }
