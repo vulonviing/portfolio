@@ -68,34 +68,26 @@ function ArchetypeCard({ tone, headline, detail, show = true }) {
 const khameneiPost = pollsByKey['case-khamenei'].post;
 
 function DecisionFlowSlide({ number, step = 0 }) {
-  const showTweet = step >= 3;
-  const mainContent = (
-    <>
-      <div className="archetype-grid">
-        <ArchetypeCard tone="green" headline="On-topic. Accurate." detail="The note that should win." show={step >= 1} />
-        <ArchetypeCard tone="amber" headline="Sounds right. Isn’t." detail="Same tone and style — wrong or irrelevant information." show={step >= 2} />
-        <ArchetypeCard tone="coral" headline="Troll note." detail="Doesn’t even try to be true." show={step >= 3} />
-      </div>
-      <div className="archetype-vote">
-        <div className="archetype-vote-people"><Person tone="blue" /><Person tone="coral" /></div>
-        <span className="archetype-vote-arrow" aria-hidden="true" />
-        <strong className="archetype-summary">Congratulations. You are now the algorithm.</strong>
-      </div>
-    </>
-  );
-
+  const showTweetOverlay = step >= 4;
   return (
     <SlideFrame number={number} eyebrow="WHAT IS COMMUNITY NOTES?" title="Not every candidate note is trying to help.">
-      {showTweet ? (
-        <div className="archetype-layout archetype-layout-split">
-          <div className="archetype-tweet-col">
-            <PostCard post={khameneiPost} className="archetype-tweet-post" />
-          </div>
-          <div className="archetype-main-col">{mainContent}</div>
+      <div className="archetype-layout">
+        <div className="archetype-grid">
+          <ArchetypeCard tone="green" headline="On-topic. Accurate." detail="The note that should win." show={step >= 1} />
+          <ArchetypeCard tone="amber" headline="Sounds right. Isn’t." detail="Same tone and style — wrong or irrelevant information." show={step >= 2} />
+          <ArchetypeCard tone="coral" headline="Troll note." detail="Doesn’t even try to be true." show={step >= 3} />
         </div>
-      ) : (
-        <div className="archetype-layout">{mainContent}</div>
-      )}
+        <div className="archetype-vote">
+          <div className="archetype-vote-people"><Person tone="blue" /><Person tone="coral" /></div>
+          <span className="archetype-vote-arrow" aria-hidden="true" />
+          <strong className="archetype-summary">Congratulations. You are now the algorithm.</strong>
+        </div>
+        {showTweetOverlay && (
+          <div className="archetype-tweet-overlay">
+            <PostCard post={khameneiPost} note="Allah didn’t protect him." className="archetype-tweet-post" />
+          </div>
+        )}
+      </div>
     </SlideFrame>
   );
 }
