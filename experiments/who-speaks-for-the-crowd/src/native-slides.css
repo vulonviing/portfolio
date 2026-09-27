@@ -162,6 +162,28 @@
   gap: 8cqh;
 }
 
+.archetype-top {
+  display: flex;
+  flex-direction: column;
+  gap: 3.2cqh;
+  width: 100%;
+}
+
+.archetype-tweet { display: flex; justify-content: center; width: 100%; }
+.archetype-tweet-post { width: min(40cqw, 42cqh); padding: 1.7cqh 1.5cqw; }
+.archetype-tweet-post .post-avatar { width: 4.6cqh; height: 4.6cqh; }
+.archetype-tweet-post .post-identity strong { font-size: 1.55cqh; }
+.archetype-tweet-post .post-identity > span,
+.archetype-tweet-post .post-time { font-size: 1.3cqh; }
+.archetype-tweet-post .post-text { margin: 1.3cqh 0; font-size: 2.05cqh; line-height: 1.25; }
+.archetype-tweet-post .post-media { height: 15cqh; }
+.archetype-tweet-post .post-meta { font-size: 1.15cqh; }
+.archetype-tweet-post .post-actions { margin-top: 0.85cqh; padding-top: 0.85cqh; }
+.archetype-tweet-post .post-action,
+.archetype-tweet-post .post-action-icon { font-size: 1.15cqh; }
+.archetype-tweet-post .post-action svg,
+.archetype-tweet-post .post-action-icon svg { width: 1.35cqh; height: 1.35cqh; }
+
 .archetype-grid {
   display: grid;
   width: 100%;
@@ -226,6 +248,10 @@
 .example-layout .post-note { margin-top: 1.6cqh; padding: 1.5cqh 1.3cqw; }
 .example-layout .post-note p { font-size: 1.85cqh; line-height: 1.4; }
 .example-layout .post-actions-extra { margin-left: auto; }
+.goldfish-big-photo { margin-top: 1.6cqh; }
+.goldfish-big-photo img { display: block; width: 100%; height: 32cqh; border: 1px solid #d9dde1; border-radius: 1.4cqh; object-fit: cover; object-position: center; }
+.goldfish-big-photo-top { margin-top: 0; }
+.goldfish-big-photo-top img { height: 48cqh; }
 .example-qr-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.4cqh; text-align: center; }
 .example-qr-panel > p { margin: 0; max-width: 20cqw; color: var(--native-muted); font-size: 1.6cqh; line-height: 1.4; }
 

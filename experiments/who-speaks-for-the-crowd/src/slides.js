@@ -1,7 +1,7 @@
 import { polls } from './polls.js';
 
 const researchSlides = [
-  { key: 'community-notes', title: 'One note. One decision.', steps: 1 },
+  { key: 'community-notes', title: 'One note. One decision.', steps: 5 },
   { key: 'approval-puzzle', title: '95.1% said helpful. X still did not display it.', steps: 3 },
   { key: 'unlikely-agreement', title: 'X already looks for unlikely agreement.', steps: 1 },
   { key: 'implicit-electorate', title: 'A hyperactive minority held the note back.', steps: 2 },
@@ -26,7 +26,7 @@ const backupSlides = [
 export const slides = [
   { id: 'join', type: 'join', title: 'Who Speaks for the Crowd?' },
   {
-    id: 'goldfish-example', type: 'native', nativeKey: 'goldfish-example', title: 'A wrong tweet. A note that fixes it.', steps: 1,
+    id: 'goldfish-example', type: 'native', nativeKey: 'goldfish-example', title: 'A wrong tweet. A note that fixes it.', steps: 4,
   },
   ...polls.map((poll) => ({
     id: `poll-${poll.key}`,

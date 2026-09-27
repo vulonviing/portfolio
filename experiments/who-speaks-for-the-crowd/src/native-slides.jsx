@@ -1,5 +1,6 @@
-import { PostCard } from './post-card.jsx';
+import { PostCard, PostIcon } from './post-card.jsx';
 import { VoteQr } from './vote-qr.jsx';
+import { pollsByKey } from './polls.js';
 
 const base = import.meta.env?.BASE_URL || '/who-speaks-for-the-crowd/';
 const dotRange = (count) => Array.from({ length: count }, (_, index) => index);
@@ -54,9 +55,9 @@ function CheckMark() {
   return <span className="check-mark" aria-hidden="true">✓</span>;
 }
 
-function ArchetypeCard({ tone, headline, detail }) {
+function ArchetypeCard({ tone, headline, detail, show = true }) {
   return (
-    <div className={`archetype-card archetype-card-${tone}`}>
+    <div className={`archetype-card archetype-card-${tone} native-reveal ${show ? 'native-reveal-visible' : ''}`}>
       <span className="archetype-eyebrow"><i /> CANDIDATE NOTE</span>
       <strong>{headline}</strong>
       <p>{detail}</p>
@@ -64,20 +65,31 @@ function ArchetypeCard({ tone, headline, detail }) {
   );
 }
 
-function DecisionFlowSlide({ number }) {
+const khameneiPost = pollsByKey['case-khamenei'].post;
+
+function DecisionFlowSlide({ number, step = 0 }) {
   return (
     <SlideFrame number={number} eyebrow="WHAT IS COMMUNITY NOTES?" title="Not every candidate note is trying to help.">
       <div className="archetype-layout">
-        <div className="archetype-grid">
-          <ArchetypeCard tone="green" headline="On-topic. Accurate." detail="The note that should win." />
-          <ArchetypeCard tone="amber" headline="Sounds right. Isn’t." detail="Same tone and style — wrong or irrelevant information." />
-          <ArchetypeCard tone="coral" headline="Troll note." detail="Doesn’t even try to be true." />
+        <div className="archetype-top">
+          {step >= 4 && (
+            <div className="archetype-tweet">
+              <PostCard post={khameneiPost} className="archetype-tweet-post" />
+            </div>
+          )}
+          <div className="archetype-grid">
+            <ArchetypeCard tone="green" headline="On-topic. Accurate." detail="The note that should win." show={step >= 1} />
+            <ArchetypeCard tone="amber" headline="Sounds right. Isn’t." detail="Same tone and style — wrong or irrelevant information." show={step >= 2} />
+            <ArchetypeCard tone="coral" headline="Troll note." detail="Doesn’t even try to be true." show={step >= 3} />
+          </div>
         </div>
-        <div className="archetype-vote">
-          <div className="archetype-vote-people"><Person tone="blue" /><Person tone="coral" /></div>
-          <span className="archetype-vote-arrow" aria-hidden="true" />
-          <strong className="archetype-summary">Congratulations. You are now the algorithm.</strong>
-        </div>
+        {step >= 4 && (
+          <div className="archetype-vote">
+            <div className="archetype-vote-people"><Person tone="blue" /><Person tone="coral" /></div>
+            <span className="archetype-vote-arrow" aria-hidden="true" />
+            <strong className="archetype-summary">Congratulations. You are now the algorithm.</strong>
+          </div>
+        )}
       </div>
     </SlideFrame>
   );
@@ -94,21 +106,86 @@ const goldfishPost = {
   engagement: { replies: '89', reposts: '1.4K', likes: '9.2K', views: '210K' },
 };
 
-function GoldfishExampleSlide({ number, audienceUrl }) {
+const goldfishNote = (
+  <>
+    Goldfish can remember things for months, not seconds — they’ve been trained to recognize
+    colors, sounds, and feeding times. Small bowls are actually harmful to them.
+    <br />
+    University of Plymouth (2003)
+  </>
+);
+
+function GoldfishExampleSlide({ number, step = 0, audienceUrl }) {
+  const showTweetBody = step !== 3;
+  const showSmallPhoto = step === 0 || step === 2;
+  const showBigPhotoInNoteSlot = step === 1;
+  const showBigPhotoAsBody = step === 3;
+  const showNote = step === 2 || step === 3;
+
   return (
     <SlideFrame number={number} eyebrow="COMMUNITY NOTES 101" title="A wrong tweet. A note that fixes it.">
       <div className="example-layout">
-        <PostCard
-          post={goldfishPost}
-          note={(
+        <article className="post-card post-card-with-media">
+          {showTweetBody && (
             <>
-              Goldfish can remember things for months, not seconds — they’ve been trained to recognize
-              colors, sounds, and feeding times. Small bowls are actually harmful to them.
-              <br />
-              University of Plymouth (2003)
+              <header className="post-author">
+                <img className="post-avatar post-avatar-image" src={goldfishPost.avatarImage} alt="" draggable="false" />
+                <div className="post-identity">
+                  <strong>{goldfishPost.author}</strong>
+                  <span>{goldfishPost.handle}</span>
+                </div>
+                <div className="post-header-meta" aria-hidden="true">
+                  <span className="post-time">· {goldfishPost.timeAgo}</span>
+                  <span className="post-spark"><img src={`${base}media/grok-logo.png`} alt="" draggable="false" /></span>
+                  <span className="post-more">•••</span>
+                </div>
+              </header>
+              <p className="post-text">{goldfishPost.text}</p>
+              {showSmallPhoto && (
+                <div className="post-media-grid post-media-grid-single">
+                  <span className="post-media-static">
+                    <img className="post-media" src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
+                  </span>
+                </div>
+              )}
+              <div className="post-actions" aria-hidden="true">
+                <div className="post-actions-group">
+                  <span className="post-action"><PostIcon name="comment" />{goldfishPost.engagement.replies}</span>
+                  <span className="post-action"><PostIcon name="repost" />{goldfishPost.engagement.reposts}</span>
+                  <span className="post-action"><PostIcon name="heart" />{goldfishPost.engagement.likes}</span>
+                  <span className="post-action"><PostIcon name="views" />{goldfishPost.engagement.views}</span>
+                </div>
+                <div className="post-actions-extra">
+                  <span className="post-action-icon"><PostIcon name="bookmark" /></span>
+                  <span className="post-action-icon"><PostIcon name="share" /></span>
+                </div>
+              </div>
             </>
           )}
-        />
+          {showBigPhotoInNoteSlot && (
+            <div className="goldfish-big-photo">
+              <img src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
+            </div>
+          )}
+          {showBigPhotoAsBody && (
+            <div className="goldfish-big-photo goldfish-big-photo-top">
+              <img src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
+            </div>
+          )}
+          {showNote && (
+            <div className="post-note">
+              <div className="post-note-head">
+                <span className="post-note-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-4.8 7.6 8.5 8.5 0 0 1-3.7.9 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+                  </svg>
+                </span>
+                <strong>Community Note</strong>
+              </div>
+              <p>{goldfishNote}</p>
+            </div>
+          )}
+        </article>
         <div className="example-qr-panel">
           <VoteQr audienceUrl={audienceUrl} large label="Scan to join" />
           <p>Keep your phone out — you’ll vote on real cases next.</p>
