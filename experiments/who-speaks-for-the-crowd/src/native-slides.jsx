@@ -122,7 +122,7 @@ const goldfishNote = (
 
 function GoldfishExampleSlide({ number, step = 0, audienceUrl }) {
   const showTweetBody = step !== 3;
-  const showSmallPhoto = step === 0 || step === 2;
+  const showSmallPhoto = step === 2;
   const showBigPhotoInNoteSlot = step === 1;
   const showBigPhotoAsBody = step === 3;
   const showNote = step === 2 || step === 3;
