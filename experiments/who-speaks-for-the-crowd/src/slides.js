@@ -10,7 +10,6 @@ const researchSlides = [
   { key: 'camp-approval', title: 'Each cluster gets its own approval rate.', steps: 1 },
   { key: 'soft-veto', title: 'Enthusiasm cannot buy consent.', steps: 3 },
   { key: 'rescue-pipeline', title: 'A different rule changes who is heard.', steps: 3 },
-  { key: 'yarmouk', title: '3,000 soldiers. But which battle?', steps: 2 },
   { key: 'closing', title: 'Any questions?', steps: 1 },
 ];
 
@@ -21,6 +20,7 @@ const backupSlides = [
   { key: 'topic-signatures', title: 'Which cluster agrees more depends on the topic.', steps: 1 },
   { key: 'visibility-results', title: 'A different rule changes who is heard.', steps: 1 },
   { key: 'text-review', title: 'An AI judge read all 13,655 candidate notes.', steps: 1 },
+  { key: 'yarmouk', title: '3,000 soldiers. But which battle?', steps: 1 },
 ];
 
 export const slides = [

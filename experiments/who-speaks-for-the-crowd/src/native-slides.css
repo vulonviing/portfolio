@@ -220,19 +220,14 @@
 .archetype-summary { font-size: 4.8cqh; text-align: center; }
 
 /* 06b · goldfish example */
-.example-layout { position: absolute; inset: 0 0 4.5cqh; display: grid; grid-template-columns: 58% 1fr; align-items: center; gap: 5cqw; }
-.example-layout .post-card { width: 100%; padding: 1.8cqh 1.4cqw 1.2cqh; }
-.example-layout .post-avatar { width: 4.8cqh; height: 4.8cqh; }
-.example-layout .post-identity strong { font-size: 1.55cqh; }
-.example-layout .post-identity > span { font-size: 1.25cqh; }
-.example-layout .post-text { margin: 1.3cqh 0 1.2cqh; font-size: 2.5cqh; }
-.example-layout .post-media { max-height: 21cqh; }
-.example-layout .post-meta { margin-top: 0.9cqh; font-size: 1.1cqh; }
-.example-layout .post-actions { margin-top: 0.8cqh; padding-top: 0.8cqh; }
-.example-layout .post-note { margin-top: 1.2cqh; padding: 1.1cqh 1cqw; }
-.example-layout .post-note p { font-size: 1.45cqh; line-height: 1.28; }
-.example-qr-panel { display: grid; justify-items: center; gap: 2cqh; text-align: center; }
-.example-qr-panel > p { margin: 0; max-width: 20cqw; color: var(--native-muted); font-size: 1.5cqh; line-height: 1.35; }
+.example-layout { position: absolute; inset: 0; display: grid; grid-template-columns: 55% 1fr; align-items: stretch; gap: 5cqw; overflow: hidden; }
+.example-layout .post-card { display: flex; flex-direction: column; justify-content: center; width: 100%; padding: 2.4cqh 1.7cqw 1.7cqh; }
+.example-layout .post-media { height: 30cqh; max-height: none; object-fit: cover; object-position: center 35%; }
+.example-layout .post-note { margin-top: 1.6cqh; padding: 1.5cqh 1.3cqw; }
+.example-layout .post-note p { font-size: 1.85cqh; line-height: 1.4; }
+.example-layout .post-actions-extra { margin-left: auto; }
+.example-qr-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.4cqh; text-align: center; }
+.example-qr-panel > p { margin: 0; max-width: 20cqw; color: var(--native-muted); font-size: 1.6cqh; line-height: 1.4; }
 
 /* 07 · puzzle */
 .puzzle-layout { position: absolute; inset: 0; display: grid; grid-template-columns: 55% 1fr; align-items: center; gap: 6cqw; }

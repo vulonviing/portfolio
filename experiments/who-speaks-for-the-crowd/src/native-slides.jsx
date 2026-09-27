@@ -93,7 +93,6 @@ const goldfishPost = {
   imageAlt: 'A goldfish staring directly at the camera through its tank glass.',
   timeAgo: '4h',
   engagement: { replies: '89', reposts: '1.4K', likes: '9.2K', views: '210K' },
-  meta: 'Illustrative example',
 };
 
 function GoldfishExampleSlide({ number, audienceUrl }) {
@@ -547,9 +546,9 @@ const yarmoukPost = {
   meta: 'Nov 10, 2025',
 };
 
-function YarmoukSlide({ number, step }) {
+function YarmoukSlide({ number, step, backup }) {
   return (
-    <SlideFrame number={number} eyebrow="CASE: YARMOUK / MU’TAH" title="3,000 soldiers. But which battle?">
+    <SlideFrame number={number} eyebrow={`${backup ? 'BACKUP · ' : ''}CASE: YARMOUK / MU’TAH`} title="3,000 soldiers. But which battle?">
       <div className="battle-layout">
         <PostCard post={yarmoukPost} className="battle-post" />
         <div className="battle-notes">

@@ -568,6 +568,8 @@ button {
   align-content: center;
 }
 
+.poll-source-feature .post-actions-extra { margin-left: auto; }
+
 .post-card {
   width: min(48cqw, 82cqh);
   padding: 2.4cqh 1.55cqw 1.5cqh;
