@@ -261,7 +261,7 @@
 .example-layout .post-actions-extra { margin-left: auto; }
 .goldfish-flex-top { display: flex; flex: 1; flex-direction: column; min-height: 0; }
 .goldfish-big-photo { display: flex; flex: 1; min-height: 0; margin-top: 1.6cqh; }
-.goldfish-big-photo img { display: block; width: 100%; height: 100%; border: 1px solid #d9dde1; border-radius: 1.4cqh; object-fit: cover; object-position: center 25%; }
+.goldfish-big-photo img { display: block; width: 100%; height: 100%; border: 1px solid #d9dde1; border-radius: 1.4cqh; object-fit: cover; object-position: center 38%; }
 .goldfish-big-photo-top { margin-top: 0; }
 .example-qr-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.4cqh; text-align: center; }
 .example-qr-panel > p { margin: 0; max-width: 20cqw; color: var(--native-muted); font-size: 1.6cqh; line-height: 1.4; }
