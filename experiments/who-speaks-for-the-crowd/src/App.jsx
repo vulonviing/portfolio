@@ -490,7 +490,9 @@ function PresentationApp() {
       </nav>
       <div className={`vps-connection vps-connection-${vpsConnection}`} role="status" aria-live="polite">
         <span className="vps-connection-dot" aria-hidden="true" />
-        {vpsConnection === 'connected' ? 'Connected' : vpsConnection === 'connecting' ? 'Connecting to voting API…' : 'Cannot connect to voting API'}
+        {vpsConnection === 'connected'
+          ? (canControlVoting ? 'Connected · Control ready' : 'Connected · Control not paired')
+          : vpsConnection === 'connecting' ? 'Connecting to voting API…' : 'Cannot connect to voting API'}
       </div>
       <p className="keyboard-hint" aria-hidden="true">← → navigate · {canControlVoting ? 'LIVE VPS CONTROL CONNECTED' : 'OPEN FROM MANAGEMENT PANEL TO CONTROL VOTING'} · F fullscreen</p>
     </main>
