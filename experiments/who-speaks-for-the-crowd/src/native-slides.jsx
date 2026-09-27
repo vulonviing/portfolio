@@ -436,8 +436,8 @@ function SoftVetoSlide({ number, step }) {
         <Reveal show={step >= 1} className="veto-result veto-result-fail">
           <span>IF APPROVAL IS ONE-SIDED</span>
           <div className="veto-result-columns">
-            <div className="veto-result-col"><strong>√(90% × 20%) ≈ 0.42</strong><b>FAIL · below 0.5</b></div>
-            <div className="veto-result-col veto-result-alt"><strong>(90% + 20%) / 2 = 0.55</strong><b>plain average would pass</b></div>
+            <div className="veto-result-col"><strong>√(84% × 22%) ≈ 0.43</strong><b>FAIL · below 0.5</b></div>
+            <div className="veto-result-col veto-result-alt"><strong>(84% + 22%) / 2 = 0.53</strong><b>plain average would pass</b></div>
           </div>
         </Reveal>
         <Reveal show={step >= 2} className="veto-result veto-result-pass">

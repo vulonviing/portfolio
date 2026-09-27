@@ -386,7 +386,7 @@
 .camp-example-post .post-actions-extra, .soft-veto-post .post-actions-extra { margin-left: auto; }
 
 /* 13 · soft veto */
-.soft-veto-layout { position: absolute; inset: 1% 3%; display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); grid-template-rows: 41cqh 12cqh 12cqh; align-content: center; gap: 1.2cqh 3.2cqw; }
+.soft-veto-layout { position: absolute; inset: 1% 3%; display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); grid-template-rows: 41cqh 12cqh 12cqh; align-content: start; gap: 1.2cqh 3.2cqw; }
 .soft-veto-tweet-shell { grid-row: 1 / 4; align-self: center; padding-bottom: 1.1cqh; border: 1px solid #e2e5e8; border-radius: 2cqh; background: #fff; box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
 .soft-veto-post { width: 100%; padding: 1.3cqh 1.1cqw 0; border: 0; background: transparent; box-shadow: none; }
 .soft-veto-post .post-avatar { width: 3.8cqh; height: 3.8cqh; }
