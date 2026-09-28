@@ -6,7 +6,7 @@ const researchSlides = [
   { key: 'cca-proposal', title: 'What do we propose? CCA.', steps: 2 },
   { key: 'constituencies', title: 'We recover constituencies from voting behavior.', steps: 3 },
   { key: 'camp-approval', title: 'Each cluster gets its own approval rate.', steps: 5 },
-  { key: 'soft-veto', title: 'Enthusiasm cannot buy consent.', steps: 3 },
+  { key: 'soft-veto', title: 'Enthusiasm cannot buy consent.', steps: 6 },
   { key: 'rescue-pipeline', title: 'A different rule changes who is heard.', steps: 3 },
   { key: 'closing', title: 'Any questions?', steps: 1 },
 ];

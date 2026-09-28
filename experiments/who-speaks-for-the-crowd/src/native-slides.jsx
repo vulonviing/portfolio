@@ -554,6 +554,28 @@ function SoftVetoSlide({ number, step }) {
             </Reveal>
           </div>
         </div>
+        {step >= 3 && (
+          <PostCard
+            post={oxfordPost}
+            note={oxfordActualNote}
+            className="soft-veto-card-overlay soft-veto-card-afd native-reveal native-reveal-visible"
+          />
+        )}
+        {step >= 4 && (
+          <PostCard
+            post={khameneiPost}
+            note="Allah didn’t protect him."
+            className="soft-veto-card-overlay soft-veto-card-khamenei native-reveal native-reveal-visible"
+          />
+        )}
+        {step >= 5 && (
+          <div className="soft-veto-blur-overlay native-reveal native-reveal-visible">
+            <div className="soft-veto-blur-slogan">
+              <span>IT DOESN’T MATTER WHOSE SIDE IT’S ON</span>
+              <strong>False is false.</strong>
+            </div>
+          </div>
+        )}
       </div>
     </SlideFrame>
   );

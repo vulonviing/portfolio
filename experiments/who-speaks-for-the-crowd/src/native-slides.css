@@ -514,6 +514,37 @@
 .veto-note-fail, .veto-result-fail { color: var(--native-coral); }
 .veto-note-pass, .veto-result-pass { color: var(--native-green); }
 
+/* Steps 3-5: misinformation isn't just one shape. Two more real tweet+note
+   pairs land on top of the existing layout like a stack of evidence, then
+   the whole canvas blurs behind one closing line -- heartbreaking, political,
+   or a troll post, all of it fails the same way. */
+.soft-veto-card-overlay {
+  position: absolute; z-index: 6;
+  width: 30cqw; padding: 1.7cqh 1.5cqw;
+  box-shadow: 0 2.4cqh 6cqh rgba(22, 24, 28, 0.38);
+}
+.soft-veto-card-overlay .post-text { font-size: 1.85cqh; line-height: 1.32; }
+.soft-veto-card-overlay .post-note { margin-top: 1cqh; padding: 1.1cqh 1.3cqw; }
+.soft-veto-card-overlay .post-note-head strong { font-size: 1.5cqh; }
+.soft-veto-card-overlay .post-note p { font-size: 1.7cqh; }
+.soft-veto-card-afd {
+  top: 48%; left: 46%; width: 34cqw;
+  transform: translate(-50%, -50%) rotate(-3deg);
+}
+.soft-veto-card-khamenei {
+  top: 62%; right: 2cqw; width: 27cqw;
+  transform: translateY(-50%) rotate(4deg);
+}
+.soft-veto-blur-overlay {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(247, 248, 249, 0.55);
+  backdrop-filter: blur(1.6cqh); -webkit-backdrop-filter: blur(1.6cqh);
+}
+.soft-veto-blur-slogan { display: grid; justify-items: center; gap: 1.2cqh; text-align: center; padding: 4cqh 6cqw; }
+.soft-veto-blur-slogan > span { font-size: 2.1cqh; font-weight: 800; letter-spacing: 0.07em; color: var(--native-muted); text-transform: uppercase; }
+.soft-veto-blur-slogan > strong { font-size: 6.4cqh; line-height: 1.05; color: var(--native-ink); }
+
 /* 14 · visibility flow */
 .results-flow { position: absolute; inset: 4% 3% 7%; }
 .results-line { position: absolute; top: 27%; left: 1%; display: grid; width: 98%; height: 24cqh; grid-template-columns: 20% 9% 24% 9% 28%; align-items: center; justify-content: space-between; }
