@@ -165,10 +165,13 @@ export function PostIcon({ name }) {
   );
 }
 
-export function PostCard({ post, compact = false, note, className = '' }) {
+export function PostCard({ post, compact = false, note, className = '', hideMedia = false }) {
   const [expandedMedia, setExpandedMedia] = useState(null);
-  const media = post.images || (post.image ? [{ src: post.image, alt: post.imageAlt }] : []);
-  const hasMedia = media.length > 0;
+  const media = post.images
+    || (post.image && [{ src: post.image, alt: post.imageAlt }])
+    || (post.video && [{ src: post.video, alt: post.videoAlt, video: true }])
+    || [];
+  const hasMedia = !hideMedia && media.length > 0;
   const isSplitDocument = media.length > 1 && media.every((item) => item.splitDocument);
   const zoomable = post.zoomable !== false;
   return (
@@ -195,7 +198,7 @@ export function PostCard({ post, compact = false, note, className = '' }) {
       {hasMedia && (
         <div className={`post-media-grid ${media.length > 1 ? 'post-media-grid-multiple' : 'post-media-grid-single'} ${isSplitDocument ? 'post-media-grid-split-document' : ''}`}>
           {media.map((item) => (
-            zoomable ? (
+            zoomable && !item.video ? (
               <button
                 className={`post-media-button ${item.prominent ? 'post-media-button-prominent' : ''}`}
                 type="button"
@@ -208,7 +211,11 @@ export function PostCard({ post, compact = false, note, className = '' }) {
               </button>
             ) : (
               <span className={`post-media-static ${item.prominent ? 'post-media-button-prominent' : ''}`} key={item.src}>
-                <img className="post-media" src={item.src} alt={item.alt} draggable="false" />
+                {item.video ? (
+                  <video className="post-media" src={item.src} aria-label={item.alt} autoPlay muted loop playsInline />
+                ) : (
+                  <img className="post-media" src={item.src} alt={item.alt} draggable="false" />
+                )}
               </span>
             )
           ))}

@@ -175,7 +175,6 @@ function PollSlide({ poll, phase, state, audienceUrl, warning, number, votingKey
               <PostCard
                 post={poll.post}
                 compact
-                className={poll.key === 'case-great-wall' && showReveal ? 'post-card-compact-tight' : ''}
                 note={showReveal && actualCandidate ? (
                   <>
                     {actualCandidate.text}
@@ -577,7 +576,7 @@ function AudienceApp() {
       ) : (
         <section className="audience-poll">
           <div className="audience-round">
-            <span>ROUND {poll.round} OF 3 · VOTING OPEN</span>
+            <span>ROUND {poll.round} OF {pollKeys.length} · VOTING OPEN</span>
           </div>
           <h1>{poll.title}</h1>
           <PostCard post={poll.post} compact />

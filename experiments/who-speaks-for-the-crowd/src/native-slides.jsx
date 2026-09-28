@@ -205,39 +205,51 @@ const rawChickenPost = {
   engagement: { replies: '12', reposts: '34', likes: '210', views: '8.4K' },
   meta: 'Mar 14, 2024',
 };
-// Real tweet, real Community Note (Feb 2024) -- a teaching example for the
-// camp-approval/soft-veto math, not one of the three actual voting cases.
-// Candidate A (the rejected, dismissive one) is written for this talk, not
-// an archived note; candidate B is the real note, kept verbatim.
-const muskWindowsExample = {
+// Real tweet, real Community Note (Oct 2024) -- a teaching example for the
+// camp-approval formula. Shown with no note on screen: the presenter lets the
+// room react to the caption first, then reveals live that the video is
+// misattributed footage, not what it claims to show.
+const palestineTweetExample = {
   post: {
-    author: 'Elon Musk',
-    handle: '@elonmusk',
-    verified: true,
-    avatarImage: `${base}media/elonmusk-avatar-v2.jpg`,
-    sourceUrl: 'https://x.com/elonmusk/status/1761881852833419771',
-    text: 'Just bought a new PC and it won’t let me use it unless I create a Microsoft account. This is messed up.',
-    timeAgo: '2y',
-    engagement: { replies: '8.9K', reposts: '2.1K', likes: '74K', views: '18M' },
-    meta: 'Feb 25, 2024',
+    author: 'Palestine Urdu | فلسطین اردو',
+    handle: '@PalestineUrdu_',
+    avatarImage: `${base}media/palestineurdu-avatar.jpg`,
+    sourceUrl: 'https://x.com/PalestineUrdu_/status/1850234893961503056',
+    text: 'A Palestinian child trapped under rubble awaits aid. What a heartbreaking scene, yet the international community remains silent.',
+    video: `${base}media/palestine-video.mp4`,
+    videoAlt: 'Video captioned as footage of a child trapped under rubble in Gaza.',
+    zoomable: false,
+    engagement: { replies: '582', reposts: '8K', likes: '13.1K', views: '394K' },
+    meta: 'Oct 26, 2024 · Translated from Urdu',
   },
+  reveal: { detail: 'Real Community Note: the video is a girl playing by a hole in a wall, stolen and reposted with a false caption.' },
+};
+
+// Illustrative, written for this talk -- not an archived note. Demonstrates
+// Same real tweet as camp-approval, continuing that story: what candidate
+// notes could this tweet have gotten? Candidate A is illustrative, written
+// for this talk -- a directionally-right but inflammatory note that a real
+// rater might propose. Candidate B is the real, verbatim Community Note
+// that shipped on this tweet.
+const softVetoExample = {
+  post: palestineTweetExample.post,
   candidates: [
     {
       id: 'A',
-      text: 'Sir, this is a laptop, not a moon landing. Millions of people click “skip” every day — maybe ask an intern.',
+      text: 'This account is a known propaganda outlet spreading fake casualty footage — it should be banned outright.',
       reveal: { detail: 'Illustrative, written for this talk — not an archived note' },
     },
     {
       id: 'B',
-      text: 'It is still possible to set up the latest version of Windows without a Microsoft account.',
-      reveal: { detail: 'Real Community Note, Feb 2024. Musk called it “failing”; it held up anyway.' },
+      text: 'This video is NOT of a child “trapped under rubble” in Gaza. This video is of a little girl playing by a hole in a wall. The video was stolen and reposted with an inaccurate caption.',
+      reveal: { detail: 'Real Community Note on this tweet, kept verbatim.' },
     },
   ],
 };
 
-function InfluenceGroup({ tone, label, force, strength, figures }) {
+function InfluenceGroup({ tone, label, force, strength, figures, show = true }) {
   return (
-    <div className={`influence-group influence-group-${tone}`}>
+    <div className={`influence-group influence-group-${tone} native-reveal ${show ? 'native-reveal-visible' : ''}`}>
       <div className="influence-group-label">
         <span className="influence-group-name">{label}</span>
         <span className="influence-group-force" aria-label={`Force: ${force} out of 10`}>
@@ -260,34 +272,13 @@ function InfluenceGroup({ tone, label, force, strength, figures }) {
   );
 }
 
-function InfluenceRow() {
+function InfluenceRow({ step = 3 }) {
   return (
     <div className="influence-row" aria-label="A hyperactive minority outweighs a quiet, positive majority">
-      <InfluenceGroup tone="coral" label="AMIGO" force={2} strength={2} figures={['✓', '✓']} />
-      <InfluenceGroup tone="blue" label="NORMAL" force={5} strength={5} figures={['✓', '✓', '✓', '✓', '✓']} />
-      <InfluenceGroup tone="amber" label="STRONG VOTER" force={8} strength={8} figures={['×', '×']} />
+      <InfluenceGroup tone="coral" label="AMIGO" force={2} strength={2} figures={['✓', '✓']} show={step >= 2} />
+      <InfluenceGroup tone="blue" label="NORMAL" force={5} strength={5} figures={['✓', '✓', '✓', '✓', '✓']} show={step >= 1} />
+      <InfluenceGroup tone="amber" label="STRONG VOTER" force={8} strength={8} figures={['×', '×']} show={step >= 3} />
     </div>
-  );
-}
-
-function ApprovalPuzzleSlide({ number, step }) {
-  return (
-    <SlideFrame number={number} eyebrow="THE PUZZLE" title="95.1% said helpful. X still did not display it.">
-      <div className="puzzle-layout">
-        <PostCard
-          post={rawChickenPost}
-          note={<>Raw chicken does not need to be washed before cooking. Washing poultry can spread bacterial contamination around the kitchen.<br />CDC · USDA</>}
-        />
-        <div className="puzzle-results">
-          <Reveal show={step >= 1} className="approval-number">
-            <strong>95.1%</strong>
-            <span>overall approval</span>
-            <b className="status-pill">Status: NOT SHOWN</b>
-          </Reveal>
-          <Reveal show={step >= 2} className="puzzle-takeaway"><strong>High approval was not enough.</strong></Reveal>
-        </div>
-      </div>
-    </SlideFrame>
   );
 }
 
@@ -333,13 +324,13 @@ function DominanceDiagram() {
   );
 }
 
-function AgreementSlide({ number }) {
+function AgreementSlide({ number, step = 0 }) {
   return (
     <SlideFrame number={number} eyebrow="HOW X WORKS" title="X already looks for unlikely agreement.">
       <div className="agreement-layout">
         <div className="agreement-grid">
-          <section><span className="agreement-label agreement-coral">AMIGO</span><div className="support-visual"><Person tone="coral" /><CheckMark /><div className="support-note support-note-coral"><Person tone="coral" /></div></div><strong className="agreement-coral">Predictable support</strong></section>
-          <section><span className="agreement-label agreement-amber">HYPERACTIVE MINORITY</span><DominanceDiagram /><strong className="agreement-amber">A few raters set the axis</strong></section>
+          <section className={`native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}><span className="agreement-label agreement-coral">AMIGO</span><div className="support-visual"><Person tone="coral" /><CheckMark /><div className="support-note support-note-coral"><Person tone="coral" /></div></div><strong className="agreement-coral">Predictable support</strong></section>
+          <section className={`native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`}><span className="agreement-label agreement-amber">HYPERACTIVE MINORITY</span><DominanceDiagram /><strong className="agreement-amber">A few raters set the axis</strong></section>
         </div>
         <strong className="agreement-bottom">Even a high, correct-looking vote can stall — the system is scoring rater quality and intent, not counting the vote itself.</strong>
       </div>
@@ -356,15 +347,15 @@ function GapSlide({ number, step }) {
           note={<>Raw chicken does not need to be washed before cooking. Washing poultry can spread bacterial contamination around the kitchen.<br />CDC · USDA</>}
         />
         <div className="puzzle-results">
-          <Reveal show={step >= 1} className="approval-block">
-            <InfluenceRow />
+          <div className="approval-block">
+            <InfluenceRow step={step} />
             <div className="approval-number">
               <strong>95.1%</strong>
               <span>overall approval</span>
               <b className="status-pill">Status: NOT SHOWN</b>
             </div>
-          </Reveal>
-          <Reveal show={step >= 2} className="puzzle-takeaway"><strong>A few raters decided — not the room.</strong></Reveal>
+          </div>
+          <strong className="puzzle-takeaway">A few raters decided — not the room.</strong>
         </div>
       </div>
     </SlideFrame>
@@ -396,7 +387,7 @@ function CountryFlag({ country }) {
   );
 }
 
-function CcaProposalSlide({ number }) {
+function CcaProposalSlide({ number, step = 0 }) {
   return (
     <SlideFrame number={number} eyebrow="OUR PROPOSAL" title="What do we propose? CCA.">
       <div className="cca-proposal-layout">
@@ -404,7 +395,7 @@ function CcaProposalSlide({ number }) {
           <strong>CCA</strong>
           <span>Cross-Constituency<br />Aggregation</span>
         </div>
-        <div className="cca-inspiration">
+        <div className={`cca-inspiration native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`}>
           <strong>INSPIRED BY DECISIONS THAT NEED SUPPORT ACROSS GROUPS</strong>
           <div className="cca-country-grid">
             <div><CountryFlag country="switzerland" /><b>SWITZERLAND</b><span>People + cantons</span></div>
@@ -416,20 +407,22 @@ function CcaProposalSlide({ number }) {
         </div>
         <div className="cca-commitments">
           <div className="cca-commitment cca-commitment-limit"><span>WHAT WE DO NOT PROMISE</span><strong>A drop-in replacement for X’s full algorithm.</strong></div>
-          <div className="cca-commitment cca-commitment-built"><span>WHAT WE BUILT</span><strong>A working implementation on real ratings.</strong></div>
+          <div className={`cca-commitment cca-commitment-built native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}><span>WHAT WE BUILT</span><strong>A working implementation on real ratings.</strong></div>
         </div>
       </div>
     </SlideFrame>
   );
 }
 
-function ConstituenciesSlide({ number }) {
+function ConstituenciesSlide({ number, step = 0 }) {
   return (
     <SlideFrame number={number} eyebrow="OUR APPROACH" title="We recover constituencies from voting behavior.">
       <div className="clustering-flow">
-        <section><strong>RATINGS</strong><RatingsMatrix /></section><FlowArrow />
-        <section><strong>CO-RATING GRAPH</strong><CoRatingGraph /></section><FlowArrow />
-        <section className="cluster-result">
+        <section><strong>RATINGS</strong><RatingsMatrix /></section>
+        <FlowArrow className={`native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`} />
+        <section className={`native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}><strong>CO-RATING GRAPH</strong><CoRatingGraph /></section>
+        <FlowArrow className={`native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`} />
+        <section className={`cluster-result native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`}>
           <strong>SPECTRAL CLUSTERING</strong>
           <div className="cluster-dots">
             <div className="cluster-dot-group"><b>107,734 raters</b><DotGrid tone="blue" count={16} columns={4} /></div>
@@ -437,8 +430,8 @@ function ConstituenciesSlide({ number }) {
           </div>
         </section>
       </div>
-      <div className="metrics-strip"><strong>100,000 notes</strong><strong>200,000 raters</strong></div>
-      <strong className="behavior-note">Behavior—not demographics or declared ideology.</strong>
+      <Reveal show={step >= 2} className="metrics-strip"><strong>100,000 notes</strong><strong>200,000 raters</strong></Reveal>
+      <Reveal show={step >= 2} className="behavior-note"><strong>Behavior—not demographics or declared ideology.</strong></Reveal>
     </SlideFrame>
   );
 }
@@ -462,22 +455,28 @@ function TopicSignaturesSlide({ number, backup }) {
   );
 }
 
-function CampApprovalSlide({ number }) {
+function CampApprovalSlide({ number, step = 0 }) {
   return (
     <SlideFrame number={number} eyebrow="CCA" title="Each cluster gets its own approval rate.">
       <div className="camp-approval-layout">
         <div className="camp-side camp-side-blue"><strong className="camp-size">107,734 raters</strong><DotGrid tone="blue" count={32} columns={8} /><span>CLUSTER A: pA</span></div>
-        <FlowArrow tone="blue" />
+        <FlowArrow tone="blue" className={`native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`} />
         <div className="camp-example-center">
-          <div className="camp-approval-header">
+          <PostCard
+            post={palestineTweetExample.post}
+            className={`camp-example-post native-reveal ${step >= 2 ? 'native-reveal-visible' : ''} ${step >= 3 ? 'camp-example-post-with-video' : ''}`}
+            hideMedia={step < 3}
+          />
+        </div>
+        <FlowArrow tone="coral" className={`camp-arrow-inward native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`} />
+        <div className="camp-side-coral-wrap">
+          <div className={`camp-approval-header native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}>
             <span>GEOMETRIC MEAN</span>
             <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
             <p>(the balance point both clusters can accept on this note)</p>
           </div>
-          <PostCard post={muskWindowsExample.post} className="camp-example-post" />
+          <div className="camp-side camp-side-coral"><strong className="camp-size">92,266 raters</strong><DotGrid tone="coral" count={32} columns={8} /><span>CLUSTER B: pB</span></div>
         </div>
-        <FlowArrow tone="coral" className="camp-arrow-inward" />
-        <div className="camp-side camp-side-coral"><strong className="camp-size">92,266 raters</strong><DotGrid tone="coral" count={32} columns={8} /><span>CLUSTER B: pB</span></div>
       </div>
     </SlideFrame>
   );
@@ -496,39 +495,40 @@ function CandidateCommunityNote({ candidate, show, tone }) {
 }
 
 function SoftVetoSlide({ number, step }) {
-  const oneSidedNote = muskWindowsExample.candidates.find((candidate) => candidate.id === 'A');
-  const balancedNote = muskWindowsExample.candidates.find((candidate) => candidate.id === 'B');
+  const oneSidedNote = softVetoExample.candidates.find((candidate) => candidate.id === 'A');
+  const balancedNote = softVetoExample.candidates.find((candidate) => candidate.id === 'B');
   return (
     <SlideFrame number={number} eyebrow="CCA" title="Enthusiasm cannot buy consent.">
       <div className="soft-veto-layout">
         <div className="soft-veto-tweet-shell">
-          <PostCard post={muskWindowsExample.post} className="soft-veto-post" />
+          <PostCard post={softVetoExample.post} className="soft-veto-post" />
         </div>
-        <div className="soft-veto-explainer">
-          <span>GEOMETRIC MEAN</span>
-          <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
-          <p>Multiply approvals; take square root.</p>
+        <div className="soft-veto-notes-column">
+          <div className="soft-veto-explainer">
+            <span>GEOMETRIC MEAN</span>
+            <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
+          </div>
+          <div className="soft-veto-note-pair">
+            <CandidateCommunityNote candidate={oneSidedNote} show={step >= 1} tone="fail" />
+            <Reveal show={step >= 1} className="veto-result veto-result-fail">
+              <span>IF APPROVAL IS ONE-SIDED</span>
+              <div className="veto-result-columns">
+                <div className="veto-result-col"><strong>√(84% × 27%) ≈ 0.48</strong><b>FAIL · below 0.5</b></div>
+                <div className="veto-result-col veto-result-alt"><strong>(84% + 27%) / 2 = 0.56</strong><b>plain average pass</b></div>
+              </div>
+            </Reveal>
+          </div>
+          <div className="soft-veto-note-pair">
+            <CandidateCommunityNote candidate={balancedNote} show={step >= 2} tone="pass" />
+            <Reveal show={step >= 2} className="veto-result veto-result-pass">
+              <span>THE NOTE THAT ACTUALLY SHIPPED</span>
+              <div className="veto-result-columns">
+                <div className="veto-result-col"><strong>√(62% × 58%) ≈ 0.60</strong><b>PASS · above 0.5</b></div>
+                <div className="veto-result-col veto-result-alt"><strong>(62% + 58%) / 2 = 0.60</strong><b>plain average agrees here</b></div>
+              </div>
+            </Reveal>
+          </div>
         </div>
-        {/* Each note sits in the same grid row as the result it leads to
-            (DOM order = row order below), so the connecting arrow always
-            lands on the right box regardless of how tall the card or the
-            note text is -- they used to drift apart independently. */}
-        <CandidateCommunityNote candidate={oneSidedNote} show={step >= 1} tone="fail" />
-        <Reveal show={step >= 1} className="veto-result veto-result-fail">
-          <span>IF APPROVAL IS ONE-SIDED</span>
-          <div className="veto-result-columns">
-            <div className="veto-result-col"><strong>√(84% × 22%) ≈ 0.43</strong><b>FAIL · below 0.5</b></div>
-            <div className="veto-result-col veto-result-alt"><strong>(84% + 22%) / 2 = 0.53</strong><b>plain average pass</b></div>
-          </div>
-        </Reveal>
-        <CandidateCommunityNote candidate={balancedNote} show={step >= 2} tone="pass" />
-        <Reveal show={step >= 2} className="veto-result veto-result-pass">
-          <span>IF BOTH CLUSTERS APPROVE</span>
-          <div className="veto-result-columns">
-            <div className="veto-result-col"><strong>√(70% × 68%) ≈ 0.69</strong><b>PASS · above 0.5</b></div>
-            <div className="veto-result-col veto-result-alt"><strong>(70% + 68%) / 2 = 0.69</strong><b>plain average agrees here</b></div>
-          </div>
-        </Reveal>
       </div>
     </SlideFrame>
   );
@@ -695,7 +695,6 @@ function ClosingSlide({ number }) {
 const nativeSlideComponents = {
   'community-notes': DecisionFlowSlide,
   'goldfish-example': GoldfishExampleSlide,
-  'approval-puzzle': ApprovalPuzzleSlide,
   'unlikely-agreement': AgreementSlide,
   'implicit-electorate': GapSlide,
   'cca-proposal': CcaProposalSlide,

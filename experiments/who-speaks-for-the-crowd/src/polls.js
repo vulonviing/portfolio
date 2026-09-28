@@ -1,56 +1,12 @@
 const base = import.meta.env?.BASE_URL || '/who-speaks-for-the-crowd/';
 
-export const pollKeys = ['case-great-wall', 'case-oxford', 'case-khamenei'];
+export const pollKeys = ['case-oxford', 'case-khamenei'];
 
 export const polls = [
   {
-    key: 'case-great-wall',
-    round: 1,
-    eyebrow: 'AUDIENCE VOTE 1 OF 3',
-    title: 'Which note should be shown?',
-    post: {
-      author: 'Inevitable West', handle: '@Inevitablewest', avatar: 'IW', verified: true,
-      avatarImage: `${base}media/inevitable-west-avatar.jpg`,
-      sourceUrl: 'https://x.com/Inevitablewest/status/1891443393684774979',
-      text: 'German schools are holding mock elections. The AfD are winning every single one by a massive majority.\n\nThe kids are going to be just fine.',
-      timeAgo: '17h',
-      engagement: { replies: '428', reposts: '1.2K', likes: '8.6K', views: '312K' },
-      images: [
-        {
-          src: `${base}media/afd-juniorwahl-parties.jpg`,
-          alt: 'Close-up of the Juniorwahl party list showing the AfD at 63.49 percent, followed by the CDU at 14.29 percent.',
-          splitDocument: true,
-        },
-        {
-          src: `${base}media/afd-juniorwahl-pie-chart.jpg`,
-          alt: 'Close-up of the Juniorwahl second-vote pie chart.',
-          splitDocument: true,
-        },
-      ],
-      meta: 'Feb 17, 2025',
-    },
-    candidates: [
-      {
-        id: 'A', badge: 'Candidate note',
-        text: 'The AfD did not win “every single one by a massive majority.” Instead, they placed fourth with 15.5%. This was the result of the U18 federal election, in which nearly 170,000 young people participated.',
-        reveal: { tone: 'actual', label: 'ACTUAL COMMUNITY NOTE', detail: 'Community Note 1891720468169720267', sourceUrl: 'https://x.com/i/birdwatch/n/1891720468169720267' },
-      },
-      {
-        id: 'B', badge: 'Candidate note',
-        text: 'This image shows the nationwide Juniorwahl result. The AfD won 63.49% of the youth vote across Germany.',
-        reveal: { tone: 'false', label: 'PLAUSIBLE, BUT INVENTED', detail: 'The image reports one school in Pirna, not a nationwide result.' },
-      },
-      {
-        id: 'C', badge: 'Candidate note',
-        text: 'Juniorwahl and U18 elections are educational projects; their results do not count toward the official Bundestag election.',
-        reveal: { tone: 'context', label: 'TRUE, BUT NOT RELEVANT', detail: 'Accurate context that does not test the post’s nationwide claim.' },
-      },
-    ],
-  },
-  {
     key: 'case-oxford',
-    round: 2,
-    eyebrow: 'AUDIENCE VOTE 2 OF 3',
+    round: 1,
+    eyebrow: 'AUDIENCE VOTE 1 OF 2',
     title: 'Which note should be shown?',
     post: {
       author: 'Legitimate Targets', handle: '@LegitTargets', avatar: 'LT', verified: true,
@@ -92,8 +48,8 @@ export const polls = [
   },
   {
     key: 'case-khamenei',
-    round: 3,
-    eyebrow: 'AUDIENCE VOTE 3 OF 3',
+    round: 2,
+    eyebrow: 'AUDIENCE VOTE 2 OF 2',
     title: 'Which note should be shown?',
     post: {
       author: 'Shia Visuals', handle: '@ShiaVisuals', avatar: 'SV',

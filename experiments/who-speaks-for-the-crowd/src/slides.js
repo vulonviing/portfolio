@@ -2,12 +2,11 @@ import { polls } from './polls.js';
 
 const researchSlides = [
   { key: 'community-notes', title: 'One note. One decision.', steps: 5 },
-  { key: 'approval-puzzle', title: '95.1% said helpful. X still did not display it.', steps: 3 },
-  { key: 'unlikely-agreement', title: 'X already looks for unlikely agreement.', steps: 1 },
-  { key: 'implicit-electorate', title: 'A hyperactive minority held the note back.', steps: 2 },
-  { key: 'cca-proposal', title: 'What do we propose? CCA.', steps: 1 },
-  { key: 'constituencies', title: 'We recover constituencies from voting behavior.', steps: 1 },
-  { key: 'camp-approval', title: 'Each cluster gets its own approval rate.', steps: 1 },
+  { key: 'unlikely-agreement', title: 'X already looks for unlikely agreement.', steps: 3 },
+  { key: 'implicit-electorate', title: 'A hyperactive minority held the note back.', steps: 4 },
+  { key: 'cca-proposal', title: 'What do we propose? CCA.', steps: 3 },
+  { key: 'constituencies', title: 'We recover constituencies from voting behavior.', steps: 3 },
+  { key: 'camp-approval', title: 'Each cluster gets its own approval rate.', steps: 4 },
   { key: 'soft-veto', title: 'Enthusiasm cannot buy consent.', steps: 3 },
   { key: 'rescue-pipeline', title: 'A different rule changes who is heard.', steps: 3 },
   { key: 'closing', title: 'Any questions?', steps: 1 },

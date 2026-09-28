@@ -164,33 +164,34 @@
 
 .archetype-tweet-overlay {
   position: absolute;
-  inset: 0 50% 0 0;
+  inset: 0;
   z-index: 5;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: 3cqw;
 }
 
 .archetype-tweet-post {
-  width: min(47cqw, 62cqh);
-  padding: 2.4cqh 2.1cqw;
+  width: min(66cqw, 84cqh);
+  padding: 3.1cqh 2.6cqw;
   box-shadow: 0 2.8cqh 7cqh rgba(22, 24, 28, 0.34);
 }
-.archetype-tweet-post .post-avatar { width: 6.2cqh; height: 6.2cqh; }
-.archetype-tweet-post .post-identity strong { font-size: 2.1cqh; }
+.archetype-tweet-post .post-avatar { width: 7.8cqh; height: 7.8cqh; }
+.archetype-tweet-post .post-identity strong { font-size: 2.6cqh; }
 .archetype-tweet-post .post-identity > span,
-.archetype-tweet-post .post-time { font-size: 1.75cqh; }
-.archetype-tweet-post .post-text { margin: 1.8cqh 0; font-size: 2.85cqh; line-height: 1.25; }
-.archetype-tweet-post .post-media { height: 24cqh; }
-.archetype-tweet-post .post-meta { font-size: 1.5cqh; }
-.archetype-tweet-post .post-actions { margin-top: 1.15cqh; padding-top: 1.15cqh; }
+.archetype-tweet-post .post-time { font-size: 2.2cqh; }
+.archetype-tweet-post .post-text { margin: 2.2cqh 0; font-size: 3.6cqh; line-height: 1.25; }
+.archetype-tweet-post .post-media { height: 30cqh; }
+.archetype-tweet-post .post-meta { font-size: 1.9cqh; }
+.archetype-tweet-post .post-actions { margin-top: 1.4cqh; padding-top: 1.4cqh; }
 .archetype-tweet-post .post-action,
-.archetype-tweet-post .post-action-icon { font-size: 1.55cqh; }
+.archetype-tweet-post .post-action-icon { font-size: 1.95cqh; }
 .archetype-tweet-post .post-action svg,
-.archetype-tweet-post .post-action-icon svg { width: 1.85cqh; height: 1.85cqh; }
-.archetype-tweet-post .post-note { margin-top: 1.7cqh; padding: 1.7cqh 1.5cqw; }
-.archetype-tweet-post .post-note-head strong { font-size: 1.9cqh; }
-.archetype-tweet-post .post-note p { font-size: 2.25cqh; }
+.archetype-tweet-post .post-action-icon svg { width: 2.3cqh; height: 2.3cqh; }
+.archetype-tweet-post .post-note { margin-top: 2.1cqh; padding: 2.1cqh 1.9cqw; }
+.archetype-tweet-post .post-note-head strong { font-size: 2.4cqh; }
+.archetype-tweet-post .post-note p { font-size: 2.8cqh; }
 
 .archetype-grid {
   display: grid;
@@ -253,12 +254,14 @@
 .example-layout { position: absolute; inset: 2.4cqh 0 0; display: grid; grid-template-columns: 55% 1fr; grid-template-rows: minmax(0, 1fr); align-items: stretch; gap: 5cqw; overflow: hidden; }
 .example-layout .post-card { display: flex; flex-direction: column; width: 100%; min-height: 0; padding: 2.4cqh 1.7cqw 1.7cqh; }
 .example-layout .post-media { height: 30cqh; max-height: none; object-fit: cover; object-position: center; }
+.example-layout .post-media-static { display: flex; align-items: center; justify-content: center; background: #fff; }
+.example-layout .post-media-static .post-media { width: 80%; margin: auto; border-radius: 1.4cqh; }
 .example-layout .post-note { margin-top: 1.6cqh; padding: 1.5cqh 1.3cqw; }
 .example-layout .post-note p { font-size: 1.85cqh; line-height: 1.4; }
 .example-layout .post-actions-extra { margin-left: auto; }
 .goldfish-flex-top { display: flex; flex: 1; flex-direction: column; min-height: 0; }
-.goldfish-big-photo { display: flex; flex: 1; min-height: 0; margin-top: 1.6cqh; }
-.goldfish-big-photo img { display: block; width: 100%; height: 100%; border: 1px solid #d9dde1; border-radius: 1.4cqh; object-fit: cover; object-position: center 45%; }
+.goldfish-big-photo { display: flex; flex: 1; min-height: 0; margin-top: 1.6cqh; background: #fff; border-radius: 1.4cqh; overflow: hidden; }
+.goldfish-big-photo img { display: block; width: 80%; height: 100%; margin: auto; border: 1px solid #d9dde1; border-radius: 1.4cqh; object-fit: cover; object-position: center 45%; }
 .goldfish-big-photo-top { margin-top: 0; }
 .example-qr-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.4cqh; text-align: center; }
 .example-qr-panel > p { margin: 0; max-width: 20cqw; color: var(--native-muted); font-size: 1.6cqh; line-height: 1.4; }
@@ -403,15 +406,25 @@
 .camp-approval-header > strong { font-size: 3.4cqh; }
 .camp-approval-header sub { font-size: 0.55em; }
 .camp-approval-header > p { margin: 0; color: var(--native-muted); font-size: 1.9cqh; font-weight: 700; }
-.camp-approval-layout { position: absolute; inset: 3% 3%; display: grid; grid-template-columns: minmax(0, 1fr) 5.2cqw minmax(0, 2.15fr) 5.2cqw minmax(0, 1fr); align-items: center; gap: 1.5cqw; }
+.camp-approval-layout { position: absolute; inset: 3% 3%; display: grid; grid-template-columns: minmax(0, 0.85fr) 5.2cqw minmax(0, 1.75fr) 5.2cqw minmax(0, 1.25fr); align-items: center; gap: 1.5cqw; }
 .camp-side { display: grid; justify-items: center; gap: 3cqh; }
 .camp-size { font-size: 2.5cqh; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .camp-side > span { padding: 1.5cqh 1.2cqw; border: 0.35cqh solid currentcolor; border-radius: 1.8cqh; font-size: 2cqh; font-weight: 700; white-space: nowrap; }
 .camp-side-blue { color: var(--native-blue); }
 .camp-side-coral { color: var(--native-coral); }
 .camp-arrow-inward { transform: rotate(180deg); }
+.camp-side-coral-wrap { position: relative; display: grid; justify-items: center; gap: 3cqh; }
+.camp-side-coral-wrap .camp-approval-header {
+  position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%);
+  width: max-content; max-width: 28cqw; margin: 0 0 4cqh;
+}
+.camp-side-coral-wrap .camp-approval-header > span { font-size: 2.3cqh; }
+.camp-side-coral-wrap .camp-approval-header > strong { font-size: 4.6cqh; }
+.camp-side-coral-wrap .camp-approval-header > p { font-size: 1.8cqh; }
 .camp-example-center { display: grid; min-width: 0; gap: 1.8cqh; }
 .camp-example-post { width: 100%; padding: 2cqh 1.6cqw; }
+.camp-example-post .post-media-grid-single { display: flex; justify-content: center; }
+.camp-example-post .post-media-grid-single .post-media { width: auto; max-width: 100%; max-height: 62cqh; }
 .camp-example-post .post-avatar { width: 5.2cqh; height: 5.2cqh; }
 .camp-example-post .post-identity strong { font-size: 2.15cqh; }
 .camp-example-post .post-identity > span, .camp-example-post .post-time { font-size: 1.65cqh; }
@@ -421,47 +434,57 @@
 .camp-example-post .post-action, .camp-example-post .post-action-icon { font-size: 1.8cqh; }
 .camp-example-post .post-action svg, .camp-example-post .post-action-icon svg { width: 2.1cqh; height: 2.1cqh; }
 .camp-example-post .post-actions-extra, .soft-veto-post .post-actions-extra { margin-left: auto; }
+/* Once the video appears, shrink the read text to make room -- the room
+   already read it moments earlier at full size, so it stays memorable. */
+.camp-example-post-with-video .post-avatar { width: 3.4cqh; height: 3.4cqh; }
+.camp-example-post-with-video .post-identity strong { font-size: 1.5cqh; }
+.camp-example-post-with-video .post-identity > span, .camp-example-post-with-video .post-time { font-size: 1.2cqh; }
+.camp-example-post-with-video .post-text { margin: 0.8cqh 0; font-size: 1.7cqh; line-height: 1.2; }
+.camp-example-post-with-video .post-meta { font-size: 1.1cqh; }
+.camp-example-post-with-video .post-action, .camp-example-post-with-video .post-action-icon { font-size: 1.2cqh; }
+.camp-example-post-with-video .post-action svg, .camp-example-post-with-video .post-action-icon svg { width: 1.4cqh; height: 1.4cqh; }
 
 /* 13 · soft veto */
-/* Row 1 = card + formula, row 2 = note A + FAIL, row 3 = note B + PASS --
-   plain DOM order decides the row (see the JSX), and align-items: center
-   keeps each note vertically centered on its own result box even when
-   one side is taller than the other. Row-gap is 0 so the tweet card and
-   its two notes read as one continuous, seamlessly attached card (like a
-   real Community Note) -- the right column gets its spacing back via
-   margin-top on .soft-veto-explainer/.veto-result instead. */
-.soft-veto-layout { position: absolute; inset: 1% 3%; display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); grid-auto-rows: min-content; align-items: stretch; align-content: center; gap: 0 3.6cqw; }
-.soft-veto-tweet-shell { display: flex; flex-direction: column; justify-content: center; padding-bottom: 1.6cqh; border: 1px solid #e2e5e8; border-bottom: 0; border-radius: 2cqh 2cqh 0 0; background: #fff; }
-.soft-veto-post { width: 100%; padding: 1.8cqh 1.5cqw 0; border: 0; background: transparent; box-shadow: none; }
-.soft-veto-post .post-avatar { width: 5cqh; height: 5cqh; }
-.soft-veto-post .post-identity strong { font-size: 2.1cqh; }
-.soft-veto-post .post-identity > span, .soft-veto-post .post-time { font-size: 1.6cqh; }
-.soft-veto-post .post-text { margin: 1.5cqh 0; font-size: 2.6cqh; line-height: 1.25; }
-.soft-veto-post .post-media-grid-multiple .post-media { height: 22cqh; }
-.soft-veto-post .post-meta { font-size: 1.5cqh; }
-.soft-veto-post .post-action, .soft-veto-post .post-action-icon { font-size: 1.8cqh; }
-.soft-veto-post .post-action svg, .soft-veto-post .post-action-icon svg { width: 2.1cqh; height: 2.1cqh; }
-.soft-veto-explainer { display: grid; align-content: center; justify-items: center; gap: 2.1cqh; margin-top: 0; }
-.soft-veto-explainer > span { color: var(--native-blue); font-size: 2.3cqh; font-weight: 800; letter-spacing: 0.06em; }
-.soft-veto-explainer > strong { font-size: 6cqh; white-space: nowrap; }
+/* Left column: the same real tweet from camp-approval, standalone. Right
+   column: candidate note A (fails) stacked above candidate note B (the
+   real note that shipped), each paired tightly with its own math result.
+   The geometric-mean formula moves out of this grid entirely, into the
+   dead space top-right of the canvas (see .soft-veto-explainer). */
+.soft-veto-layout { position: absolute; inset: 3% 3%; display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: center; gap: 0 3.6cqw; }
+.soft-veto-explainer {
+  position: absolute; top: -10.5cqh; left: 50%; transform: translateX(-50%); z-index: 2;
+  display: grid; justify-items: center; text-align: center; gap: 0.6cqh;
+}
+.soft-veto-explainer > span { color: var(--native-blue); font-size: 2.1cqh; font-weight: 800; letter-spacing: 0.06em; }
+.soft-veto-explainer > strong { font-size: 4.4cqh; white-space: nowrap; }
 .soft-veto-explainer sub { font-size: 0.55em; }
-.soft-veto-explainer p { margin: 0; color: var(--native-muted); font-size: 2.7cqh; font-weight: 700; }
-.veto-note { position: relative; display: grid; align-content: center; min-height: 11cqh; padding: 1.4cqh 1.5cqw; border: 1px solid #e2e5e8; border-top: 0; border-bottom: 0; border-radius: 0; background: #f7f8f9; }
-.veto-note-pass { border-bottom: 1px solid #e2e5e8; border-bottom-left-radius: 2cqh; border-bottom-right-radius: 2cqh; box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
-.veto-note::before { position: absolute; top: 50%; left: calc(100% + 0.4cqw); width: 1.8cqw; height: 0.4cqh; background: currentcolor; content: ''; transform: translateY(-50%); }
-.veto-note::after { position: absolute; top: 50%; left: calc(100% + 1.6cqw); width: 1.1cqh; height: 1.1cqh; border-top: 0.4cqh solid currentcolor; border-right: 0.4cqh solid currentcolor; content: ''; transform: translateY(-50%) rotate(45deg); }
-.veto-note .post-note-head { margin-bottom: 0.8cqh; color: var(--native-ink); }
-.veto-note .post-note-head strong { font-size: 2cqh; }
-.veto-note-letter { margin-left: auto; color: currentcolor; font-size: 1.8cqh; font-weight: 800; }
+.soft-veto-tweet-shell { width: 100%; }
+.soft-veto-post { width: 100%; padding: 1.8cqh 1.5cqw; border: 1px solid #e2e5e8; border-radius: 2cqh; background: #fff; box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
+.soft-veto-post .post-avatar { width: 3.6cqh; height: 3.6cqh; }
+.soft-veto-post .post-identity strong { font-size: 1.6cqh; }
+.soft-veto-post .post-identity > span, .soft-veto-post .post-time { font-size: 1.3cqh; }
+.soft-veto-post .post-text { margin: 1cqh 0; font-size: 1.9cqh; line-height: 1.25; }
+.soft-veto-post .post-media-grid-single { display: flex; justify-content: center; }
+.soft-veto-post .post-media-grid-single .post-media { width: auto; max-width: 100%; max-height: 56cqh; }
+.soft-veto-post .post-meta { font-size: 1.15cqh; }
+.soft-veto-post .post-action, .soft-veto-post .post-action-icon { font-size: 1.3cqh; }
+.soft-veto-post .post-action svg, .soft-veto-post .post-action-icon svg { width: 1.5cqh; height: 1.5cqh; }
+.soft-veto-notes-column { position: relative; display: grid; gap: 2.8cqh; align-content: center; }
+.soft-veto-note-pair { display: grid; gap: 1cqh; }
+.veto-note { display: grid; align-content: center; gap: 0.8cqh; padding: 1.4cqh 1.5cqw; border: 1px solid #e2e5e8; border-radius: 1.6cqh; background: #f7f8f9; }
+.veto-note-pass { box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
+.veto-note .post-note-head { color: var(--native-ink); }
+.veto-note .post-note-head strong { font-size: 1.8cqh; }
+.veto-note-letter { margin-left: auto; color: currentcolor; font-size: 1.6cqh; font-weight: 800; }
 .veto-note-fail .veto-note-letter { color: var(--native-coral); }
 .veto-note-pass .veto-note-letter { color: var(--native-green); }
-.veto-note p { margin: 0; color: var(--native-ink); font-size: 2.1cqh; line-height: 1.3; }
-.veto-result { display: grid; align-content: center; gap: 1cqh; padding: 1.4cqh 1.8cqw; margin-top: 2cqh; border: 0.3cqh solid currentcolor; border-radius: 1.6cqh; background: #fff; }
-.veto-result > span { display: block; text-align: center; font-size: 1.7cqh; font-weight: 800; letter-spacing: 0.04em; }
+.veto-note p { margin: 0; color: var(--native-ink); font-size: 1.9cqh; line-height: 1.3; }
+.veto-result { display: grid; align-content: center; gap: 1cqh; padding: 1.4cqh 1.8cqw; border: 0.3cqh solid currentcolor; border-radius: 1.6cqh; background: #fff; }
+.veto-result > span { display: block; text-align: center; font-size: 1.55cqh; font-weight: 800; letter-spacing: 0.04em; }
 .veto-result-columns { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 1.2cqw; }
 .veto-result-col { display: grid; justify-items: center; gap: 0.4cqh; text-align: center; }
-.veto-result-col strong { color: var(--native-ink); font-size: 2.6cqh; white-space: nowrap; }
-.veto-result-col b { font-size: 1.85cqh; }
+.veto-result-col strong { color: var(--native-ink); font-size: 2.2cqh; white-space: nowrap; }
+.veto-result-col b { font-size: 1.55cqh; }
 .veto-result-alt { padding-left: 1.2cqw; border-left: 0.2cqh solid var(--native-line); color: var(--native-muted); }
 .veto-result-alt b { color: var(--native-muted); font-weight: 700; }
 .veto-note-fail, .veto-result-fail { color: var(--native-coral); }
