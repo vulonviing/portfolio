@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react';
 import { PostCard, PostIcon } from './post-card.jsx';
 import { VoteQr } from './vote-qr.jsx';
 import { pollsByKey } from './polls.js';
@@ -55,9 +56,9 @@ function CheckMark() {
   return <span className="check-mark" aria-hidden="true">✓</span>;
 }
 
-function ArchetypeCard({ tone, headline, detail, show = true }) {
+function ArchetypeCard({ tone, headline, detail, show = true, shiftRight = false }) {
   return (
-    <div className={`archetype-card archetype-card-${tone} native-reveal ${show ? 'native-reveal-visible' : ''}`}>
+    <div className={`archetype-card archetype-card-${tone} native-reveal ${show ? 'native-reveal-visible' : ''} ${shiftRight ? 'archetype-card-shift-right' : ''}`}>
       <span className="archetype-eyebrow"><i /> CANDIDATE NOTE</span>
       <strong>{headline}</strong>
       <p>{detail}</p>
@@ -66,23 +67,35 @@ function ArchetypeCard({ tone, headline, detail, show = true }) {
 }
 
 const khameneiPost = pollsByKey['case-khamenei'].post;
+const oxfordPost = pollsByKey['case-oxford'].post;
+const oxfordActualNote = pollsByKey['case-oxford'].candidates.find((candidate) => candidate.id === 'B').text;
+const oxfordInventedNote = pollsByKey['case-oxford'].candidates.find((candidate) => candidate.id === 'A').text;
 
 function DecisionFlowSlide({ number, step = 0 }) {
-  const showTweetOverlay = step >= 4;
   return (
     <SlideFrame number={number} eyebrow="WHAT IS COMMUNITY NOTES?" title="Not every candidate note is trying to help.">
       <div className="archetype-layout">
         <div className="archetype-grid">
           <ArchetypeCard tone="green" headline="On-topic. Accurate." detail="The note that should win." show={step >= 1} />
-          <ArchetypeCard tone="amber" headline="Sounds right. Isn’t." detail="Same tone and style — wrong or irrelevant information." show={step >= 2} />
-          <ArchetypeCard tone="coral" headline="Troll note." detail="Doesn’t even try to be true." show={step >= 3} />
+          <ArchetypeCard tone="amber" headline="Sounds right. Isn’t." detail="Same tone and style — wrong or irrelevant information." show={step >= 3} shiftRight={step === 3 || step === 4} />
+          <ArchetypeCard tone="coral" headline="Troll note." detail="Doesn’t even try to be true." show={step >= 5} />
         </div>
         <div className="archetype-vote">
           <div className="archetype-vote-people"><Person tone="blue" /><Person tone="coral" /></div>
           <span className="archetype-vote-arrow" aria-hidden="true" />
           <strong className="archetype-summary">Congratulations. You are now the algorithm.</strong>
         </div>
-        {showTweetOverlay && (
+        {step === 2 && (
+          <div className="archetype-tweet-overlay archetype-tweet-overlay-right">
+            <PostCard post={oxfordPost} note={oxfordActualNote} className="archetype-tweet-post" />
+          </div>
+        )}
+        {step === 4 && (
+          <div className="archetype-tweet-overlay">
+            <PostCard post={oxfordPost} note={oxfordInventedNote} className="archetype-tweet-post" />
+          </div>
+        )}
+        {step >= 6 && (
           <div className="archetype-tweet-overlay">
             <PostCard post={khameneiPost} note="Allah didn’t protect him." className="archetype-tweet-post" />
           </div>
@@ -106,24 +119,71 @@ const goldfishPost = {
 const goldfishNote = (
   <>
     Goldfish can remember things for months, not seconds — they’ve been trained to recognize
-    colors, sounds, and feeding times. Small bowls are actually harmful to them.
-    <br />
+    colors, sounds, and feeding times. Small bowls are actually harmful to them.{' '}
     University of Plymouth (2003)
   </>
 );
 
+// Illustrative, written for this talk -- not archived notes. Shown alongside
+// the real note (goldfishNote) so the room sees this wasn't the only
+// candidate: a troll note, an attack on the poster instead of the claim, and
+// a badly-written near-miss, all next to the one that actually won.
+const goldfishDecoyNotes = [
+  'lol nobody actually believes this, fish brains are basically nothing 🐟🤣',
+  '@dailyfunfacts posts fake science content constantly — this account should be suspended for spreading misinformation.',
+  'this is wrong goldfish do forget stuff fast its common sense why is everyone believeing this lol',
+];
+
+// One small cluster of person icons per note, in the dead space between the
+// tweet card and the QR panel on the final step -- different vote counts per
+// note so it reads as "people are voting on these right now," before the
+// room does it for real. Order matches goldfishDecoyNotes then goldfishNote.
+// The real note (last) gets the most people and is picked out in blue.
+const GOLDFISH_VOTER_COUNTS = [2, 4, 1, 12];
+
+function NoteIcon() {
+  return (
+    <span className="post-note-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 11.5a8.38 8.38 0 0 1-4.8 7.6 8.5 8.5 0 0 1-3.7.9 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+      </svg>
+    </span>
+  );
+}
+
 function GoldfishExampleSlide({ number, step = 0, audienceUrl }) {
-  const showTweetBody = step !== 3;
+  const showTweetBody = step < 3;
   const showSmallPhoto = step === 2;
   const showBigPhotoInNoteSlot = step === 1;
-  const showBigPhotoAsBody = step === 3;
+  const showBigPhotoAsBody = step === 3 || step >= 4;
   const showNote = step === 2 || step === 3;
+  const showAllNotes = step >= 4;
+  const showVoters = step === 5;
+
+  const layoutRef = useRef(null);
+  const noteRefs = useRef([]);
+  const [voterTops, setVoterTops] = useState([]);
+
+  useLayoutEffect(() => {
+    if (!showVoters || !layoutRef.current) { setVoterTops([]); return undefined; }
+    const measure = () => {
+      const layoutRect = layoutRef.current.getBoundingClientRect();
+      setVoterTops(noteRefs.current.map((el) => {
+        const rect = el.getBoundingClientRect();
+        return rect.top + rect.height / 2 - layoutRect.top;
+      }));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(layoutRef.current);
+    return () => observer.disconnect();
+  }, [showVoters]);
 
   return (
     <SlideFrame number={number} eyebrow="COMMUNITY NOTES 101" title="A wrong tweet. A note that fixes it.">
-      <div className="example-layout">
+      <div className="example-layout" ref={layoutRef}>
         <article className="post-card post-card-with-media">
-          <div className="goldfish-flex-top">
+          <div className={`goldfish-flex-top ${showAllNotes ? 'goldfish-flex-top-compact' : ''}`}>
             {showTweetBody && (
               <>
                 <header className="post-author">
@@ -154,7 +214,7 @@ function GoldfishExampleSlide({ number, step = 0, audienceUrl }) {
               </div>
             )}
             {showBigPhotoAsBody && (
-              <div className="goldfish-big-photo goldfish-big-photo-top">
+              <div className={`goldfish-big-photo goldfish-big-photo-top ${showAllNotes ? 'goldfish-big-photo-compact' : ''}`}>
                 <img src={goldfishPost.image} alt={goldfishPost.imageAlt} draggable="false" />
               </div>
             )}
@@ -176,17 +236,37 @@ function GoldfishExampleSlide({ number, step = 0, audienceUrl }) {
           {showNote && (
             <div className="post-note">
               <div className="post-note-head">
-                <span className="post-note-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 11.5a8.38 8.38 0 0 1-4.8 7.6 8.5 8.5 0 0 1-3.7.9 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                  </svg>
-                </span>
+                <NoteIcon />
                 <strong>Community Note</strong>
               </div>
               <p>{goldfishNote}</p>
             </div>
           )}
+          {showAllNotes && (
+            <div className="post-note-stack">
+              {goldfishDecoyNotes.map((text, index) => (
+                <div className="post-note post-note-compact" key={index} ref={(el) => { noteRefs.current[index] = el; }}>
+                  <div className="post-note-head"><NoteIcon /><strong>Community Note</strong></div>
+                  <p>{text}</p>
+                </div>
+              ))}
+              <div className="post-note post-note-compact" ref={(el) => { noteRefs.current[goldfishDecoyNotes.length] = el; }}>
+                <div className="post-note-head"><NoteIcon /><strong>Community Note</strong></div>
+                <p>{goldfishNote}</p>
+              </div>
+            </div>
+          )}
         </article>
+        {showVoters && voterTops.map((top, index) => (
+          <div className="goldfish-voter-row native-reveal native-reveal-visible" style={{ top }} key={index} aria-hidden="true">
+            {Array.from({ length: GOLDFISH_VOTER_COUNTS[index] || 0 }).map((_, figureIndex) => (
+              <span className={`goldfish-voter-figure ${index === goldfishDecoyNotes.length ? 'goldfish-voter-figure-real' : ''}`} key={figureIndex}>
+                <span className="goldfish-voter-figure-head" />
+                <span className="goldfish-voter-figure-body" />
+              </span>
+            ))}
+          </div>
+        ))}
         <div className="example-qr-panel">
           <VoteQr audienceUrl={audienceUrl} large label="Scan to join" />
           <p>Keep your phone out — you’ll vote on real cases next.</p>
@@ -196,15 +276,6 @@ function GoldfishExampleSlide({ number, step = 0, audienceUrl }) {
   );
 }
 
-const rawChickenPost = {
-  author: 'Home Kitchen Hacks',
-  handle: '@dailyfoodhacks',
-  avatarImage: `${base}media/home-kitchen-hacks-avatar.jpg`,
-  text: 'PSA: always wash your raw chicken thoroughly before cooking. Basic food safety 101.',
-  timeAgo: '22s',
-  engagement: { replies: '12', reposts: '34', likes: '210', views: '8.4K' },
-  meta: 'Mar 14, 2024',
-};
 // Real tweet, real Community Note (Oct 2024) -- a teaching example for the
 // camp-approval formula. Shown with no note on screen: the presenter lets the
 // room react to the caption first, then reveals live that the video is
@@ -247,37 +318,24 @@ const softVetoExample = {
   ],
 };
 
-function InfluenceGroup({ tone, label, force, strength, figures, show = true }) {
+function VoterSpectrumRow({ tone, label, force, figures, show }) {
   return (
-    <div className={`influence-group influence-group-${tone} native-reveal ${show ? 'native-reveal-visible' : ''}`}>
-      <div className="influence-group-label">
-        <span className="influence-group-name">{label}</span>
-        <span className="influence-group-force" aria-label={`Force: ${force} out of 10`}>
-          <span className="influence-force-meter" aria-hidden="true">
-            {dotRange(10).map((level) => <i className={level < strength ? 'is-active' : ''} key={level} />)}
-          </span>
-          <span>FORCE</span>
-          <span>{force} OUT OF 10</span>
-        </span>
+    <div className={`voter-row native-reveal ${show ? 'native-reveal-visible' : ''}`}>
+      <div className="voter-row-id">
+        <span className={`voter-row-label voter-row-label-${tone}`}>{label}</span>
+        <div className="voter-row-figures">
+          {figures.map((mark, index) => (
+            <div className={`influence-figure influence-${tone}`} key={index}>
+              <Person tone={tone} />
+              <span className={`influence-mark influence-mark-${mark === '✓' ? 'positive' : 'negative'}`}>{mark}</span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="influence-group-figures">
-        {figures.map((mark, index) => (
-          <div className={`influence-figure influence-${tone}`} key={index}>
-            <Person tone={tone} />
-            <span className={`influence-mark influence-mark-${mark === '✓' ? 'positive' : 'negative'}`}>{mark}</span>
-          </div>
-        ))}
+      <div className="voter-row-spectrum">
+        <div className="voter-row-track"><div className={`voter-row-fill voter-row-fill-${tone}`} style={{ width: `${force * 10}%` }} /></div>
+        <span className="voter-row-force" aria-label={`Force: ${force} out of 10`}>{force}/10</span>
       </div>
-    </div>
-  );
-}
-
-function InfluenceRow({ step = 3 }) {
-  return (
-    <div className="influence-row" aria-label="A hyperactive minority outweighs a quiet, positive majority">
-      <InfluenceGroup tone="coral" label="AMIGO" force={2} strength={2} figures={['✓', '✓']} show={step >= 2} />
-      <InfluenceGroup tone="blue" label="NORMAL" force={5} strength={5} figures={['✓', '✓', '✓', '✓', '✓']} show={step >= 1} />
-      <InfluenceGroup tone="amber" label="STRONG VOTER" force={8} strength={8} figures={['×', '×']} show={step >= 3} />
     </div>
   );
 }
@@ -290,73 +348,18 @@ function HandshakeDiagram({ compact = false }) {
   );
 }
 
-const DOMINANCE_SPARSE = [
-  [24, 18], [64, 18], [104, 18], [144, 18],
-  [24, 58], [144, 58],
-  [24, 100], [144, 100],
-  [24, 142], [144, 142],
-  [24, 182], [64, 182], [104, 182], [144, 182],
-];
-const DOMINANCE_HEAVY = [[64, 58], [104, 100], [64, 142]];
-const DOMINANCE_ESTIMATE = [280, 100];
-
-function DominanceDiagram() {
-  return (
-    <svg className="dominance-graph" viewBox="0 0 320 220" aria-label="A few raters supply most of the model's observations">
-      <g className="dominance-edges-sparse">
-        {DOMINANCE_SPARSE.map(([x, y], index) => (
-          <line key={`sparse-${index}`} x1={x} y1={y} x2={DOMINANCE_ESTIMATE[0]} y2={DOMINANCE_ESTIMATE[1]} />
-        ))}
-      </g>
-      <g className="dominance-edges-heavy">
-        {DOMINANCE_HEAVY.map(([x, y], index) => (
-          <line key={`heavy-${index}`} x1={x} y1={y} x2={DOMINANCE_ESTIMATE[0]} y2={DOMINANCE_ESTIMATE[1]} />
-        ))}
-      </g>
-      <g className="dominance-nodes-sparse">
-        {DOMINANCE_SPARSE.map(([x, y], index) => <circle key={`sparse-node-${index}`} cx={x} cy={y} r="5" />)}
-      </g>
-      <g className="dominance-nodes-heavy">
-        {DOMINANCE_HEAVY.map(([x, y], index) => <circle key={`heavy-node-${index}`} cx={x} cy={y} r="7.5" />)}
-      </g>
-      <circle className="dominance-estimate" cx={DOMINANCE_ESTIMATE[0]} cy={DOMINANCE_ESTIMATE[1]} r="9" />
-    </svg>
-  );
-}
-
-function AgreementSlide({ number, step = 0 }) {
-  return (
-    <SlideFrame number={number} eyebrow="HOW X WORKS" title="X already looks for unlikely agreement.">
-      <div className="agreement-layout">
-        <div className="agreement-grid">
-          <section className={`native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}><span className="agreement-label agreement-coral">AMIGO</span><div className="support-visual"><Person tone="coral" /><CheckMark /><div className="support-note support-note-coral"><Person tone="coral" /></div></div><strong className="agreement-coral">Predictable support</strong></section>
-          <section className={`native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`}><span className="agreement-label agreement-amber">HYPERACTIVE MINORITY</span><DominanceDiagram /><strong className="agreement-amber">A few raters set the axis</strong></section>
-        </div>
-        <strong className="agreement-bottom">Even a high, correct-looking vote can stall — the system is scoring rater quality and intent, not counting the vote itself.</strong>
-      </div>
-    </SlideFrame>
-  );
-}
-
-function GapSlide({ number, step }) {
+function GapSlide({ number, step = 0 }) {
   return (
     <SlideFrame number={number} eyebrow="THE ANSWER" title="A hyperactive minority held the note back.">
-      <div className="puzzle-layout puzzle-layout-dominance">
-        <PostCard
-          post={rawChickenPost}
-          note={<>Raw chicken does not need to be washed before cooking. Washing poultry can spread bacterial contamination around the kitchen.<br />CDC · USDA</>}
-        />
-        <div className="puzzle-results">
-          <div className="approval-block">
-            <InfluenceRow step={step} />
-            <div className="approval-number">
-              <strong>95.1%</strong>
-              <span>overall approval</span>
-              <b className="status-pill">Status: NOT SHOWN</b>
-            </div>
-          </div>
-          <strong className="puzzle-takeaway">A few raters decided — not the room.</strong>
+      <div className="gap-layout">
+        <div className="gap-rows">
+          <VoterSpectrumRow tone="amber" label="STRONG VOTER" force={8} figures={['×', '×']} show={step >= 2} />
+          <VoterSpectrumRow tone="blue" label="NORMAL" force={5} figures={['✓', '✓', '✓', '✓', '✓']} show={step >= 1} />
+          <VoterSpectrumRow tone="coral" label="AMIGO" force={2} figures={['✓', '✓']} show={step >= 2} />
         </div>
+        <Reveal show={step >= 2} className="gap-takeaway">
+          <strong>X does not give every voter an equal chance — it sorts people into classes, and lets some outweigh the room.</strong>
+        </Reveal>
       </div>
     </SlideFrame>
   );
@@ -395,7 +398,7 @@ function CcaProposalSlide({ number, step = 0 }) {
           <strong>CCA</strong>
           <span>Cross-Constituency<br />Aggregation</span>
         </div>
-        <div className={`cca-inspiration native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`}>
+        <div className={`cca-inspiration native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}>
           <strong>INSPIRED BY DECISIONS THAT NEED SUPPORT ACROSS GROUPS</strong>
           <div className="cca-country-grid">
             <div><CountryFlag country="switzerland" /><b>SWITZERLAND</b><span>People + cantons</span></div>
@@ -405,9 +408,8 @@ function CcaProposalSlide({ number, step = 0 }) {
           </div>
           <p>We look for a middle ground that every group can accept.</p>
         </div>
-        <div className="cca-commitments">
-          <div className="cca-commitment cca-commitment-limit"><span>WHAT WE DO NOT PROMISE</span><strong>A drop-in replacement for X’s full algorithm.</strong></div>
-          <div className={`cca-commitment cca-commitment-built native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}><span>WHAT WE BUILT</span><strong>A working implementation on real ratings.</strong></div>
+        <div className="cca-commitments cca-commitments-single">
+          <div className="cca-commitment cca-commitment-equal"><span>OUR RULE</span><strong>Every voter counts the same — no cluster’s ballot outweighs another’s.</strong></div>
         </div>
       </div>
     </SlideFrame>
@@ -462,19 +464,42 @@ function CampApprovalSlide({ number, step = 0 }) {
         <div className="camp-side camp-side-blue"><strong className="camp-size">107,734 raters</strong><DotGrid tone="blue" count={32} columns={8} /><span>CLUSTER A: pA</span></div>
         <FlowArrow tone="blue" className={`native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`} />
         <div className="camp-example-center">
-          <PostCard
-            post={palestineTweetExample.post}
-            className={`camp-example-post native-reveal ${step >= 2 ? 'native-reveal-visible' : ''} ${step >= 3 ? 'camp-example-post-with-video' : ''}`}
-            hideMedia={step < 3}
-          />
+          {step >= 1 && step < 3 && (
+            <div className="camp-approval-header camp-approval-header-centered native-reveal native-reveal-visible">
+              <span>GEOMETRIC MEAN</span>
+              <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
+              <p>(the balance point both clusters can accept on this note)</p>
+              {step >= 2 && (
+                <div className="camp-approval-example">
+                  <span>EXAMPLE</span>
+                  <strong>Cluster A: <span className="camp-approval-example-a">90%</span> · Cluster B: <span className="camp-approval-example-b">10%</span></strong>
+                  <span className="camp-approval-example-result">√(90% × 10%) ≈ 30% → <b className="camp-approval-example-flag">REJECTED</b></span>
+                </div>
+              )}
+            </div>
+          )}
+          {step >= 3 && (
+            <PostCard
+              post={palestineTweetExample.post}
+              className={`camp-example-post native-reveal native-reveal-visible ${step >= 4 ? 'camp-example-post-with-video' : ''}`}
+              hideMedia={step < 4}
+            />
+          )}
         </div>
         <FlowArrow tone="coral" className={`camp-arrow-inward native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`} />
         <div className="camp-side-coral-wrap">
-          <div className={`camp-approval-header native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}>
-            <span>GEOMETRIC MEAN</span>
-            <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
-            <p>(the balance point both clusters can accept on this note)</p>
-          </div>
+          {step >= 3 && (
+            <div className="camp-approval-header native-reveal native-reveal-visible">
+              <span>GEOMETRIC MEAN</span>
+              <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
+              <p>(the balance point both clusters can accept on this note)</p>
+              <div className="camp-approval-example">
+                <span>EXAMPLE</span>
+                <strong>Cluster A: <span className="camp-approval-example-a">90%</span> · Cluster B: <span className="camp-approval-example-b">10%</span></strong>
+                <span className="camp-approval-example-result">√(90% × 10%) ≈ 30% → <b className="camp-approval-example-flag">REJECTED</b></span>
+              </div>
+            </div>
+          )}
           <div className="camp-side camp-side-coral"><strong className="camp-size">92,266 raters</strong><DotGrid tone="coral" count={32} columns={8} /><span>CLUSTER B: pB</span></div>
         </div>
       </div>
@@ -695,7 +720,6 @@ function ClosingSlide({ number }) {
 const nativeSlideComponents = {
   'community-notes': DecisionFlowSlide,
   'goldfish-example': GoldfishExampleSlide,
-  'unlikely-agreement': AgreementSlide,
   'implicit-electorate': GapSlide,
   'cca-proposal': CcaProposalSlide,
   constituencies: ConstituenciesSlide,

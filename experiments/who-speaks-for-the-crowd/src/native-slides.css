@@ -171,6 +171,11 @@
   justify-content: flex-start;
   padding-left: 3cqw;
 }
+.archetype-tweet-overlay-right {
+  justify-content: flex-end;
+  padding-left: 0;
+  padding-right: 3cqw;
+}
 
 .archetype-tweet-post {
   width: min(66cqw, 84cqh);
@@ -210,6 +215,19 @@
 
 .archetype-card:first-child { padding-left: 0; }
 .archetype-card:last-child { padding-right: 0; border-right: 0; }
+/* Steps 3-4 only: the tweet (right at step 2, left at step 4) overlays the
+   left/middle columns, so "Sounds right" jumps to the (otherwise empty)
+   third column to stay clear of it. Now visually last, its divider needs
+   to move from its own trailing right edge to its leading left edge --
+   troll's border-right (which would normally separate them) is stripped
+   by :last-child, so we draw this card's own border-left instead.
+   Reverts to normal DOM order the moment troll appears (step >= 5). */
+/* border-box draws a right-border just inside the shared column boundary
+   and a left-border just inside it from the other side -- same nominal
+   line, opposite sub-pixel bleed. Pull the box left by exactly the border
+   width so this card's own border-left lands on the identical pixels the
+   neighboring card's border-right would have used. */
+.archetype-card-shift-right { order: 3; padding-right: 0; border-right: 0; border-left: 0.28cqh solid #16181c; margin-left: -0.28cqh; }
 
 .archetype-eyebrow { display: flex; align-items: center; gap: 0.9cqw; color: var(--native-muted); font-size: 1.7cqh; font-weight: 700; letter-spacing: 0.04em; }
 .archetype-eyebrow i { width: 1.4cqh; height: 1.4cqh; border-radius: 50%; background: currentcolor; }
@@ -256,56 +274,65 @@
 .example-layout .post-media { height: 30cqh; max-height: none; object-fit: cover; object-position: center; }
 .example-layout .post-media-static { display: flex; align-items: center; justify-content: center; background: #fff; }
 .example-layout .post-media-static .post-media { width: 80%; margin: auto; border-radius: 1.4cqh; }
-.example-layout .post-note { margin-top: 1.6cqh; padding: 1.5cqh 1.3cqw; }
-.example-layout .post-note p { font-size: 1.85cqh; line-height: 1.4; }
+.example-layout .post-note { margin-top: 1.6cqh; padding: 1.6cqh 1.4cqw; }
+.example-layout .post-note-head strong { font-size: 1.9cqh; }
+.example-layout .post-note p { font-size: 2.15cqh; line-height: 1.4; }
+.example-layout .post-actions .post-action,
+.example-layout .post-actions .post-action-icon { font-size: 1.75cqh; }
+.example-layout .post-actions .post-action svg,
+.example-layout .post-actions .post-action-icon svg { width: 2.1cqh; height: 2.1cqh; }
 .example-layout .post-actions-extra { margin-left: auto; }
 .goldfish-flex-top { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.goldfish-flex-top-compact { flex: 0 0 auto; }
 .goldfish-big-photo { display: flex; flex: 1; min-height: 0; margin-top: 1.6cqh; background: #fff; border-radius: 1.4cqh; overflow: hidden; }
 .goldfish-big-photo img { display: block; width: 80%; height: 100%; margin: auto; border: 1px solid #d9dde1; border-radius: 1.4cqh; object-fit: cover; object-position: center 45%; }
 .goldfish-big-photo-top { margin-top: 0; }
+.goldfish-big-photo-compact { flex: 0 0 auto; height: 18cqh; margin-top: 0; }
+/* Step 4: the real note (last) is untouched from steps 2-3; three
+   illustrative decoys are stacked above it so the room sees it was picked
+   among four, not the only option. Centered in the space the shrunk photo
+   gives up, so goldfish-flex-top-compact must stop flex-growing above. */
+.post-note-stack { display: flex; flex: 1; flex-direction: column; justify-content: flex-start; gap: 1.2cqh; min-height: 0; margin-top: -1.5cqh; position: relative; z-index: 1; }
+.example-layout .post-note-compact { margin-top: 0; padding: 1.2cqh 1.5cqw; }
+.example-layout .post-note-compact .post-note-head strong { font-size: 2.1cqh; }
+.example-layout .post-note-compact p { font-size: 2.35cqh; line-height: 1.3; }
+/* Final step: one small cluster of person icons per note, in the dead space
+   between the card and the QR panel, positioned (via JS measurement) level
+   with that note -- different counts per note read as "people are voting on
+   these right now." Single neutral color: this isn't the two camps, just a
+   generic crowd. */
+.goldfish-voter-row {
+  position: absolute; left: 55.22%; transform: translateY(-50%);
+  display: flex; flex-wrap: wrap; align-content: center; justify-content: center;
+  width: 4.6cqw; gap: 0.7cqh 0.5cqw; z-index: 2;
+}
+.goldfish-voter-figure { position: relative; display: block; width: 1.95cqh; height: 3.3cqh; color: var(--native-muted); }
+.goldfish-voter-figure-real { color: var(--native-blue); }
+.goldfish-voter-figure-head { position: absolute; top: 0; left: 50%; width: 1.28cqh; height: 1.28cqh; border-radius: 50%; background: currentcolor; transform: translateX(-50%); }
+.goldfish-voter-figure-body { position: absolute; bottom: 0; left: 50%; width: 1.88cqh; height: 2.03cqh; border-radius: 0.98cqh 0.98cqh 0.3cqh 0.3cqh; background: currentcolor; transform: translateX(-50%); }
 .example-qr-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.4cqh; text-align: center; }
 .example-qr-panel > p { margin: 0; max-width: 20cqw; color: var(--native-muted); font-size: 1.6cqh; line-height: 1.4; }
 
-/* 07 · puzzle */
-.puzzle-layout { position: absolute; inset: 0; display: grid; grid-template-columns: 55% 1fr; align-items: center; gap: 6cqw; }
-.puzzle-layout .post-card { width: 100%; }
-.puzzle-layout .post-actions { justify-content: space-between; }
-.puzzle-layout .post-actions-extra { margin-left: 0; }
-.puzzle-results { display: grid; grid-template-rows: auto 1fr; align-items: center; justify-items: center; row-gap: 3cqh; padding-top: 3cqh; }
-.puzzle-layout-dominance { grid-template-columns: 46% 1fr; }
-.puzzle-layout-dominance .puzzle-results { grid-template-rows: auto 1fr; row-gap: 2.5cqh; transform: translateY(3cqh); }
-.puzzle-layout-dominance .approval-number strong { font-size: 10cqh; }
-.puzzle-layout-dominance .approval-number span { font-size: 2.6cqh; }
-.approval-block { display: grid; justify-items: center; gap: 1.6cqh; }
-.approval-number { display: grid; justify-items: center; gap: 1.5cqh; }
-.approval-number strong { color: var(--native-green); font-size: 8.5cqh; line-height: 1; }
-.approval-number span { color: var(--native-muted); font-size: 2.2cqh; }
-.status-pill { padding: 0.7cqh 1.4cqw; border: 0.28cqh solid var(--native-coral); border-radius: 999px; color: var(--native-coral); font-size: 1.5cqh; font-weight: 800; letter-spacing: 0.02em; white-space: nowrap; }
+/* 07 · the gap: who actually has the power */
+.gap-layout { position: absolute; inset: 6% 8%; display: grid; align-content: center; justify-items: stretch; gap: 8cqh; }
+.gap-rows { display: grid; gap: 6.5cqh; }
+.voter-row { display: grid; grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr); align-items: center; gap: 4cqw; }
+.voter-row-id { display: flex; align-items: center; gap: 1.6cqw; }
+.voter-row-label { min-width: 15cqw; font-size: 2.15cqh; font-weight: 800; letter-spacing: 0.04em; }
+.voter-row-label-coral { color: var(--native-coral); }
+.voter-row-label-blue { color: var(--native-blue); }
+.voter-row-label-amber { color: var(--native-amber); }
+.voter-row-figures { display: flex; align-items: flex-end; gap: 1cqw; }
+.voter-row-figures .influence-figure { height: 6.2cqh; }
+.voter-row-spectrum { display: flex; align-items: center; gap: 1.4cqw; }
+.voter-row-track { position: relative; flex: 1; height: 2.4cqh; border-radius: 999px; background: #eceef1; overflow: hidden; }
+.voter-row-fill { position: absolute; inset: 0; width: 0; border-radius: 999px; transition: width 320ms ease; }
+.voter-row-fill-coral { background: var(--native-coral); }
+.voter-row-fill-blue { background: var(--native-blue); }
+.voter-row-fill-amber { background: var(--native-amber); }
+.voter-row-force { min-width: 5cqw; color: var(--native-muted); font-size: 1.85cqh; font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; }
+.gap-takeaway { max-width: 82%; justify-self: center; text-align: center; font-size: 2.9cqh; line-height: 1.35; }
 
-.influence-row { display: flex; align-items: flex-end; justify-content: center; gap: 2.6cqw; }
-.influence-group { display: flex; flex-direction: column; align-items: center; gap: 1.3cqh; }
-.influence-group-label { display: flex; flex-direction: column; align-items: center; gap: 0.35cqh; }
-.influence-group-name { font-size: 1.7cqh; font-weight: 800; letter-spacing: 0.04em; }
-.influence-group-force { display: flex; flex-direction: column; align-items: center; gap: 0.3cqh; color: var(--native-muted); font-size: 1.3cqh; font-weight: 800; letter-spacing: 0.02em; white-space: nowrap; }
-.influence-force-meter { display: flex; height: 1.55cqh; align-items: flex-end; gap: 0.12cqw; }
-.influence-force-meter i { width: 0.24cqw; border-radius: 0.12cqh 0.12cqh 0 0; background: var(--native-line); }
-.influence-force-meter i:nth-child(1) { height: 0.28cqh; }
-.influence-force-meter i:nth-child(2) { height: 0.43cqh; }
-.influence-force-meter i:nth-child(3) { height: 0.58cqh; }
-.influence-force-meter i:nth-child(4) { height: 0.73cqh; }
-.influence-force-meter i:nth-child(5) { height: 0.88cqh; }
-.influence-force-meter i:nth-child(6) { height: 1.03cqh; }
-.influence-force-meter i:nth-child(7) { height: 1.18cqh; }
-.influence-force-meter i:nth-child(8) { height: 1.33cqh; }
-.influence-force-meter i:nth-child(9) { height: 1.48cqh; }
-.influence-force-meter i:nth-child(10) { height: 1.63cqh; }
-.influence-group-coral .influence-force-meter .is-active { background: var(--native-coral); }
-.influence-group-blue .influence-force-meter .is-active { background: var(--native-blue); }
-.influence-group-amber .influence-force-meter .is-active { background: var(--native-amber); }
-.influence-group-coral .influence-group-name { color: var(--native-coral); }
-.influence-group-blue .influence-group-name { color: var(--native-blue); }
-.influence-group-amber .influence-group-name { color: var(--native-amber); }
-.influence-group-figures { display: flex; align-items: flex-end; gap: 1cqw; }
 .influence-figure { position: relative; display: grid; height: 16cqh; place-items: center end; }
 .influence-coral { width: 3.2cqw; }
 .influence-blue { width: 2.6cqw; }
@@ -317,32 +344,10 @@
 .influence-mark-positive { background: var(--native-green); }
 .influence-mark-negative { background: var(--native-coral); }
 .influence-amber .influence-mark { width: 3cqh; height: 3cqh; font-size: 1.85cqh; bottom: -1cqh; box-shadow: 0 0 0 0.45cqh rgba(245, 179, 53, 0.35); }
-.nmr-status { display: grid; min-width: 24cqw; justify-items: center; gap: 1.2cqh; padding: 3cqh 1.7cqw; border: 0.35cqh solid var(--native-coral); border-radius: 2cqh; }
-.nmr-status span { color: var(--native-muted); font-size: 1.35cqh; font-weight: 700; }
-.nmr-status strong { color: var(--native-coral); font-size: 2.35cqh; }
-.puzzle-takeaway { align-self: start; font-size: 3cqh; }
 
 /* 08 · agreement */
-.agreement-layout { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7cqh; }
-.agreement-grid { display: grid; width: 92%; grid-template-columns: 1fr 1fr; gap: 9cqw; }
-.agreement-grid section { display: grid; min-height: 46cqh; grid-template-rows: auto 1fr auto; justify-items: center; gap: 3cqh; }
-.agreement-label { font-size: 2.1cqh; font-weight: 700; }
-.agreement-coral { color: var(--native-coral); }
-.agreement-green { color: var(--native-green); }
-.agreement-amber { color: var(--native-amber); }
-.support-visual, .handshake-diagram { display: flex; align-items: center; justify-content: center; gap: 2.4cqw; }
-.support-note, .handshake-note { display: grid; width: 17cqw; height: 30cqh; place-items: center; border: 0.35cqh solid var(--native-line); border-radius: 2cqh; }
-.support-note-coral { border-color: var(--native-coral); }
-.support-note .person { transform: scale(0.95); }
-.agreement-grid section > strong { font-size: 2.9cqh; }
-.agreement-bottom { max-width: 76%; text-align: center; font-size: 2.9cqh; line-height: 1.34; }
-
-.dominance-graph { width: 100%; height: 34cqh; }
-.dominance-edges-sparse line { stroke: var(--native-line); stroke-width: 2; }
-.dominance-edges-heavy line { stroke: var(--native-amber); stroke-width: 5; }
-.dominance-nodes-sparse circle { fill: var(--native-ink); opacity: 0.32; }
-.dominance-nodes-heavy circle { fill: var(--native-amber); }
-.dominance-estimate { fill: var(--native-coral); }
+.handshake-diagram { display: flex; align-items: center; justify-content: center; gap: 2.4cqw; }
+.handshake-note { display: grid; width: 17cqw; height: 30cqh; place-items: center; border: 0.35cqh solid var(--native-line); border-radius: 2cqh; }
 
 /* 09 · CCA proposal */
 .cca-proposal-layout { position: absolute; inset: 4% 3% 6%; display: flex; flex-direction: column; justify-content: center; gap: 5cqh; }
@@ -358,13 +363,12 @@
 .cca-country-grid span { color: var(--native-muted); font-size: 1.75cqh; }
 .cca-inspiration p { margin: 0; color: var(--native-muted); font-size: 1.7cqh; }
 .cca-commitments { display: grid; grid-template-columns: 1fr 1fr; gap: 2cqw; }
+.cca-commitments-single { grid-template-columns: 1fr; }
 .cca-commitment { display: grid; min-height: 15cqh; align-content: center; gap: 1.8cqh; padding: 2cqh 2cqw; border-radius: 1.6cqh; background: #fff; }
 .cca-commitment span { font-size: 1.6cqh; font-weight: 800; letter-spacing: 0.04em; }
 .cca-commitment strong { font-size: 2.55cqh; line-height: 1.25; }
-.cca-commitment-limit { border: 0.25cqh solid var(--native-coral); }
-.cca-commitment-limit span { color: var(--native-coral); }
-.cca-commitment-built { border: 0.25cqh solid var(--native-green); }
-.cca-commitment-built span { color: var(--native-green); }
+.cca-commitment-equal { border: 0.25cqh solid var(--native-blue); text-align: center; justify-items: center; }
+.cca-commitment-equal span { color: var(--native-blue); }
 
 /* 10 · clustering */
 .clustering-flow { position: absolute; top: 17%; left: 4%; display: grid; width: 92%; grid-template-columns: 15cqw 4.5cqw 22cqw 4.5cqw minmax(0, 1fr); align-items: center; gap: 1.3cqw; }
@@ -402,6 +406,16 @@
 
 /* 12 · camp approval */
 .camp-approval-header { display: grid; justify-items: center; gap: 0.7cqh; margin-bottom: 1cqh; text-align: center; }
+.camp-approval-header-centered { margin-bottom: 0; }
+.camp-approval-header-centered > span { font-size: 2.9cqh; }
+.camp-approval-header-centered > strong { font-size: 7.6cqh; }
+.camp-approval-header-centered > p { font-size: 2.5cqh; max-width: 34cqw; }
+.camp-approval-header-centered .camp-approval-example {
+  margin-top: 2cqh; padding: 1.6cqh 2cqw; border-width: 0.3cqh;
+}
+.camp-approval-header-centered .camp-approval-example > span:first-child { font-size: 1.9cqh; }
+.camp-approval-header-centered .camp-approval-example > strong { font-size: 2.8cqh; }
+.camp-approval-header-centered .camp-approval-example-result { font-size: 2.8cqh; }
 .camp-approval-header > span { color: var(--native-blue); font-size: 1.9cqh; font-weight: 800; letter-spacing: 0.06em; }
 .camp-approval-header > strong { font-size: 3.4cqh; }
 .camp-approval-header sub { font-size: 0.55em; }
@@ -421,6 +435,16 @@
 .camp-side-coral-wrap .camp-approval-header > span { font-size: 2.3cqh; }
 .camp-side-coral-wrap .camp-approval-header > strong { font-size: 4.6cqh; }
 .camp-side-coral-wrap .camp-approval-header > p { font-size: 1.8cqh; }
+.camp-approval-example {
+  display: grid; justify-items: center; gap: 0.5cqh; margin-top: 1.2cqh;
+  padding: 1.1cqh 1.4cqw; border: 0.22cqh solid var(--native-coral); border-radius: 1.2cqh;
+}
+.camp-approval-example > span:first-child { color: var(--native-muted); font-size: 1.3cqh; font-weight: 800; letter-spacing: 0.05em; }
+.camp-approval-example > strong { font-size: 1.9cqh; }
+.camp-approval-example-a { color: var(--native-blue); }
+.camp-approval-example-b { color: var(--native-coral); }
+.camp-approval-example-result { color: var(--native-ink); font-size: 1.9cqh; font-weight: 800; }
+.camp-approval-example-flag { color: var(--native-coral); }
 .camp-example-center { display: grid; min-width: 0; gap: 1.8cqh; }
 .camp-example-post { width: 100%; padding: 2cqh 1.6cqw; }
 .camp-example-post .post-media-grid-single { display: flex; justify-content: center; }
@@ -450,13 +474,13 @@
    real note that shipped), each paired tightly with its own math result.
    The geometric-mean formula moves out of this grid entirely, into the
    dead space top-right of the canvas (see .soft-veto-explainer). */
-.soft-veto-layout { position: absolute; inset: 3% 3%; display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: center; gap: 0 3.6cqw; }
+.soft-veto-layout { position: absolute; inset: 2.5% 2%; display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: center; gap: 0 3cqw; }
 .soft-veto-explainer {
-  position: absolute; top: -10.5cqh; left: 50%; transform: translateX(-50%); z-index: 2;
+  position: absolute; top: -11.5cqh; left: 50%; transform: translateX(-50%); z-index: 2;
   display: grid; justify-items: center; text-align: center; gap: 0.6cqh;
 }
-.soft-veto-explainer > span { color: var(--native-blue); font-size: 2.1cqh; font-weight: 800; letter-spacing: 0.06em; }
-.soft-veto-explainer > strong { font-size: 4.4cqh; white-space: nowrap; }
+.soft-veto-explainer > span { color: var(--native-blue); font-size: 2.5cqh; font-weight: 800; letter-spacing: 0.06em; }
+.soft-veto-explainer > strong { font-size: 5.2cqh; white-space: nowrap; }
 .soft-veto-explainer sub { font-size: 0.55em; }
 .soft-veto-tweet-shell { width: 100%; }
 .soft-veto-post { width: 100%; padding: 1.8cqh 1.5cqw; border: 1px solid #e2e5e8; border-radius: 2cqh; background: #fff; box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
@@ -469,23 +493,23 @@
 .soft-veto-post .post-meta { font-size: 1.15cqh; }
 .soft-veto-post .post-action, .soft-veto-post .post-action-icon { font-size: 1.3cqh; }
 .soft-veto-post .post-action svg, .soft-veto-post .post-action-icon svg { width: 1.5cqh; height: 1.5cqh; }
-.soft-veto-notes-column { position: relative; display: grid; gap: 2.8cqh; align-content: center; }
-.soft-veto-note-pair { display: grid; gap: 1cqh; }
-.veto-note { display: grid; align-content: center; gap: 0.8cqh; padding: 1.4cqh 1.5cqw; border: 1px solid #e2e5e8; border-radius: 1.6cqh; background: #f7f8f9; }
+.soft-veto-notes-column { position: relative; display: grid; gap: 3.2cqh; align-content: center; }
+.soft-veto-note-pair { display: grid; gap: 1.2cqh; }
+.veto-note { display: grid; align-content: center; gap: 1cqh; padding: 1.7cqh 1.9cqw; border: 1px solid #e2e5e8; border-radius: 1.6cqh; background: #f7f8f9; }
 .veto-note-pass { box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
 .veto-note .post-note-head { color: var(--native-ink); }
-.veto-note .post-note-head strong { font-size: 1.8cqh; }
-.veto-note-letter { margin-left: auto; color: currentcolor; font-size: 1.6cqh; font-weight: 800; }
+.veto-note .post-note-head strong { font-size: 2.15cqh; }
+.veto-note-letter { margin-left: auto; color: currentcolor; font-size: 1.9cqh; font-weight: 800; }
 .veto-note-fail .veto-note-letter { color: var(--native-coral); }
 .veto-note-pass .veto-note-letter { color: var(--native-green); }
-.veto-note p { margin: 0; color: var(--native-ink); font-size: 1.9cqh; line-height: 1.3; }
-.veto-result { display: grid; align-content: center; gap: 1cqh; padding: 1.4cqh 1.8cqw; border: 0.3cqh solid currentcolor; border-radius: 1.6cqh; background: #fff; }
-.veto-result > span { display: block; text-align: center; font-size: 1.55cqh; font-weight: 800; letter-spacing: 0.04em; }
-.veto-result-columns { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 1.2cqw; }
-.veto-result-col { display: grid; justify-items: center; gap: 0.4cqh; text-align: center; }
-.veto-result-col strong { color: var(--native-ink); font-size: 2.2cqh; white-space: nowrap; }
-.veto-result-col b { font-size: 1.55cqh; }
-.veto-result-alt { padding-left: 1.2cqw; border-left: 0.2cqh solid var(--native-line); color: var(--native-muted); }
+.veto-note p { margin: 0; color: var(--native-ink); font-size: 2.3cqh; line-height: 1.3; }
+.veto-result { display: grid; align-content: center; gap: 1.2cqh; padding: 1.7cqh 2.1cqw; border: 0.3cqh solid currentcolor; border-radius: 1.6cqh; background: #fff; }
+.veto-result > span { display: block; text-align: center; font-size: 1.85cqh; font-weight: 800; letter-spacing: 0.04em; }
+.veto-result-columns { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 1.4cqw; }
+.veto-result-col { display: grid; justify-items: center; gap: 0.5cqh; text-align: center; }
+.veto-result-col strong { color: var(--native-ink); font-size: 2.65cqh; white-space: nowrap; }
+.veto-result-col b { font-size: 1.85cqh; }
+.veto-result-alt { padding-left: 1.4cqw; border-left: 0.2cqh solid var(--native-line); color: var(--native-muted); }
 .veto-result-alt b { color: var(--native-muted); font-weight: 700; }
 .veto-note-fail, .veto-result-fail { color: var(--native-coral); }
 .veto-note-pass, .veto-result-pass { color: var(--native-green); }
