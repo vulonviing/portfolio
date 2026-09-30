@@ -371,10 +371,12 @@
 .cca-commitment-equal span { color: var(--native-blue); }
 
 /* 10 · clustering */
-.clustering-flow { position: absolute; top: 17%; left: 4%; display: grid; width: 92%; grid-template-columns: 15cqw 4.5cqw 22cqw 4.5cqw minmax(0, 1fr); align-items: center; gap: 1.3cqw; }
-.clustering-flow > section { display: grid; height: 37cqh; grid-template-rows: auto 1fr; align-items: center; justify-items: center; gap: 2.2cqh; padding: 2.4cqh 1cqw; }
-.clustering-flow .flow-arrow { color: var(--native-ink); }
-.clustering-flow section > strong { color: var(--native-muted); font-size: 1.7cqh; }
+.clustering-flow { position: absolute; top: 13%; left: 2%; display: grid; width: 96%; grid-template-columns: 23cqw 4cqw 27cqw 4cqw minmax(0, 1fr); align-items: start; gap: 1.2cqw; }
+.clustering-flow > section { display: grid; height: 42cqh; grid-template-rows: auto 1fr; align-items: center; justify-items: center; gap: 2cqh; padding: 2.4cqh 1cqw; }
+.clustering-flow .flow-arrow { margin-top: 12cqh; color: var(--native-ink); }
+.clustering-label { display: grid; justify-items: center; gap: 1cqh; text-align: center; }
+.clustering-label > strong { color: var(--native-muted); font-size: 2.5cqh; letter-spacing: 0.04em; }
+.clustering-label > p { margin: 0; max-width: 26cqw; color: var(--native-muted); font-size: 2cqh; line-height: 1.35; font-weight: 600; }
 .ratings-matrix { display: grid; grid-template-columns: repeat(6, 3.4cqh); gap: 0.55cqh; }
 .ratings-matrix span { display: grid; width: 3.4cqh; height: 3.4cqh; place-items: center; border: 0.18cqh solid #c6cdd4; border-radius: 0.5cqh; color: transparent; font-size: 2.3cqh; font-weight: 800; line-height: 1; }
 .ratings-matrix .rating-yes { color: #0756c9; border-color: #7aaff2; background: #cfe3ff; }
@@ -386,13 +388,13 @@
 .cluster-result { position: relative; }
 .cluster-dots { display: flex; max-width: 100%; align-items: flex-end; justify-content: center; gap: 4.5cqw; }
 .cluster-dot-group { display: grid; justify-items: center; gap: 1.6cqh; }
-.cluster-dot-group b { font-size: 2.3cqh; font-weight: 800; }
+.cluster-dot-group b { font-size: 3.1cqh; font-weight: 800; }
 .cluster-dot-group:first-child b { color: var(--native-blue); }
 .cluster-dot-group:last-child b { color: var(--native-coral); }
 .cluster-dot-group .dot-grid { gap: 2cqh 1.3cqw; }
 .cluster-dot-group .dot-grid span { width: 2.2cqh; height: 2.2cqh; }
-.metrics-strip { position: absolute; bottom: 12%; left: 20%; display: grid; width: 60%; grid-template-columns: repeat(2, 1fr); padding: 3.8cqh 2.5cqw; text-align: center; font-size: 2.55cqh; }
-.behavior-note { position: absolute; bottom: 4%; left: 0; width: 100%; color: var(--native-muted); text-align: center; font-size: 2cqh; }
+.metrics-strip { position: absolute; bottom: 12%; left: 20%; display: grid; width: 60%; grid-template-columns: repeat(2, 1fr); padding: 3.8cqh 2.5cqw; text-align: center; font-size: 3.3cqh; }
+.behavior-note { position: absolute; bottom: 4%; left: 0; width: 100%; color: var(--native-muted); text-align: center; font-size: 2.6cqh; }
 
 /* 11 · topic signatures */
 .topic-evidence-layout { position: absolute; inset: 1% 2% 5%; display: grid; }
@@ -483,16 +485,18 @@
 .soft-veto-explainer > strong { font-size: 5.2cqh; white-space: nowrap; }
 .soft-veto-explainer sub { font-size: 0.55em; }
 .soft-veto-tweet-shell { width: 100%; }
-.soft-veto-post { width: 100%; padding: 1.8cqh 1.5cqw; border: 1px solid #e2e5e8; border-radius: 2cqh; background: #fff; box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
-.soft-veto-post .post-avatar { width: 3.6cqh; height: 3.6cqh; }
-.soft-veto-post .post-identity strong { font-size: 1.6cqh; }
-.soft-veto-post .post-identity > span, .soft-veto-post .post-time { font-size: 1.3cqh; }
-.soft-veto-post .post-text { margin: 1cqh 0; font-size: 1.9cqh; line-height: 1.25; }
+.soft-veto-post { width: 100%; padding: 3.4cqh 2.8cqw; border: 1px solid #e2e5e8; border-radius: 2cqh; background: #fff; box-shadow: 0 1.8cqh 4.5cqh rgba(26, 31, 40, 0.12); }
+.soft-veto-post .post-avatar { width: 5.6cqh; height: 5.6cqh; }
+.soft-veto-post .post-identity strong { font-size: 2.4cqh; white-space: nowrap; }
+.soft-veto-post .post-identity > span, .soft-veto-post .post-time { font-size: 2cqh; }
+.soft-veto-post .post-text { margin: 2.2cqh 0; font-size: 3.6cqh; line-height: 1.28; }
 .soft-veto-post .post-media-grid-single { display: flex; justify-content: center; }
 .soft-veto-post .post-media-grid-single .post-media { width: auto; max-width: 100%; max-height: 56cqh; }
-.soft-veto-post .post-meta { font-size: 1.15cqh; }
-.soft-veto-post .post-action, .soft-veto-post .post-action-icon { font-size: 1.3cqh; }
-.soft-veto-post .post-action svg, .soft-veto-post .post-action-icon svg { width: 1.5cqh; height: 1.5cqh; }
+.soft-veto-post .post-meta { font-size: 2.1cqh; }
+.soft-veto-post .post-action, .soft-veto-post .post-action-icon { font-size: 2cqh; }
+.soft-veto-post .post-action svg, .soft-veto-post .post-action-icon svg { width: 2.2cqh; height: 2.2cqh; }
+.soft-veto-post .post-actions-group { gap: 3cqw; }
+.soft-veto-post .post-actions-extra { gap: 0.8cqw; }
 .soft-veto-notes-column { position: relative; display: grid; gap: 3.2cqh; align-content: center; }
 .soft-veto-note-pair { display: grid; gap: 1.2cqh; }
 .veto-note { display: grid; align-content: center; gap: 1cqh; padding: 1.7cqh 1.9cqw; border: 1px solid #e2e5e8; border-radius: 1.6cqh; background: #f7f8f9; }
@@ -506,6 +510,7 @@
 .veto-result { display: grid; align-content: center; gap: 1.2cqh; padding: 1.7cqh 2.1cqw; border: 0.3cqh solid currentcolor; border-radius: 1.6cqh; background: #fff; }
 .veto-result > span { display: block; text-align: center; font-size: 1.85cqh; font-weight: 800; letter-spacing: 0.04em; }
 .veto-result-columns { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 1.4cqw; }
+.veto-result-columns-single { grid-template-columns: 1fr; }
 .veto-result-col { display: grid; justify-items: center; gap: 0.5cqh; text-align: center; }
 .veto-result-col strong { color: var(--native-ink); font-size: 2.65cqh; white-space: nowrap; }
 .veto-result-col b { font-size: 1.85cqh; }

@@ -420,19 +420,25 @@ function ConstituenciesSlide({ number, step = 0 }) {
   return (
     <SlideFrame number={number} eyebrow="OUR APPROACH" title="We recover constituencies from voting behavior.">
       <div className="clustering-flow">
-        <section><strong>RATINGS</strong><RatingsMatrix /></section>
+        <section>
+          <div className="clustering-label"><strong>RATINGS</strong><p>Every rater’s approve/reject on every note — 100,000 notes × 200,000 raters</p></div>
+          <RatingsMatrix />
+        </section>
         <FlowArrow className={`native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`} />
-        <section className={`native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}><strong>CO-RATING GRAPH</strong><CoRatingGraph /></section>
+        <section className={`native-reveal ${step >= 1 ? 'native-reveal-visible' : ''}`}>
+          <div className="clustering-label"><strong>CO-RATING GRAPH</strong><p>An edge links two raters who tend to approve the same notes</p></div>
+          <CoRatingGraph />
+        </section>
         <FlowArrow className={`native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`} />
         <section className={`cluster-result native-reveal ${step >= 2 ? 'native-reveal-visible' : ''}`}>
-          <strong>SPECTRAL CLUSTERING</strong>
+          <div className="clustering-label"><strong>SPECTRAL CLUSTERING</strong><p>k = 2, then outliers reassigned to the cluster they fit best</p></div>
           <div className="cluster-dots">
             <div className="cluster-dot-group"><b>107,734 raters</b><DotGrid tone="blue" count={16} columns={4} /></div>
             <div className="cluster-dot-group"><b>92,266 raters</b><DotGrid tone="coral" count={16} columns={4} /></div>
           </div>
         </section>
       </div>
-      <Reveal show={step >= 2} className="metrics-strip"><strong>100,000 notes</strong><strong>200,000 raters</strong></Reveal>
+      <div className="metrics-strip"><strong>100,000 notes</strong><strong>200,000 raters</strong></div>
       <Reveal show={step >= 2} className="behavior-note"><strong>Behavior—not demographics or declared ideology.</strong></Reveal>
     </SlideFrame>
   );
@@ -526,7 +532,7 @@ function SoftVetoSlide({ number, step }) {
     <SlideFrame number={number} eyebrow="CCA" title="Enthusiasm cannot buy consent.">
       <div className="soft-veto-layout">
         <div className="soft-veto-tweet-shell">
-          <PostCard post={softVetoExample.post} className="soft-veto-post" />
+          <PostCard post={softVetoExample.post} className="soft-veto-post" hideMedia />
         </div>
         <div className="soft-veto-notes-column">
           <div className="soft-veto-explainer">
@@ -534,34 +540,33 @@ function SoftVetoSlide({ number, step }) {
             <strong>C<sub>i</sub> = √(p<sub>A</sub> × p<sub>B</sub>)</strong>
           </div>
           <div className="soft-veto-note-pair">
-            <CandidateCommunityNote candidate={oneSidedNote} show={step >= 1} tone="fail" />
-            <Reveal show={step >= 1} className="veto-result veto-result-fail">
+            <CandidateCommunityNote candidate={oneSidedNote} show={step >= 2} tone="fail" />
+            <Reveal show={step >= 2} className="veto-result veto-result-fail">
               <span>IF APPROVAL IS ONE-SIDED</span>
               <div className="veto-result-columns">
-                <div className="veto-result-col"><strong>√(84% × 27%) ≈ 0.48</strong><b>FAIL · below 0.5</b></div>
+                <Reveal show={step >= 3} className="veto-result-col"><strong>√(84% × 27%) ≈ 0.48</strong><b>FAIL · below 0.5</b></Reveal>
                 <div className="veto-result-col veto-result-alt"><strong>(84% + 27%) / 2 = 0.56</strong><b>plain average pass</b></div>
               </div>
             </Reveal>
           </div>
           <div className="soft-veto-note-pair">
-            <CandidateCommunityNote candidate={balancedNote} show={step >= 2} tone="pass" />
-            <Reveal show={step >= 2} className="veto-result veto-result-pass">
+            <CandidateCommunityNote candidate={balancedNote} show={step >= 4} tone="pass" />
+            <Reveal show={step >= 4} className="veto-result veto-result-pass">
               <span>THE NOTE THAT ACTUALLY SHIPPED</span>
-              <div className="veto-result-columns">
+              <div className="veto-result-columns veto-result-columns-single">
                 <div className="veto-result-col"><strong>√(62% × 58%) ≈ 0.60</strong><b>PASS · above 0.5</b></div>
-                <div className="veto-result-col veto-result-alt"><strong>(62% + 58%) / 2 = 0.60</strong><b>plain average agrees here</b></div>
               </div>
             </Reveal>
           </div>
         </div>
-        {step >= 3 && (
+        {step === 1 && (
           <PostCard
             post={oxfordPost}
             note={oxfordActualNote}
             className="soft-veto-card-overlay soft-veto-card-afd native-reveal native-reveal-visible"
           />
         )}
-        {step >= 4 && (
+        {step === 1 && (
           <PostCard
             post={khameneiPost}
             note="Allah didn’t protect him."
@@ -569,6 +574,20 @@ function SoftVetoSlide({ number, step }) {
           />
         )}
         {step >= 5 && (
+          <PostCard
+            post={oxfordPost}
+            note={oxfordActualNote}
+            className="soft-veto-card-overlay soft-veto-card-afd native-reveal native-reveal-visible"
+          />
+        )}
+        {step >= 6 && (
+          <PostCard
+            post={khameneiPost}
+            note="Allah didn’t protect him."
+            className="soft-veto-card-overlay soft-veto-card-khamenei native-reveal native-reveal-visible"
+          />
+        )}
+        {step >= 7 && (
           <div className="soft-veto-blur-overlay native-reveal native-reveal-visible">
             <div className="soft-veto-blur-slogan">
               <span>IT DOESN’T MATTER WHOSE SIDE IT’S ON</span>
@@ -723,12 +742,12 @@ function ClosingSlide({ number }) {
       <span className="closing-number">{String(number).padStart(2, '0')}</span>
       <div className="closing-content">
         <span>Cross-Constituency Aggregation for Community Notes</span>
-        <h1>Any questions?</h1>
+        <h1>Thank you.</h1>
         <p>Emrecan Ulu · Jingyao Shi</p>
         <div className="closing-contact">
           <div className="closing-emails">
             <span>Emrecan · <a href="mailto:emrecanulu@outlook.com">emrecanulu@outlook.com</a></span>
-            <span>Jingyao · xxxx@xxx.com</span>
+            <span>Jingyao · <a href="mailto:jingyao.shih@outlook.com">jingyao.shih@outlook.com</a></span>
           </div>
           <a href="https://github.com/vulonviing/cross-constituency-aggregation-community-notes" target="_blank" rel="noopener noreferrer">
             github.com/vulonviing/cross-constituency-aggregation-community-notes
