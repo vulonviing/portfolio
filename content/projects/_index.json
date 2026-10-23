@@ -1,5 +1,18 @@
 [
   {
+    "slug": "agents-desk",
+    "title": "Agents Desk",
+    "date": "2026",
+    "excerpt": "A local pixel-art office where every project folder is a desk with one read-only Claude Code or Codex coordinator — resumable CLI chats, a bounded-evidence news desk, and ambient colleagues, all running on your own machine.",
+    "tags": ["JavaScript", "Node.js", "Canvas", "MCP", "Claude Code", "Codex"],
+    "repo": "https://github.com/vulonviing/agents-desk",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
+  },
+  {
     "slug": "ccu-jupyter-client",
     "title": "CCU Terminal Client",
     "date": "2026",

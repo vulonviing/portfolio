@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>Agents Desk — Emrecan Ulu</title>
+  <meta name="description" content="A local pixel-art office where every project folder is a desk with one read-only Claude Code or Codex coordinator — resumable CLI chats, a bounded-evidence news desk, and ambient colleagues, all running on your own machine." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="Agents Desk, projects by Emrecan Ulu, JavaScript, Node.js, Canvas, MCP, Claude Code, Codex" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/projects/agents-desk.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="Agents Desk — Emrecan Ulu" />
+  <meta property="og:description" content="A local pixel-art office where every project folder is a desk with one read-only Claude Code or Codex coordinator — resumable CLI chats, a bounded-evidence news desk, and ambient colleagues, all running on your own machine." />
+  <meta property="og:url" content="https://emrecanulu.com/projects/agents-desk.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Agents Desk — Emrecan Ulu" />
+  <meta name="twitter:description" content="A local pixel-art office where every project folder is a desk with one read-only Claude Code or Codex coordinator — resumable CLI chats, a bounded-evidence news desk, and ambient colleagues, all running on your own machine." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Agents Desk",
+  "description": "A local pixel-art office where every project folder is a desk with one read-only Claude Code or Codex coordinator — resumable CLI chats, a bounded-evidence news desk, and ambient colleagues, all running on your own machine.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/projects/agents-desk.html",
+  "url": "https://emrecanulu.com/projects/agents-desk.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "JavaScript",
+    "Node.js",
+    "Canvas",
+    "MCP",
+    "Claude Code",
+    "Codex"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="projects">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+            <li><a href="/resonance.html" rel="nofollow" data-nav="resonance">Resonance</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/projects.html">Projects</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/agents-desk" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Projects · 2026</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>Agents Desk</h1>
+<p>One wide pixel-art open office where every desk is a project folder from <code>~/Documents</code>. Each desk has one permanent coordinator. Click a desk (or its character) and you chat with a real, <strong>read-only</strong> Claude or Codex CLI session running inside that project. When nobody is working, the colleagues live their own lives: they visit each other, gaze out of the window, make coffee, gather around the fireplace at night and pet the office cat.</p>
+<table><thead><tr><th>Day: sun shafts, weather board, LED news</th><th>Night: moonlight, fireplace, colleagues' break</th></tr></thead><tbody><tr><td><img src="https://raw.githubusercontent.com/vulonviing/agents-desk/main/docs/img/office-day.png" alt="Office by day" loading="lazy" /></td><td><img src="https://raw.githubusercontent.com/vulonviing/agents-desk/main/docs/img/office-night.png" alt="Office by night" loading="lazy" /></td></tr></tbody></table>
+<p>The UI is bilingual (TR | EN, switch on the cork board). Code, comments and docs are English.</p>
+<h2>Purpose</h2>
+<p>Agents Desk turns a folder of projects into a place you can look at. It is an ambient dashboard and a chat front end in one:</p>
+<ul><li><strong>See</strong> which projects have an active CLI, what the news desk is preparing and how much quota is left.</li><li><strong>Ask</strong> a project's coordinator about its code, read-only, through the same resumable CLI session you</li></ul>
+<p>would use in a terminal.</p>
+<ul><li><strong>Keep company</strong>: the office stays alive, with dialogue written by Gemini Flash from pooled lines, never</li></ul>
+<p>one model call per spoken line.</p>
+<h2>Functions</h2>
+<ul><li><strong>Coordinator chats.</strong> One session per coordinator until you press "Yeni konuşma". Every message resumes</li></ul>
+<p>it; switching CLI switches the thread without resetting one. "Resume kopyala" copies <code>cd '&lt;project&gt;' &amp;&amp; claude --resume &lt;id&gt;</code> (or <code>codex resume &lt;id&gt;</code>) for your own terminal. Chats run in the project folder with read tools only (Claude <code>-p --restricted</code>, Codex <code>--sandbox read-only</code>). There is no embedded terminal and no write capability.</p>
+<ul><li><strong>Hourly news desk (Bora).</strong> Each edition has exactly 15 events: 2 German politics, 2 Turkish politics and</li></ul>
+<p>11 AI/technology. Flash writes bilingual headlines; public article evidence is read through the Desk-owned briefing MCP (bounded, memory-only). The wall LED rotates headlines every 12 seconds. "Ask Bora" opens the same chat with the selected article. Likes mark an event consumed for later editions.</p>
+<ul><li><strong>Application Studio (Deniz) and CV Clinic (Ece).</strong> Deniz mirrors the external CV repository read-only</li></ul>
+<p>(collector → search, evaluation → evaluate, documents → prepare). The floor display shows a job table, a Germany map of pending CVs or submitted applications, and CLI usage. Geography is local; no application data goes to geocoding services or models.</p>
+<ul><li><strong>Cork board.</strong> The control surface: CLI in use (red pin), TR/EN, location (rounded locally to 0.1°) with</li></ul>
+<p>weather, board refresh and usage taps. Physical controls are operated by Leya with 75% probability when she is eligible, otherwise by a free colleague.</p>
+<ul><li><strong>Usage.</strong> Normalized Claude/Codex/Antigravity quota read read-only from the Agents Deck history store.</li><li><strong>Session continuity.</strong> A page refresh resumes the office moment for moment (scene snapshot every 300 ms in</li></ul>
+<p><code>localStorage</code>, chat session ids in <code>data/chat-sessions.json</code>, never message text).</p>
+<ul><li><strong>External monitor companion.</strong> A native macOS window (<code>app/monitor/Monitor.swift</code>) shows the same office on</li></ul>
+<p>a selected external display only, never activating or stealing focus.</p>
+<h2>Animation tree</h2>
+<pre><code class="language-text">Office
+├── Day / night (window clock, override with window.OFFICE_HOUR)
+│   ├── 08–17  full daylight, sun shafts through the windows
+│   ├── 17–21  dusk, shafts fade out
+│   └── 21–05  night: moonlight shafts, fireplace light, hearth gathering
+├── Coordinators (Deniz, Ece, Bora)
+│   ├── At desk: typing, replying, application / news preparation scenes
+│   ├── Ambient life (only while nothing is working; a pinned chat never joins)
+│   │   ├── Visit another desk (up to four dialogue turns)
+│   │   ├── Window gazing
+│   │   ├── Coffee and water cooler
+│   │   │   └── Kitchen lifecycle: cup fills → carried by hand → sits on desk 2–4 min with sips
+│   │   │       → returned to the dirty counter → at 8 dishes a free sim opens the tap, scrubs, rinses, dries
+│   │   ├── Comment on the LED news
+│   │   └── Breaks (first after 3–7 min, 2–3 min long, then 12–20 min apart)
+│   │       ├── Day: routed seating, seated stretches, small talk, Leya interactions
+│   │       └── Night hearth (darkness ≥ 0.45, all coordinators idle): three chairs, fireplace dialogue
+│   ├── Physical controls: walk to a pad, jump on it, tap a board card
+│   └── News delivery: Bora takes the disk from his desk and inserts it below the LED
+├── Leya the cat
+│   ├── Long naps, grooming, kneading, stretching, play
+│   ├── Visits: rubs against a free colleague, receives gentle petting (hearts, purr)
+│   ├── Environment trips: window watching and meowing, counter jump / walk / descent, floor-LED corner nap
+│   ├── Hearth: walks to her cushion, kneads, naps by the fire
+│   └── Controls: floor-display ON/OFF pads, board paw taps (never during an open or working chat)
+├── Monitor screens (idle desks, randomized, last three excluded)
+│   ├── Excel · X/Instagram/Facebook · WhatsApp · Chrome
+│   ├── VS Code · Claude · Codex · Copilot · Antigravity
+│   ├── Football · basketball · tennis
+│   └── Real activity always wins: active CLI screen, News Desk preparation progress
+├── Wall LED: headline + summary pager, 12 s rotation
+├── Floor LED: job table / Germany map / usage, fiber pulses, green connector lamps, ON/OFF pads
+└── Cork board: weather card, CLI pin flight, tap glow on refresh and usage</code></pre>
+<p>Full, code-derived inventory (files, timings, state machines, how to add one): <a href="https://github.com/vulonviing/agents-desk/blob/main/docs/animations.md"><code>docs/animations.md</code></a>.</p>
+<h2>Run</h2>
+<pre><code class="language-sh">node server/server.js          # or: nohup node server/server.js &amp;  (keeps the office alive)
+open http://127.0.0.1:4317</code></pre>
+<ul><li>Node ≥ 22, no npm dependencies, no build step for the front end (<code>office/public/</code>).</li><li>Desks are listed in <code>desk.config.json</code>; each needs a project folder and a coordinator name.</li><li><code>npm test</code> runs the server and logic tests (<code>node:test</code>).</li><li>External monitor (macOS): <code>npm run monitor:build</code> once, then <code>npm run monitor</code>.</li></ul>
+<h2>Layout</h2>
+<table><thead><tr><th>Path</th><th>Contents</th></tr></thead><tbody><tr><td><code>server/</code></td><td>HTTP + SSE, chat/CLI sessions, dialogue pools, news desk, briefing MCP, application board, usage</td></tr><tr><td><code>office/public/js/</code></td><td>Canvas office: <code>office.js</code> (render, camera), <code>life.js</code> (ambient director), <code>leya.js</code>, <code>kitchen-life.js</code>, <code>fireplace-life.js</code>, <code>screens.js</code>, <code>layout.js</code>, <code>nav.js</code>, <code>news.js</code>, <code>application-*.js</code>, <code>chat.js</code>, <code>i18n.js</code></td></tr><tr><td><code>app/monitor/</code></td><td>macOS external-monitor companion (Swift)</td></tr><tr><td><code>test/</code></td><td><code>node:test</code> suites</td></tr><tr><td><code>data/</code></td><td>Runtime state (git-ignored)</td></tr><tr><td><code>docs/</code></td><td><code>animations.md</code> (animation inventory), <code>img/</code> (screenshots)</td></tr><tr><td><code>AGENTS.md</code></td><td>Binding rules for agents working in this repo</td></tr></tbody></table>
+<h2>Safety</h2>
+<p>Everything runs from this repository. Other project folders are read-only inputs; chats never get write, network or MCP access beyond the Desk-owned briefing MCP; secret files are never opened. Transcripts, prompts and credentials are never persisted. See <code>AGENTS.md</code> for the full list.</p>
+<h2>License</h2>
+<p>Copyright (c) 2026 vulonviing. Released under the <a href="https://github.com/vulonviing/agents-desk/blob/main/LICENSE">PolyForm Noncommercial License 1.0.0</a>: free to use, study, modify and share for any non-commercial purpose; commercial use is not permitted. The license covers this repository's own code only; the third-party material below keeps its own terms.</p>
+<h2>Credits</h2>
+<ul><li>The scene, sprites and LED panel are adapted from the studio office of <code>muratceme/minik-ajanlar</code>.</li><li>Germany boundaries: <a href="https://www.naturalearthdata.com/">Natural Earth</a> (public domain).</li><li>City coordinates: <a href="https://www.geonames.org/">GeoNames</a> (CC BY 4.0).</li><li>Weather: <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0, free non-commercial API); city names via BigDataCloud's free client-side reverse geocoding.</li><li>Fonts: Pixelify Sans and Geist (SIL Open Font License 1.1, loaded from Google Fonts); the single digit-five glyph is an original drawing.</li><li>News headlines are fetched at runtime from public feeds and are not redistributed in this repository.</li></ul>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>
