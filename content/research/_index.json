@@ -76,18 +76,5 @@
       "branch": "main",
       "path": "README.md"
     }
-  },
-  {
-    "slug": "community-notes-x-rescue",
-    "title": "Community Notes X Rescue",
-    "date": "2025",
-    "excerpt": "Full analytical workflow for a paper on rescuing Community Notes stuck in 'Needs More Ratings' through clustering, rescue simulation, topic modeling, and LLM validation.",
-    "tags": ["Community Notes", "Clustering", "Topic Modeling", "LLM"],
-    "repo": "https://github.com/vulonviing/community-notes-x-rescue",
-    "content_source": {
-      "type": "github_readme",
-      "branch": "main",
-      "path": "README.md"
-    }
   }
 ]
