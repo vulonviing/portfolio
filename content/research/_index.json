@@ -76,5 +76,18 @@
       "branch": "main",
       "path": "README.md"
     }
+  },
+  {
+    "slug": "aqa-label-efficient-learning",
+    "title": "Non-Supervised Learning in Action Quality Assessment",
+    "date": "July 2025",
+    "excerpt": "A seminar paper (AG Keim, University of Konstanz) organizing how Action Quality Assessment is moving from fully supervised score regression towards label-efficient learning, with a benchmark comparison compiled from the original papers.",
+    "tags": ["Action Quality Assessment", "Label-Efficient Learning", "Survey", "Computer Vision"],
+    "repo": "https://github.com/vulonviing/aqa-nonsupervised-learning-seminar",
+    "content_source": {
+      "type": "github_readme",
+      "branch": "main",
+      "path": "README.md"
+    }
   }
 ]

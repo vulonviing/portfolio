@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="shortcut icon" href="/assets/img/favicon.svg" />
+
+  <title>Non-Supervised Learning in Action Quality Assessment — Emrecan Ulu</title>
+  <meta name="description" content="A seminar paper (AG Keim, University of Konstanz) organizing how Action Quality Assessment is moving from fully supervised score regression towards label-efficient learning, with a benchmark comparison compiled from the original papers." />
+  <meta name="author" content="Emrecan Ulu" />
+  <meta name="keywords" content="Non-Supervised Learning in Action Quality Assessment, research by Emrecan Ulu, Action Quality Assessment, Label-Efficient Learning, Survey, Computer Vision" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://emrecanulu.com/research/aqa-label-efficient-learning.html" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Emrecan Ulu" />
+  <meta property="og:title" content="Non-Supervised Learning in Action Quality Assessment — Emrecan Ulu" />
+  <meta property="og:description" content="A seminar paper (AG Keim, University of Konstanz) organizing how Action Quality Assessment is moving from fully supervised score regression towards label-efficient learning, with a benchmark comparison compiled from the original papers." />
+  <meta property="og:url" content="https://emrecanulu.com/research/aqa-label-efficient-learning.html" />
+  <meta property="og:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Emrecan Ulu portfolio cover" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Non-Supervised Learning in Action Quality Assessment — Emrecan Ulu" />
+  <meta name="twitter:description" content="A seminar paper (AG Keim, University of Konstanz) organizing how Action Quality Assessment is moving from fully supervised score regression towards label-efficient learning, with a benchmark comparison compiled from the original papers." />
+  <meta name="twitter:image" content="https://emrecanulu.com/assets/img/og-cover.png" />
+  <meta name="twitter:image:alt" content="Emrecan Ulu portfolio cover" />
+
+<!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-LYY1V218NW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-LYY1V218NW');
+  </script>
+
+<script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem("theme-preference");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+          document.documentElement.style.colorScheme = savedTheme;
+        }
+      } catch (err) {
+        console.warn("Could not restore theme preference:", err);
+      }
+    })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  "headline": "Non-Supervised Learning in Action Quality Assessment",
+  "description": "A seminar paper (AG Keim, University of Konstanz) organizing how Action Quality Assessment is moving from fully supervised score regression towards label-efficient learning, with a benchmark comparison compiled from the original papers.",
+  "author": {
+    "@type": "Person",
+    "name": "Emrecan Ulu",
+    "url": "https://emrecanulu.com/"
+  },
+  "mainEntityOfPage": "https://emrecanulu.com/research/aqa-label-efficient-learning.html",
+  "url": "https://emrecanulu.com/research/aqa-label-efficient-learning.html",
+  "image": "https://emrecanulu.com/assets/img/og-cover.png",
+  "keywords": [
+    "Action Quality Assessment",
+    "Label-Efficient Learning",
+    "Survey",
+    "Computer Vision"
+  ],
+  "publisher": {
+    "@type": "Person",
+    "name": "Emrecan Ulu"
+  }
+}
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+</head>
+<body data-page="research">
+<header class="site-header">
+    <div class="container site-header__inner">
+      <a href="/" class="site-header__brand">Emrecan Ulu</a>
+      <div class="site-header__actions">
+        <nav class="site-nav" aria-label="Primary">
+          <ul>
+            <li><a href="/" data-nav="home">Home</a></li>
+            <li><a href="/about.html" data-nav="about">About</a></li>
+            <li><a href="/projects.html" data-nav="projects">Projects</a></li>
+            <li><a href="/research.html" data-nav="research">Research</a></li>
+            <li><a href="/resonance.html" rel="nofollow" data-nav="resonance">Resonance</a></li>
+          </ul>
+        </nav>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="entry">
+      <div class="container">
+        <div class="entry__actions">
+          <a class="entry__back" href="/research.html">Research</a>
+          <a class="entry__repo" href="https://github.com/vulonviing/aqa-nonsupervised-learning-seminar" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </div>
+        <div class="entry__meta">Research · July 2025</div>
+      </div>
+    </section>
+
+    <section class="section--tight" style="padding-top: 24px;">
+      <div class="container">
+        <article class="prose">
+<h1>Non-Supervised Learning in Action Quality Assessment</h1>
+<p>Seminar paper for AG Keim (Data Analysis and Visualization, University of Konstanz), July 2025, by Emrecan Ulu. It is a structured literature overview of how Action Quality Assessment (AQA) is moving from fully supervised score regression towards label-efficient learning.</p>
+<p><strong>Read the paper:</strong> <a href="https://github.com/vulonviing/aqa-nonsupervised-learning-seminar/blob/main/paper/non-supervised-learning-in-aqa.pdf">paper/non-supervised-learning-in-aqa.pdf</a></p>
+<p>"Non-supervised" is used as an umbrella term for label-efficient methods (semi-, self- and weakly-supervised learning, contrastive regression, vision-language models).</p>
+<h2>What's inside</h2>
+<ul><li><strong>Taxonomy</strong> of AQA learning paradigms by the supervision they require</li><li><strong>Dataset overview</strong> (AQA-7, MTL-AQA, FineDiving, JIGSAWS, LOGO, ...)</li><li><strong>Method families:</strong> contrastive regression, teacher-reference-student, self-supervised pretext tasks, self-training with large models, CLIP-based approaches</li><li><strong>Benchmark comparison</strong> in Spearman's ρ, compiled from the numbers reported in the original papers (not re-run, so protocols and backbones may differ)</li><li><strong>Open challenges:</strong> long-form video, explainability and bias, uncertainty, neuro-symbolic hybrids, multi-modal AQA</li></ul>
+<h2>Layout</h2>
+<pre><code>paper/    the paper (PDF), including the full bibliography
+figures/  my own diagrams (Mermaid)</code></pre>
+<h2>Scope</h2>
+<ul><li>Overview of around 20 key papers</li><li>Benchmark numbers are taken from the original papers</li></ul>
+<h2>Credits</h2>
+<p>Figures 2-4 in the paper are reproduced from the cited works and belong to their respective authors. All other content is my own.</p>
+        </article>
+      </div>
+    </section>
+
+  </main>
+
+<footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div>&copy; <span data-year></span> Emrecan Ulu. Munich, Germany.</div>
+      <div>
+        <a href="mailto:emrecanulu@outlook.com">Email</a>
+        <a href="https://github.com/vulonviing" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/emrecan-ulu/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://medium.com/@emrecanulu" target="_blank" rel="noopener">Medium</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/assets/js/site.js"></script>
+</body>
+</html>
