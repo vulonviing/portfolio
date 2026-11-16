@@ -1482,3 +1482,26 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Archived vote: the live round is over, results are frozen */
+.poll-archive-note { color: #5f6670; font-size: 1.25cqh; font-weight: 700; }
+.connection-closed::before { background: #69717c; }
+.archive-intro { min-height: 0; padding: 28px 22px 4px; }
+.archive-poll { padding-top: 22px; padding-bottom: 8px; }
+.archive-poll + .archive-poll { border-top: 1px solid #dcdad4; margin-top: 18px; }
+.audience-candidates .archive-candidate { cursor: default; }
+.archive-result { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; margin: 2px 0 12px; }
+.archive-result-track { height: 10px; overflow: hidden; border-radius: 999px; background: #e8ebee; }
+.archive-result-fill { height: 100%; border-radius: inherit; background: #4f9cf9; }
+.archive-result strong { font-size: 14px; font-variant-numeric: tabular-nums; }
+.archive-candidate.candidate-reveal-actual .archive-result-fill { background: #22b88b; }
+.archive-candidate.candidate-reveal-false .archive-result-fill { background: #ff625d; }
+.archive-candidate.candidate-reveal-context .archive-result-fill { background: #e3a92f; }
+.archive-reveal { display: flex; flex-direction: column; gap: 3px; }
+.archive-reveal strong { font-size: 11px; letter-spacing: 0.055em; }
+.archive-reveal span { color: #69717c; font-size: 12.5px; line-height: 1.35; }
+.archive-candidate.candidate-reveal-actual .archive-reveal strong { color: #168366; }
+.archive-candidate.candidate-reveal-false .archive-reveal strong { color: #c4433f; }
+.archive-candidate.candidate-reveal-context .archive-reveal strong { color: #9c7012; }
+.archive-footer { width: min(680px, 100%); margin: 0 auto; padding: 8px 18px max(36px, env(safe-area-inset-bottom)); color: #686e76; font-size: 13px; line-height: 1.5; }
+.archive-footer a { color: #1d6fd6; }

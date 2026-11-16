@@ -26,7 +26,9 @@ function QrLightbox({ audienceUrl, onClose }) {
   );
 }
 
-export function VoteQr({ audienceUrl, large = false, compact = false, label = 'Scan once.' }) {
+export function VoteQr({
+  audienceUrl, large = false, compact = false, label = 'Scan once.', hint = 'Keep this page open.',
+}) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div className={`vote-qr ${large ? 'vote-qr-large' : ''} ${compact ? 'vote-qr-compact' : ''}`}>
@@ -34,13 +36,13 @@ export function VoteQr({ audienceUrl, large = false, compact = false, label = 'S
         type="button"
         className="vote-qr-code"
         onClick={() => setExpanded(true)}
-        aria-label="Enlarge QR code for the live audience vote"
+        aria-label="Enlarge QR code for the audience vote results"
       >
         <QRCodeSVG value={audienceUrl} size={256} level="M" />
       </button>
       <div className="vote-qr-copy">
         <strong>{label}</strong>
-        <span>Keep this page open.</span>
+        <span>{hint}</span>
       </div>
       {expanded && <QrLightbox audienceUrl={audienceUrl} onClose={() => setExpanded(false)} />}
     </div>

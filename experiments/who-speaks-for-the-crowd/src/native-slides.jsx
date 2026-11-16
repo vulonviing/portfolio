@@ -268,8 +268,8 @@ function GoldfishExampleSlide({ number, step = 0, audienceUrl }) {
           </div>
         ))}
         <div className="example-qr-panel">
-          <VoteQr audienceUrl={audienceUrl} large label="Scan to join" />
-          <p>Keep your phone out — you’ll vote on real cases next.</p>
+          <VoteQr audienceUrl={audienceUrl} large label="Scan for the results" hint="How the room voted." />
+          <p>The audience voted live on real cases next — scan to see how the room voted.</p>
         </div>
       </div>
     </SlideFrame>
